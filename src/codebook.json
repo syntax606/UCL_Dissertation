@@ -1,0 +1,49 @@
+{
+  "scheme_version": "1.0",
+  "description": "Two-tier pragmatic contrast annotation scheme. Tier 1: fine pragmatic-function tag. Tier 2: stance (affiliative/neutral/adversarial, auto-derived from tag, overridable) + arousal (low/high, independent judgement) + literal/nonliteral (derived). Plus confidence and optional secondary function.",
+  "families": {
+    "yeah": "agreement",
+    "right": "agreement",
+    "sure": "agreement",
+    "okay": "agreement",
+    "great": "evaluative",
+    "fine": "evaluative",
+    "really": "challenge",
+    "come_on": "challenge",
+    "oh_yeah": "agreement",
+    "oh_right": "agreement",
+    "oh_sure": "agreement",
+    "oh_okay": "agreement",
+    "oh_great": "evaluative",
+    "oh_really": "challenge",
+    "oh_come_on": "challenge",
+    "yeah_right": "agreement",
+    "yeah_sure": "agreement"
+  },
+  "functions": [
+    {"id": "sincere_agree",    "label": "Sincere agreement",                 "stance": "affiliative", "literal": true,  "families": ["agreement"]},
+    {"id": "emphatic_agree",   "label": "Emphatic / enthusiastic agreement",  "stance": "affiliative", "literal": true,  "families": ["agreement"]},
+    {"id": "backchannel",      "label": "Neutral backchannel / continuer",    "stance": "neutral",     "literal": true,  "families": ["agreement"]},
+    {"id": "topic_closure",    "label": "Topic closure / move on",            "stance": "neutral",     "literal": true,  "families": ["agreement"]},
+    {"id": "reluctant",        "label": "Reluctant / concessive",             "stance": "adversarial", "literal": false, "families": ["agreement", "evaluative"]},
+    {"id": "skeptical",        "label": "Skeptical / disbelieving",           "stance": "adversarial", "literal": false, "families": ["agreement", "challenge"]},
+    {"id": "sarcastic",        "label": "Sarcastic / ironic",                 "stance": "adversarial", "literal": false, "families": ["agreement", "evaluative"]},
+    {"id": "dismissive",       "label": "Dismissive / curt",                  "stance": "adversarial", "literal": false, "families": ["agreement", "evaluative", "challenge"]},
+    {"id": "genuine_approval", "label": "Genuine approval",                   "stance": "affiliative", "literal": true,  "families": ["evaluative"]},
+    {"id": "sincere_accept",   "label": "Sincere acceptance / OK with it",    "stance": "affiliative", "literal": true,  "families": ["evaluative"]},
+    {"id": "resigned",         "label": "Resigned / giving up",               "stance": "neutral",     "literal": false, "families": ["evaluative"]},
+    {"id": "genuine_surprise", "label": "Genuine surprise / interest",        "stance": "affiliative", "literal": true,  "families": ["challenge"]},
+    {"id": "confrontational",  "label": "Confrontational / push-back",        "stance": "adversarial", "literal": false, "families": ["challenge"]},
+    {"id": "encouraging",      "label": "Encouraging / rallying",             "stance": "affiliative", "literal": true,  "families": ["challenge"]}
+  ],
+  "stances": ["affiliative", "neutral", "adversarial"],
+  "arousal_levels": ["low", "high"],
+  "confidence_levels": ["clear", "borderline"],
+  "discard_reasons": [
+    "noise / music / ad",
+    "overlapping speech",
+    "mistranscribed / not audible",
+    "not the target use of the word",
+    "too ambiguous to label"
+  ]
+}

@@ -1,0 +1,36 @@
+# ---- Large / copyrighted data (never commit) ----
+corpus.duckdb
+candidate_targets.csv
+candidate_targets_filtered.csv
+data/clips/
+# annotation sheets contain verbatim transcript text (copyright); ship labels/labels.csv instead
+data/annotations/annotation_sheet*.csv
+*.backup.csv
+*.pre_*.csv
+
+# ---- Audio-embedded annotator batches (large; contain audio) ----
+offline_annotator/*.html
+offline_annotator/_*.log
+
+# ---- Features (large; add via git-lfs or release once extracted) ----
+features/*.npy
+features/*.npz
+features/*.parquet
+
+# ---- Raw exports / abandoned Label Studio setup / transcript-bearing JSON ----
+annotations_batch_*.json
+data/annotations/labelstudio_import.json
+start_labelstudio.sh
+offline_annotator/_*
+
+# ---- Personal supervisor-meeting prep (not reproduction material) ----
+supervisor_intro_script.md
+supervisor_walkthrough.txt
+
+# ---- Environments / caches / OS ----
+__pycache__/
+*.pyc
+.venv/
+dissertation_env/
+.DS_Store
+.ipynb_checkpoints/

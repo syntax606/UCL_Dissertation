@@ -1,0 +1,19 @@
+# Core pipeline (candidate search, extraction, annotation, label store)
+duckdb>=0.10
+pandas>=2.0
+# Audio extraction also requires ffmpeg + ffprobe on PATH (system install, not pip)
+
+# Feature extraction (Phase 2 - installed when running the extractors)
+torch>=2.2
+torchaudio>=2.2
+transformers>=4.40          # WavLM, HuBERT, Whisper encoder, Mimi
+sentence-transformers>=2.7  # transcript baseline embeddings
+
+# Probing / analysis (Phase 3)
+scikit-learn>=1.4
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+
+# Note: the offline annotator (src/07) and the label store (src/13) use only the
+# Python standard library, so they run without any of the above.
