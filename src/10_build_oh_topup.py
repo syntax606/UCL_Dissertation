@@ -21,8 +21,8 @@ POOL = ROOT / "candidate_targets_filtered.csv"
 MASTER = ROOT / "data" / "annotations" / "annotation_sheet.csv"
 OH_SHEET = ROOT / "data" / "annotations" / "annotation_sheet_oh.csv"
 CLIPS_DIR = ROOT / "data" / "clips"
-AUDIO_DIR = Path("/Volumes/Caro Drive/podcast-dissertation-audio/audio copy")
-TRANSCRIPTS_DIR = Path("/Volumes/Caro Drive/podcast-dissertation-audio/podcast_transcripts")
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import AUDIO_DIR, TRANSCRIPTS_DIR
 
 BASES = ["yeah", "okay", "right", "sure", "great", "really", "come_on"]  # 'fine' excluded: only 12 'oh fine'
 BASE_TOKENS = {b: (["come", "on"] if b == "come_on" else [b]) for b in BASES}

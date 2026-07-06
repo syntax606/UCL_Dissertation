@@ -34,3 +34,8 @@ __pycache__/
 dissertation_env/
 .DS_Store
 .ipynb_checkpoints/
+
+# Machine-specific real paths (keep local)
+configs/paths.yaml
+# Abandoned Label Studio prep (superseded by offline annotator; held local paths)
+src/06_prepare_labelstudio.py

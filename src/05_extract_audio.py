@@ -3,8 +3,8 @@ import pandas as pd
 from pathlib import Path
 
 ANNOTATION_CSV  = str(Path.home() / 'Desktop' / 'pragmatic_contrast' / 'data' / 'annotations' / 'annotation_sheet.csv')
-AUDIO_DIR       = Path('/Volumes/Caro Drive/podcast-dissertation-audio/audio copy')
-TRANSCRIPTS_DIR = Path('/Volumes/Caro Drive/podcast-dissertation-audio/podcast_transcripts')
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import AUDIO_DIR, TRANSCRIPTS_DIR
 CLIPS_DIR       = Path.home() / 'Desktop' / 'pragmatic_contrast' / 'data' / 'clips'
 TEST_N          = None  # set to None for full extraction
 

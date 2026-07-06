@@ -23,8 +23,8 @@ MASTER = ROOT / "data" / "annotations" / "annotation_sheet.csv"
 LABELED = ROOT / "data" / "annotations" / "annotation_sheet_labeled.csv"
 TOPUP = ROOT / "data" / "annotations" / "annotation_sheet_topup.csv"
 CLIPS_DIR = ROOT / "data" / "clips"
-AUDIO_DIR = Path("/Volumes/Caro Drive/podcast-dissertation-audio/audio copy")
-TRANSCRIPTS_DIR = Path("/Volumes/Caro Drive/podcast-dissertation-audio/podcast_transcripts")
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import AUDIO_DIR, TRANSCRIPTS_DIR
 
 TARGET = 40            # keepers wanted per phrase
 KEEP_RATE = 0.55       # assumed survival of filtered candidates through labelling

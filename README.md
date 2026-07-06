@@ -60,11 +60,15 @@ pip install -r requirements.txt
 #   macOS: brew install ffmpeg
 ```
 
-**Configuration note.** The scripts currently assume the project lives at
-`~/Desktop/pragmatic_contrast/`, and the audio/transcript source at
-`/Volumes/Caro Drive/podcast-dissertation-audio/`. To run elsewhere, edit the path
-constants at the top of `src/05_extract_audio.py`, `src/09`, `src/10` (audio +
-transcript dirs). *(A `configs/paths.yaml` will replace these before the repo goes public.)*
+**Configuration.** Machine-specific paths are not hardcoded. Point the pipeline at your
+audio and transcripts by copying the template and editing it:
+
+```bash
+cp configs/paths.example.yaml configs/paths.yaml   # git-ignored; set audio_dir + transcripts_dir
+# or override per-run with env vars: PC_AUDIO_DIR=... PC_TRANSCRIPTS_DIR=...
+```
+
+`src/config.py` reads these; everything else derives from the repo location.
 
 ---
 
