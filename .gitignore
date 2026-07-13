@@ -12,10 +12,8 @@ data/annotations/annotation_sheet*.csv
 offline_annotator/*.html
 offline_annotator/_*.log
 
-# ---- Features (large; add via git-lfs or release once extracted) ----
-features/*.npy
-features/*.npz
-features/*.parquet
+# ---- Features (large; >100MB/file, add via git-lfs or release once extracted) ----
+features/
 
 # ---- Raw exports / abandoned Label Studio setup / transcript-bearing JSON ----
 annotations_batch_*.json
@@ -39,3 +37,6 @@ dissertation_env/
 configs/paths.yaml
 # Abandoned Label Studio prep (superseded by offline annotator; held local paths)
 src/06_prepare_labelstudio.py
+
+# Premise-check hidden reference (labels + episode titles; keep local)
+data/annotations/premise_key.csv
