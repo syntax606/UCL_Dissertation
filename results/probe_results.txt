@@ -1,0 +1,109 @@
+labelled clips in manifest: 873
+stance dist: {'affiliative': 364, 'neutral': 147, 'adversarial': 362}
+
+==========================================================================
+A. POOLED 3-WAY STANCE DECODABILITY  (primary window W2_segment)
+==========================================================================
+model            layer  macroF1          95% CI   perm p   major
+wavlm               20    0.573     [0.54,0.61]    0.005   0.196
+hubert              23    0.520     [0.49,0.56]    0.005   0.196
+whisper              9    0.564     [0.53,0.60]    0.005   0.196
+mimi                 -    0.352     [0.33,0.38]    0.010   0.196
+text:targetonly      -    0.487     [0.46,0.52]    0.005   0.196
+text:context         -    0.378     [0.35,0.41]    0.010   0.196
+
+==========================================================================
+B. CONTEXT-WINDOW SWEEP  (macro-F1 at each model's best layer)
+==========================================================================
+model               W1_local  W2_segment  W3_discourse
+wavlm                  0.561       0.573         0.511
+hubert                 0.537       0.520         0.488
+whisper                0.545       0.564         0.531
+mimi                   0.372       0.352         0.401
+
+==========================================================================
+C. PER-PHRASE WITHIN-WORD BINARY CONTRAST  (lexical control, W2)
+==========================================================================
+
+wavlm  (mean over phrases: 0.659)
+    come_on   adv/aff  n=127  F1=0.723  (maj 0.417)
+    fine      adv/aff  n= 68  F1=0.440  (maj 0.370)
+    great     adv/aff  n= 96  F1=0.786  (maj 0.356)
+    okay      neu/adv  n=116  F1=0.689  (maj 0.376)
+    really    adv/aff  n=103  F1=0.806  (maj 0.335)
+    right     aff/neu  n=107  F1=0.647  (maj 0.371)
+    sure      aff/adv  n=103  F1=0.666  (maj 0.394)
+    yeah      aff/neu  n= 95  F1=0.519  (maj 0.403)
+
+hubert  (mean over phrases: 0.616)
+    come_on   adv/aff  n=127  F1=0.680  (maj 0.417)
+    fine      adv/aff  n= 68  F1=0.471  (maj 0.370)
+    great     adv/aff  n= 96  F1=0.712  (maj 0.356)
+    okay      neu/adv  n=116  F1=0.672  (maj 0.376)
+    really    adv/aff  n=103  F1=0.786  (maj 0.335)
+    right     aff/neu  n=107  F1=0.580  (maj 0.371)
+    sure      aff/adv  n=103  F1=0.553  (maj 0.394)
+    yeah      aff/neu  n= 95  F1=0.470  (maj 0.403)
+
+whisper  (mean over phrases: 0.672)
+    come_on   adv/aff  n=127  F1=0.742  (maj 0.417)
+    fine      adv/aff  n= 68  F1=0.496  (maj 0.370)
+    great     adv/aff  n= 96  F1=0.754  (maj 0.356)
+    okay      neu/adv  n=116  F1=0.694  (maj 0.376)
+    really    adv/aff  n=103  F1=0.825  (maj 0.335)
+    right     aff/neu  n=107  F1=0.672  (maj 0.371)
+    sure      aff/adv  n=103  F1=0.629  (maj 0.394)
+    yeah      aff/neu  n= 95  F1=0.566  (maj 0.403)
+
+mimi  (mean over phrases: 0.465)
+    come_on   adv/aff  n=127  F1=0.417  (maj 0.417)
+    fine      adv/aff  n= 68  F1=0.428  (maj 0.370)
+    great     adv/aff  n= 96  F1=0.590  (maj 0.356)
+    okay      neu/adv  n=116  F1=0.460  (maj 0.376)
+    really    adv/aff  n=103  F1=0.621  (maj 0.335)
+    right     aff/neu  n=107  F1=0.409  (maj 0.371)
+    sure      aff/adv  n=103  F1=0.394  (maj 0.394)
+    yeah      aff/neu  n= 95  F1=0.403  (maj 0.403)
+
+text:context  (mean over phrases: 0.534)
+    come_on   adv/aff  n=127  F1=0.605  (maj 0.417)
+    fine      adv/aff  n= 68  F1=0.377  (maj 0.370)
+    great     adv/aff  n= 96  F1=0.653  (maj 0.356)
+    okay      neu/adv  n=116  F1=0.546  (maj 0.376)
+    really    adv/aff  n=103  F1=0.524  (maj 0.335)
+    right     aff/neu  n=107  F1=0.567  (maj 0.371)
+    sure      aff/adv  n=103  F1=0.494  (maj 0.394)
+    yeah      aff/neu  n= 95  F1=0.504  (maj 0.403)
+
+==========================================================================
+D. MATCHED-AROUSAL TEST  (3-way stance decoded WITHIN each arousal level)
+   stance still above majority at fixed arousal => not just loudness
+==========================================================================
+model              low F1  low maj  low n   high F1  high maj  high n
+wavlm               0.531    0.197    528     0.549     0.226     345
+hubert              0.459    0.197    528     0.518     0.226     345
+whisper             0.526    0.197    528     0.514     0.226     345
+mimi                0.364    0.197    528     0.347     0.226     345
+text                0.400    0.197    528     0.359     0.226     345
+
+==========================================================================
+E. SPEAKER-IDENTITY CONTROL  (fold-grouping by SHOW vs by episode)
+   F1 holds under show-grouping => probe is not riding speaker identity
+==========================================================================
+model             by episode   by show   major  #shows
+wavlm                  0.573     0.530   0.196      32
+hubert                 0.520     0.450   0.196      32
+whisper                0.564     0.536   0.196      32
+mimi                   0.352     0.347   0.196      32
+text                   0.378     0.382   0.196      32
+
+==========================================================================
+F. CONTRAST-PRESERVATION SCORE  (training-free, within speaker x word)
+   leave-one-out nearest-centroid on distances alone; chance = 0.50
+==========================================================================
+model                CPS   cells  decisions
+wavlm              0.618      15        191
+hubert             0.613      15        191
+whisper            0.618      15        191
+mimi               0.571      15        191
+text               0.592      15        191
