@@ -220,7 +220,7 @@ pip install scikit-learn          # on top of the CPU requirements
 python3 src/18_probe.py           # all models; --perm 0 to skip permutation (faster)
 ```
 
-It prints three views:
+It prints six views:
 
 - **A. Pooled 3-way stance decodability** per representation (best layer for the audio
   models), on the primary window `W2_segment`, vs a majority-class baseline.
@@ -228,6 +228,14 @@ It prints three views:
 - **C. Per-phrase within-word binary contrast** — the lexical control: hold the word
   constant, vary only stance, and ask whether the probe still separates the two. This is
   the core test that isolates delivery from lexis; it is averaged over the eight phrases.
+- **D. Matched-arousal test** — stance decoded *within* each arousal level, so a positive
+  result can't be dismissed as the model merely encoding loudness/arousal.
+- **E. Speaker-identity control** — fold-grouping by *show* (train/test never share a
+  speaker) alongside the by-episode setting; if F1 holds, the probe isn't riding speaker
+  identity.
+- **F. Contrast-Preservation Score** — a training-free measure: within each
+  (speaker, word) cell, leave-one-out nearest-centroid on distances alone (lexis and
+  speaker both held fixed; chance = 0.50).
 
 ---
 

@@ -218,6 +218,93 @@ def per_phrase_binary(model, man, layer):
     return res
 
 
+def _arrays(model, window, man, layer):
+    """Return (X, y_stance, arousal, phrase, episode, show) aligned by id."""
+    f = load_feat(model, window)
+    if not f:
+        return None
+    ids, X = f
+    keep, y, ar, ph, g = align(ids, man)
+    show = np.array([man[ids[i]]["show_name"] for i in keep])
+    Xk = X[keep, layer] if (model in AUDIO and layer is not None) else X[keep]
+    return Xk, y, ar, ph, g, show
+
+
+def _config(model_tag, best_layers):
+    """Map a display tag to (feature_model, window, layer)."""
+    if model_tag == "text":
+        return "text", "context", None
+    if model_tag == "mimi":
+        return "mimi", PRIMARY, None
+    return model_tag, PRIMARY, best_layers.get(model_tag)
+
+
+def matched_arousal(model_tag, man, best_layers):
+    """D. Stance decodable WITHIN each arousal level? (defends the arousal confound)."""
+    m, w, lay = _config(model_tag, best_layers)
+    a = _arrays(m, w, man, lay)
+    if a is None:
+        return {}
+    Xk, y, ar, ph, g, show = a
+    out = {}
+    for lvl in ("low", "high"):
+        sel = ar == lvl
+        if sel.sum() < 30:
+            continue
+        pred = oof_predict(Xk[sel], y[sel], g[sel])
+        if pred is None:
+            continue
+        out[lvl] = dict(f1=f1_score(y[sel], pred, average="macro"),
+                        n=int(sel.sum()), maj=majority_f1(y[sel]))
+    return out
+
+
+def speaker_control(model_tag, man, best_layers):
+    """E. Re-score grouping folds by SHOW (speaker). If F1 holds, the probe is not
+    riding speaker identity (train/test never share a show)."""
+    m, w, lay = _config(model_tag, best_layers)
+    a = _arrays(m, w, man, lay)
+    if a is None:
+        return None
+    Xk, y, ar, ph, g, show = a
+    pe = oof_predict(Xk, y, g)          # by episode (main setting)
+    ps = oof_predict(Xk, y, show)       # by show (stricter)
+    return dict(episode=f1_score(y, pe, average="macro") if pe is not None else float("nan"),
+                show=f1_score(y, ps, average="macro") if ps is not None else float("nan"),
+                maj=majority_f1(y), n_shows=len(set(show)))
+
+
+def cps(model_tag, man, best_layers, min_each=3):
+    """F. Training-free Contrast-Preservation Score. Within each (show, word) cell -
+    same speaker, same word - can leave-one-out nearest-centroid tell the two stances
+    apart from distances alone? Pure delivery: lexis and speaker are both held fixed.
+    Chance = 0.50."""
+    m, w, lay = _config(model_tag, best_layers)
+    a = _arrays(m, w, man, lay)
+    if a is None:
+        return None
+    Xk, y, ar, ph, g, show = a
+    Xs = StandardScaler().fit_transform(Xk)
+    correct = tot = cells = 0
+    for sh in set(show):
+        for phrase in set(ph):
+            cell = (show == sh) & (ph == phrase)
+            top2 = [c for c, _ in Counter(y[cell]).most_common(2)]
+            if len(top2) < 2:
+                continue
+            mm = cell & np.isin(y, top2)
+            yc, Xc = y[mm], Xs[mm]
+            if min(Counter(yc).values()) < min_each:
+                continue
+            cells += 1
+            for i in range(len(yc)):
+                keep = np.ones(len(yc), bool); keep[i] = False
+                cent = {c: Xc[keep][yc[keep] == c].mean(0) for c in top2}
+                pred = min(cent, key=lambda c: np.linalg.norm(Xc[i] - cent[c]))
+                correct += (pred == yc[i]); tot += 1
+    return dict(cps=correct / tot if tot else float("nan"), cells=cells, n=tot)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+",
@@ -279,6 +366,45 @@ def main():
         for ph, v in phres.items():
             print(f"    {ph:9s} {'/'.join(c[:3] for c in v['classes']):8s} "
                   f"n={v['n']:>3}  F1={v['f1']:.3f}  (maj {v['maj']:.3f})")
+
+    tags = args.models
+
+    print("\n" + "=" * 74)
+    print("D. MATCHED-AROUSAL TEST  (3-way stance decoded WITHIN each arousal level)")
+    print("   stance still above majority at fixed arousal => not just loudness")
+    print("=" * 74)
+    print(f"{'model':16s}{'low F1':>9}{'low maj':>9}{'low n':>7}"
+          f"{'high F1':>10}{'high maj':>10}{'high n':>8}")
+    for t in tags:
+        d = matched_arousal(t, man, best_layers)
+        if not d:
+            continue
+        lo, hi = d.get("low", {}), d.get("high", {})
+        print(f"{t:16s}{lo.get('f1',float('nan')):>9.3f}{lo.get('maj',float('nan')):>9.3f}"
+              f"{lo.get('n',0):>7}{hi.get('f1',float('nan')):>10.3f}"
+              f"{hi.get('maj',float('nan')):>10.3f}{hi.get('n',0):>8}")
+
+    print("\n" + "=" * 74)
+    print("E. SPEAKER-IDENTITY CONTROL  (fold-grouping by SHOW vs by episode)")
+    print("   F1 holds under show-grouping => probe is not riding speaker identity")
+    print("=" * 74)
+    print(f"{'model':16s}{'by episode':>12}{'by show':>10}{'major':>8}{'#shows':>8}")
+    for t in tags:
+        r = speaker_control(t, man, best_layers)
+        if not r:
+            continue
+        print(f"{t:16s}{r['episode']:>12.3f}{r['show']:>10.3f}{r['maj']:>8.3f}{r['n_shows']:>8}")
+
+    print("\n" + "=" * 74)
+    print("F. CONTRAST-PRESERVATION SCORE  (training-free, within speaker x word)")
+    print("   leave-one-out nearest-centroid on distances alone; chance = 0.50")
+    print("=" * 74)
+    print(f"{'model':16s}{'CPS':>8}{'cells':>8}{'decisions':>11}")
+    for t in tags:
+        r = cps(t, man, best_layers)
+        if not r:
+            continue
+        print(f"{t:16s}{r['cps']:>8.3f}{r['cells']:>8}{r['n']:>11}")
 
 
 if __name__ == "__main__":
