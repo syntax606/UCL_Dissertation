@@ -100,21 +100,35 @@
   h1 {
     font-family: var(--serif);
     font-weight: 600;
-    font-size: clamp(25px, 3.5vw, 40px);
-    line-height: 1.12;
+    font-size: clamp(23px, 3.1vw, 36px);
+    line-height: 1.13;
     letter-spacing: -.015em;
     text-wrap: balance;
     margin: 10px 0 0;
   }
 
+  .deck {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(14.5px, 1.6vw, 18px);
+    line-height: 1.35;
+    color: var(--teal);
+    margin: 7px 0 0;
+    max-width: 82ch;
+    text-wrap: balance;
+  }
+
   .thesis {
-    margin: 10px 0 0;
-    max-width: 74ch;
-    font-size: clamp(14px, 1.35vw, 16px);
+    margin: 12px 0 0;
+    max-width: 96ch;
+    font-size: clamp(13px, 1.25vw, 15px);
     color: var(--muted);
+    border-top: 1px solid var(--rule);
+    padding-top: 11px;
   }
 
   .thesis strong { color: var(--ink); font-weight: 600; }
+  .thesis em { font-style: italic; color: var(--ink); }
 
   /* ---------- body grid ---------- */
 
@@ -433,12 +447,23 @@
       <span>MSc Computational Linguistics, UCL</span>
       <span>Advisory group · July 2026</span>
     </div>
-    <h1>When the transcript is identical, does the representation still hear the difference?</h1>
+    <h1>Transcript-Equivalent Pragmatic Contrast in Speech Representations</h1>
+    <p class="deck">
+      Do frozen speech representations preserve pragmatic stance when the lexical item is held constant,
+      and does that contrast survive the discretisation deployed speech-to-speech systems rely on?
+    </p>
     <p class="thesis">
-      Prior work shows speech beats text on pragmatic tasks, but always with the words free to vary.
-      Holding the word constant <strong>isolates delivery from lexis</strong> — and shows that the discrete
-      tokens deployed speech-to-speech systems actually consume lose most of the pragmatic contrast that
-      continuous representations keep.
+      Short phrases such as <em>yeah</em>, <em>sure</em>, and <em>great</em> perform opposite speech acts —
+      sincere agreement or sarcastic dismissal — while their transcript remains identical, so the
+      distinguishing information must reside in delivery rather than in words. Prior probing work
+      established that speech representations recover pragmatic phenomena such as sarcasm better than
+      text, but did so on corpora in which the utterances also differ lexically, leaving delivery
+      confounded with word choice. This study removes that confound by training linear probes on
+      <strong>frozen</strong> representations of the <strong>same lexical item under divergent pragmatic
+      force</strong>, comparing self-supervised continuous encoders (WavLM, HuBERT), a supervised ASR
+      encoder (Whisper), the discrete tokeniser consumed by deployed systems (Mimi), and transcript-only
+      baselines. Isolating delivery from lexis is what converts the uncontroversial observation that
+      tokenisation is lossy into the testable claim that it discards <strong>meaning</strong>.
     </p>
   </header>
 
