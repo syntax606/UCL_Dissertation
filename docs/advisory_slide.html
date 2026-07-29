@@ -1,0 +1,571 @@
+<title>Pragmatic Contrast in Speech Representations — advisory slide</title>
+
+<style>
+  :root {
+    --ground: #f5f6f8;
+    --surface: #ffffff;
+    --ink: #131920;
+    --muted: #5c6773;
+    --faint: #8a94a1;
+    --rule: #dde1e7;
+    --teal: #0f7a84;
+    --teal-soft: #d3e7e9;
+    --clay: #b4522f;
+    --clay-soft: #f0dcd3;
+    --grey-bar: #94a0ae;
+    --shadow: 0 1px 2px rgba(19, 25, 32, .05), 0 8px 24px -12px rgba(19, 25, 32, .12);
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0f1319;
+      --surface: #171c23;
+      --ink: #e8ecf1;
+      --muted: #9aa6b4;
+      --faint: #77828f;
+      --rule: #262d36;
+      --teal: #45b8c2;
+      --teal-soft: #16333a;
+      --clay: #dd8460;
+      --clay-soft: #3a2119;
+      --grey-bar: #5e6b7a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0f1319;
+    --surface: #171c23;
+    --ink: #e8ecf1;
+    --muted: #9aa6b4;
+    --faint: #77828f;
+    --rule: #262d36;
+    --teal: #45b8c2;
+    --teal-soft: #16333a;
+    --clay: #dd8460;
+    --clay-soft: #3a2119;
+    --grey-bar: #5e6b7a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  }
+
+  :root[data-theme="light"] {
+    --ground: #f5f6f8;
+    --surface: #ffffff;
+    --ink: #131920;
+    --muted: #5c6773;
+    --faint: #8a94a1;
+    --rule: #dde1e7;
+    --teal: #0f7a84;
+    --teal-soft: #d3e7e9;
+    --clay: #b4522f;
+    --clay-soft: #f0dcd3;
+    --grey-bar: #94a0ae;
+    --shadow: 0 1px 2px rgba(19, 25, 32, .05), 0 8px 24px -12px rgba(19, 25, 32, .12);
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(18px, 3vw, 34px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(14px, 2vw, 22px);
+  }
+
+  /* ---------- header ---------- */
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(25px, 3.5vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+    margin: 10px 0 0;
+  }
+
+  .thesis {
+    margin: 10px 0 0;
+    max-width: 74ch;
+    font-size: clamp(14px, 1.35vw, 16px);
+    color: var(--muted);
+  }
+
+  .thesis strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- body grid ---------- */
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(14px, 1.8vw, 22px);
+    align-items: stretch;
+  }
+
+  @media (max-width: 860px) {
+    .body { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: clamp(14px, 1.6vw, 20px);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .panel-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ---------- the lexical-control thesis object ---------- */
+
+  .contrast {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0 2px;
+  }
+
+  .token { text-align: center; }
+
+  .token .word {
+    font-family: var(--serif);
+    font-size: clamp(30px, 4.4vw, 46px);
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+
+  .token.aff .word { color: var(--teal); }
+  .token.adv .word { color: var(--clay); font-style: italic; }
+
+  .token .gloss {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    color: var(--muted);
+  }
+
+  .versus {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--faint);
+    padding: 0 2px;
+  }
+
+  .identical {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    border-top: 1px dashed var(--rule);
+    padding-top: 10px;
+  }
+
+  .identical code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* ---------- facts ---------- */
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+
+  .fact .n {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(17px, 2vw, 21px);
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+
+  .fact .k {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    border-left: 2px solid var(--teal);
+    padding-left: 10px;
+  }
+
+  /* ---------- chart ---------- */
+
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+
+  .swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .chart {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    align-items: center;
+    gap: 7px 10px;
+  }
+
+  .row-label {
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+
+  .row-label .sub {
+    color: var(--faint);
+    font-size: 11px;
+  }
+
+  .track {
+    height: 17px;
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--rule) 55%, transparent),
+      color-mix(in srgb, var(--rule) 55%, transparent)
+    );
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .bar.audio { background: var(--teal); }
+  .bar.text  { background: var(--grey-bar); }
+  .bar.disc  { background: var(--clay); }
+
+  .row-val {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  .row-val .ci {
+    font-weight: 400;
+    color: var(--faint);
+    font-size: 11px;
+  }
+
+  /* baseline overlay sits in the track column, spanning every bar row */
+  .baseline {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .baseline i {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    left: 31.6%;
+    width: 0;
+    border-left: 1px dashed var(--faint);
+  }
+
+  .axis {
+    grid-column: 2 / 4;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--faint);
+    margin-top: 2px;
+  }
+
+  .chart-foot {
+    font-size: 11.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+
+  .chart-foot b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- footer strip ---------- */
+
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(10px, 1.4vw, 16px);
+  }
+
+  @media (max-width: 860px) {
+    .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    .checks { grid-template-columns: 1fr; }
+  }
+
+  .check {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 11px 13px;
+    box-shadow: var(--shadow);
+  }
+
+  .check .h {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 5px;
+  }
+
+  .check .t {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .check .t b {
+    color: var(--ink);
+    font-weight: 600;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+  }
+
+  .status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .pill {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+
+  .pill.done {
+    border-color: color-mix(in srgb, var(--teal) 45%, transparent);
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+
+  .pill.open {
+    border-color: color-mix(in srgb, var(--clay) 40%, transparent);
+    background: var(--clay-soft);
+    color: var(--clay);
+  }
+</style>
+
+<div class="slide">
+
+  <header>
+    <div class="eyebrow">
+      <span>Track A · Pragmatic Contrast Preservation</span>
+      <span>MSc Computational Linguistics, UCL</span>
+      <span>Advisory group · July 2026</span>
+    </div>
+    <h1>When the transcript is identical, does the representation still hear the difference?</h1>
+    <p class="thesis">
+      Prior work shows speech beats text on pragmatic tasks, but always with the words free to vary.
+      Holding the word constant <strong>isolates delivery from lexis</strong> — and shows that the discrete
+      tokens deployed speech-to-speech systems actually consume lose most of the pragmatic contrast that
+      continuous representations keep.
+    </p>
+  </header>
+
+  <div class="body">
+
+    <section class="panel">
+      <div class="panel-label">The move — lexical control</div>
+
+      <div class="contrast">
+        <div class="token aff">
+          <div class="word">yeah</div>
+          <div class="gloss">Affiliative</div>
+        </div>
+        <div class="versus">vs</div>
+        <div class="token adv">
+          <div class="word">yeah</div>
+          <div class="gloss">Adversarial</div>
+        </div>
+      </div>
+
+      <div class="identical">
+        identical transcript <code>"yeah"</code> · opposite pragmatic force
+      </div>
+
+      <div class="facts">
+        <div class="fact">
+          <div class="n">873</div>
+          <div class="k">labelled clips</div>
+        </div>
+        <div class="fact">
+          <div class="n">8</div>
+          <div class="k">target phrases, each with a powered binary contrast</div>
+        </div>
+        <div class="fact">
+          <div class="n">753</div>
+          <div class="k">episodes across 32 shows</div>
+        </div>
+        <div class="fact">
+          <div class="n">3</div>
+          <div class="k">context windows (6 / 10 / 16 s)</div>
+        </div>
+      </div>
+
+      <div class="note">
+        Naturalistic political-podcast audio, not acted corpora. Stance and arousal labelled on
+        independent axes, so the headline test can be run at matched arousal.
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="chart-head">
+        <div class="panel-label">Stance decodability — 3-way macro-F1, segment window</div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--teal)"></i>continuous audio</span>
+          <span><i class="swatch" style="background:var(--grey-bar)"></i>text</span>
+          <span><i class="swatch" style="background:var(--clay)"></i>discrete tokens</span>
+        </div>
+      </div>
+
+      <div class="chart">
+        <div class="baseline"><i></i></div>
+
+        <div class="row-label">WavLM <span class="sub">L20</span></div>
+        <div class="track"><div class="bar audio" style="width:92.4%"></div></div>
+        <div class="row-val">0.573 <span class="ci">±.04</span></div>
+
+        <div class="row-label">Whisper enc. <span class="sub">L9</span></div>
+        <div class="track"><div class="bar audio" style="width:91.0%"></div></div>
+        <div class="row-val">0.564 <span class="ci">±.04</span></div>
+
+        <div class="row-label">HuBERT <span class="sub">L23</span></div>
+        <div class="track"><div class="bar audio" style="width:83.9%"></div></div>
+        <div class="row-val">0.520 <span class="ci">±.04</span></div>
+
+        <div class="row-label">Text <span class="sub">target word</span></div>
+        <div class="track"><div class="bar text" style="width:78.5%"></div></div>
+        <div class="row-val">0.487 <span class="ci">±.03</span></div>
+
+        <div class="row-label">Text <span class="sub">+ discourse</span></div>
+        <div class="track"><div class="bar text" style="width:61.0%"></div></div>
+        <div class="row-val">0.378 <span class="ci">±.03</span></div>
+
+        <div class="row-label">Mimi <span class="sub">codebooks 1–7</span></div>
+        <div class="track"><div class="bar disc" style="width:56.8%"></div></div>
+        <div class="row-val">0.352 <span class="ci">±.03</span></div>
+
+        <div class="axis">
+          <span>0</span>
+          <span>majority baseline 0.196 ⟵ dashed</span>
+          <span>0.62</span>
+        </div>
+      </div>
+
+      <div class="chart-foot">
+        <b>Lexical control (within-word, mean over 8 phrases):</b> WavLM <b>0.659</b> vs text+discourse
+        <b>0.534</b> — the contrast survives when the word cannot help. All six representations beat
+        chance (permutation p ≤ 0.01), so Mimi loses <em>most</em> of the contrast, not all of it.
+        Pooled target-only text sits above chance because phrases differ in stance base rate; the
+        within-word figure is the clean test.
+      </div>
+    </section>
+  </div>
+
+  <div class="checks">
+    <div class="check">
+      <div class="h">Premise check (human)</div>
+      <div class="t">Audio <b>0.73</b> vs transcript <b>0.65</b>, chance <b>0.33</b> — the contrast is speech-borne before any modelling.</div>
+    </div>
+    <div class="check">
+      <div class="h">Matched arousal</div>
+      <div class="t">Stance still decoded <em>within</em> each arousal level — the probe is not just reading loudness.</div>
+    </div>
+    <div class="check">
+      <div class="h">Speaker held out</div>
+      <div class="t">Grouping folds by show: WavLM <b>0.573 → 0.530</b> — not riding speaker identity.</div>
+    </div>
+    <div class="check">
+      <div class="h">Non-independence</div>
+      <div class="t">GroupKFold by episode, episode-cluster bootstrap CIs, 200-permutation tests.</div>
+    </div>
+  </div>
+
+  <div class="status">
+    <span class="pill done">Data + annotation complete</span>
+    <span class="pill done">Features extracted</span>
+    <span class="pill done">Probing complete</span>
+    <span class="pill">Writing up · 10k words</span>
+    <span class="pill open">Open: training-free CPS underpowered</span>
+  </div>
+</div>
