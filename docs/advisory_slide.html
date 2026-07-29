@@ -1,4 +1,4 @@
-<title>Pragmatic Contrast in Speech Representations — advisory slide</title>
+<title>Pragmatic Contrast in Speech Representations, advisory slide</title>
 
 <style>
   :root {
@@ -449,28 +449,30 @@
     </div>
     <h1>Transcript-Equivalent Pragmatic Contrast in Speech Representations</h1>
     <p class="deck">
-      Do frozen speech representations preserve pragmatic stance when the lexical item is held constant,
-      and does that contrast survive the discretisation deployed speech-to-speech systems rely on?
+      Deployed speech-to-speech systems never hear audio. They hear discrete tokens.
+      Do those tokens still carry what a speaker meant?
     </p>
     <p class="thesis">
-      Short phrases such as <em>yeah</em>, <em>sure</em>, and <em>great</em> perform opposite speech acts —
-      sincere agreement or sarcastic dismissal — while their transcript remains identical, so the
-      distinguishing information must reside in delivery rather than in words. Prior probing work
-      established that speech representations recover pragmatic phenomena such as sarcasm better than
-      text, but did so on corpora in which the utterances also differ lexically, leaving delivery
-      confounded with word choice. This study removes that confound by training linear probes on
-      <strong>frozen</strong> representations of the <strong>same lexical item under divergent pragmatic
-      force</strong>, comparing self-supervised continuous encoders (WavLM, HuBERT), a supervised ASR
-      encoder (Whisper), the discrete tokeniser consumed by deployed systems (Mimi), and transcript-only
-      baselines. Isolating delivery from lexis is what converts the uncontroversial observation that
-      tokenisation is lossy into the testable claim that it discards <strong>meaning</strong>.
+      Systems such as Moshi convert speech into discrete tokens before any language model sees it, so
+      whatever the tokeniser discards is simply unavailable downstream. If it discards pragmatic force,
+      a system can recover every word correctly and still misread how the speaker meant them. Short
+      phrases make this sharp, because <em>yeah</em>, <em>sure</em> and <em>great</em> each perform
+      opposite speech acts, sincere agreement or sarcastic dismissal, while the transcript stays
+      identical. Earlier probing work showed that speech representations recover pragmatic phenomena
+      better than text, but the utterances in those corpora also differed in wording, so delivery
+      remained confounded with word choice. This study removes that confound by
+      <strong>holding the word constant</strong> and probing <strong>frozen</strong> representations,
+      meaning the pretrained models are never updated and only a small linear classifier is trained, so
+      any accuracy reflects what the representation already encodes. Four families are compared,
+      self-supervised encoders (WavLM, HuBERT), a supervised ASR encoder (Whisper), the tokeniser
+      deployed systems actually consume (Mimi), and transcript-only baselines.
     </p>
   </header>
 
   <div class="body">
 
     <section class="panel">
-      <div class="panel-label">The move — lexical control</div>
+      <div class="panel-label">The design move, lexical control</div>
 
       <div class="contrast">
         <div class="token aff">
@@ -515,7 +517,7 @@
 
     <section class="panel">
       <div class="chart-head">
-        <div class="panel-label">Stance decodability — 3-way macro-F1, segment window</div>
+        <div class="panel-label">Stance decodability (3-way macro-F1, segment window)</div>
         <div class="legend">
           <span><i class="swatch" style="background:var(--teal)"></i>continuous audio</span>
           <span><i class="swatch" style="background:var(--grey-bar)"></i>text</span>
@@ -546,7 +548,7 @@
         <div class="track"><div class="bar text" style="width:61.0%"></div></div>
         <div class="row-val">0.378 <span class="ci">±.03</span></div>
 
-        <div class="row-label">Mimi <span class="sub">codebooks 1–7</span></div>
+        <div class="row-label">Mimi <span class="sub">deployed S2S tokeniser</span></div>
         <div class="track"><div class="bar disc" style="width:56.8%"></div></div>
         <div class="row-val">0.352 <span class="ci">±.03</span></div>
 
@@ -558,11 +560,19 @@
       </div>
 
       <div class="chart-foot">
-        <b>Lexical control (within-word, mean over 8 phrases):</b> WavLM <b>0.659</b> vs text+discourse
-        <b>0.534</b> — the contrast survives when the word cannot help. All six representations beat
-        chance (permutation p ≤ 0.01), so Mimi loses <em>most</em> of the contrast, not all of it.
-        Pooled target-only text sits above chance because phrases differ in stance base rate; the
-        within-word figure is the clean test.
+        <b>Lexical control</b>, the within-word test averaged over the eight phrases, gives WavLM
+        <b>0.659</b> against text-plus-discourse <b>0.534</b>, so the contrast survives even when the
+        word itself cannot help. Every representation beats chance (permutation p ≤ 0.01), so Mimi
+        loses <em>most</em> of the contrast rather than all of it. Pooled target-only text sits above
+        chance only because the eight phrases differ in stance base rate, which is why the within-word
+        figure is the clean test.
+      </div>
+
+      <div class="chart-foot" style="border-top:0; padding-top:0">
+        <b>Where it lives.</b> WavLM peaks at layer 20 of 24 and falls away above it, consistent with
+        upper layers shedding paralinguistics, while Whisper plateaus across its top third. Inside Mimi
+        the loss is not localised, since refinement codebooks 1 to 7 score 0.33 to 0.37 individually and
+        stacking them adds nothing.
       </div>
     </section>
   </div>
@@ -570,27 +580,28 @@
   <div class="checks">
     <div class="check">
       <div class="h">Premise check (human)</div>
-      <div class="t">Audio <b>0.73</b> vs transcript <b>0.65</b>, chance <b>0.33</b> — the contrast is speech-borne before any modelling.</div>
+      <div class="t">Audio <b>0.73</b> against transcript <b>0.65</b>, chance <b>0.33</b>. The contrast is speech-borne before any modelling.</div>
     </div>
     <div class="check">
       <div class="h">Matched arousal</div>
-      <div class="t">Stance still decoded <em>within</em> each arousal level — the probe is not just reading loudness.</div>
+      <div class="t">Stance is still decoded <em>within</em> each arousal level, so the probe is not simply reading loudness.</div>
     </div>
     <div class="check">
       <div class="h">Speaker held out</div>
-      <div class="t">Grouping folds by show: WavLM <b>0.573 → 0.530</b> — not riding speaker identity.</div>
+      <div class="t">Grouping folds by show moves WavLM only from <b>0.573</b> to <b>0.530</b>, so it is not riding speaker identity.</div>
     </div>
     <div class="check">
       <div class="h">Non-independence</div>
-      <div class="t">GroupKFold by episode, episode-cluster bootstrap CIs, 200-permutation tests.</div>
+      <div class="t">GroupKFold by episode, episode-cluster bootstrap intervals, and 200-permutation tests.</div>
     </div>
   </div>
 
   <div class="status">
-    <span class="pill done">Data + annotation complete</span>
+    <span class="pill done">Data and annotation complete</span>
     <span class="pill done">Features extracted</span>
     <span class="pill done">Probing complete</span>
-    <span class="pill">Writing up · 10k words</span>
-    <span class="pill open">Open: training-free CPS underpowered</span>
+    <span class="pill">Writing up, 10k words</span>
+    <span class="pill open">Next, probe Mimi codebook 0</span>
+    <span class="pill open">Open, training-free CPS underpowered</span>
   </div>
 </div>
