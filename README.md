@@ -223,7 +223,9 @@ python3 src/18_probe.py           # all models; --perm 0 to skip permutation (fa
 It prints six views:
 
 - **A. Pooled 3-way stance decodability** per representation (best layer for the audio
-  models), on the primary window `W2_segment`, vs a majority-class baseline.
+  models), on the primary window `W2_segment`, against the empirical permutation null
+  (chance is near 0.33; a majority-class predictor's 0.196 is reported for completeness only,
+  as macro-F1 penalises a constant predictor far more than a genuinely no-skill probe).
 - **B. Context-window sweep** — macro-F1 at each model's best layer across W1/W2/W3.
 - **C. Per-phrase within-word binary contrast** — the lexical control: hold the word
   constant, vary only stance, and ask whether the probe still separates the two. This is

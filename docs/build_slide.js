@@ -136,7 +136,6 @@ const rows = [
   ["Text, word only", 0.487, GREY_BAR, false],
   ["Text, with context", 0.378, GREY_BAR, false],
   ["Mimi, deployed tokeniser", 0.352, CLAY, true],
-  ["No-skill baseline", 0.196, PALE, false],
 ];
 
 // gridlines behind the bars
@@ -152,13 +151,25 @@ const rows = [
   });
 });
 
+// chance line: mean of the empirical permutation null, about 0.33
+const CHANCE = 0.33;
+const cx = BAR_X + (CHANCE / SCALE_MAX) * BAR_MAX;
+s.addShape(pres.ShapeType.line, {
+  x: cx, y: ROW_TOP - 0.08, w: 0, h: PITCH * rows.length + 0.04,
+  line: { color: CLAY, width: 1.25, dashType: "dash" },
+});
+s.addText("chance, about 0.33", {
+  x: cx - 1.05, y: ROW_TOP + PITCH * rows.length + 0.24, w: 2.10, h: 0.24, margin: 0,
+  fontFace: SANS, fontSize: 9, italic: true, color: CLAY, align: "center",
+});
+
 rows.forEach(([label, val, colour, emph], i) => {
   const y = ROW_TOP + i * PITCH;
 
   s.addText(label, {
     x: RX, y: y - 0.02, w: 2.30, h: BAR_H + 0.04, margin: 0,
     fontFace: SANS, fontSize: 10.5, bold: !!emph,
-    color: emph ? CLAY : (val === 0.196 ? MUTED : INK),
+    color: emph ? CLAY : INK,
     align: "right", valign: "middle",
   });
 
@@ -186,7 +197,7 @@ s.addText(
   [
     { text: "How to read this.   ", options: { bold: true, color: INK } },
     {
-      text: "Each bar is how accurately a simple classifier recovers the speaker's stance (affiliative, neutral or adversarial) from that representation alone, scored by macro-F1. Higher means more of the meaning survived. The pale bar is what a model with no real skill scores, so the distance above it is the signal.",
+      text: "Each bar is how accurately a simple classifier recovers the speaker's stance (affiliative, neutral or adversarial) from that representation alone, scored by macro-F1. Higher means more of the meaning survived. The dashed line is chance, the score the same probe reaches when the labels are shuffled, so the distance beyond it is the signal.",
       options: { color: MUTED },
     },
   ],
@@ -222,7 +233,7 @@ s.addText(
   [
     { text: "Finding.   ", options: { bold: true, color: TEAL, fontFace: SANS } },
     {
-      text: "Continuous representations preserve pragmatic stance, and it holds at matched arousal and on speakers the probe never trained on. The discrete tokens deployed systems actually consume lose most of it, though not all.",
+      text: "Continuous representations preserve pragmatic stance, and it holds at matched arousal and on speakers the probe never trained on. The discrete tokens deployed systems actually consume sit barely above chance, retaining very little of it.",
       options: { color: INK, fontFace: SANS },
     },
   ],
@@ -247,6 +258,9 @@ DATA
 HUMAN PREMISE CHECK, RUN BEFORE ANY MODELLING
 Two auxiliary annotators judged a counterbalanced 60-clip subset. Audio plus transcript reached 0.73 accuracy against 0.65 for transcript with discourse context, on a three-way chance of 0.33. So the contrast is partly text-recoverable but audio adds a real increment.
 
+WHAT COUNTS AS CHANCE
+Macro-F1 has no fixed chance value. A majority-class predictor scores only 0.196 here because macro-F1 gives zero to the two classes it never predicts, but our probe uses balanced class weights and spreads predictions across all three, so that is not its no-skill counterpart. The reference on the chart is the empirical permutation null, the same probe refit on shuffled labels, which sits near 0.33. Uniform and prior-matched random guessing give 0.322 and 0.333, agreeing closely. Against that line the continuous encoders are far above, while Mimi at 0.352 clears it only narrowly, though its own null never exceeded 0.330 in 60 runs, so the result remains significant.
+
 ROBUSTNESS
 Matched arousal. Stance is still decoded within each arousal level separately, so the probe is not simply reading loudness.
 Speaker held out. Grouping folds by show rather than episode moves WavLM only from 0.573 to 0.530, so it is not riding speaker identity.
@@ -264,5 +278,5 @@ NEXT
 Probe Mimi codebook 0, the WavLM-distilled stream, which was not extracted in the first run. It is the one remaining untested possibility for where pragmatic information might survive inside the tokeniser.`
 );
 
-pres.writeFile({ fileName: "/private/tmp/claude-501/-Users-carolineswartz-Desktop-Parallel-Frontier/cc920fb3-402b-4409-b43b-d506417adb91/scratchpad/advisory_slide.pptx" })
+pres.writeFile({ fileName: process.argv[2] || "advisory_slide.pptx" })
   .then(f => console.log("wrote", f));

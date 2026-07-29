@@ -84,20 +84,28 @@ def cluster_bootstrap_ci(y, pred, groups, B=1000):
     return float(np.percentile(scores, 2.5)), float(np.percentile(scores, 97.5))
 
 
-def permutation_p(X, y, groups, observed, P=200):
+def permutation_null(X, y, groups, P=200):
+    """Empirical null distribution of macro-F1: refit the probe on shuffled labels.
+
+    This, not the majority-class score, is the reference a probe should be judged
+    against. A constant (majority) predictor scores 0 on every class it never emits,
+    so macro-F1 punishes it far harder than it punishes a genuinely no-skill probe;
+    with balanced class weights our probe spreads predictions over all three classes
+    and its true chance level sits near 0.33, not near 0.196.
+    """
     y = np.asarray(y); groups = np.asarray(groups)
-    ge = 0
+    null = []
     for _ in range(P):
         yp = RNG.permutation(y)
         pred = oof_predict(X, yp, groups)
-        if pred is None:
-            continue
-        if f1_score(yp, pred, average="macro") >= observed:
-            ge += 1
-    return (ge + 1) / (P + 1)
+        if pred is not None:
+            null.append(f1_score(yp, pred, average="macro"))
+    return np.asarray(null)
 
 
 def majority_f1(y):
+    """Macro-F1 of always predicting the most frequent class. Reported for
+    completeness only; see permutation_null for the reference actually used."""
     y = np.asarray(y)
     maj = Counter(y).most_common(1)[0][0]
     return f1_score(y, [maj] * len(y), average="macro")
@@ -129,8 +137,14 @@ def eval_2d(X, y, groups, perm):
         return None
     f1 = f1_score(y, pred, average="macro")
     lo, hi = cluster_bootstrap_ci(y, pred, groups)
-    p = permutation_p(X, y, groups, f1, P=perm) if perm else float("nan")
-    return dict(f1=f1, lo=lo, hi=hi, p=p, maj=majority_f1(y), n=len(y))
+    if perm:
+        null = permutation_null(X, y, groups, P=perm)
+        p = (int((null >= f1).sum()) + 1) / (len(null) + 1)
+        chance, chance95 = float(null.mean()), float(np.percentile(null, 95))
+    else:
+        p = chance = chance95 = float("nan")
+    return dict(f1=f1, lo=lo, hi=hi, p=p, chance=chance, chance95=chance95,
+                maj=majority_f1(y), n=len(y))
 
 
 def analyze_model(model, man, perm):
@@ -315,10 +329,15 @@ def main():
     print(f"labelled clips in manifest: {len(man)}")
     print(f"stance dist: {dict(Counter(r['stance'] for r in man.values()))}\n")
 
-    print("=" * 74)
+    print("=" * 88)
     print("A. POOLED 3-WAY STANCE DECODABILITY  (primary window W2_segment)")
-    print("=" * 74)
-    print(f"{'model':16s}{'layer':>6}{'macroF1':>9}{'95% CI':>16}{'perm p':>9}{'major':>8}")
+    print("   'chance' = mean of the empirical permutation null (probe refit on shuffled")
+    print("   labels). This is the reference to judge macroF1 against. 'major' is the")
+    print("   majority-class constant predictor, reported for completeness only: macro-F1")
+    print("   punishes a constant predictor far harder than a no-skill probe, so it")
+    print("   understates chance (0.196 here) and would flatter every model.")
+    print("=" * 88)
+    print(f"{'model':16s}{'layer':>6}{'macroF1':>9}{'95% CI':>16}{'chance':>8}{'perm p':>9}{'major':>8}")
     best_layers = {}
     windows_tbl = {}
     for model in args.models:
@@ -328,7 +347,7 @@ def main():
                 if r:
                     print(f"{'text:'+variant:16s}{'-':>6}{r['f1']:>9.3f}"
                           f"{'['+format(r['lo'],'.2f')+','+format(r['hi'],'.2f')+']':>16}"
-                          f"{r['p']:>9.3f}{r['maj']:>8.3f}")
+                          f"{r['chance']:>8.3f}{r['p']:>9.3f}{r['maj']:>8.3f}")
             continue
         if pr is None:
             print(f"{model:16s}  (no features found)"); continue
@@ -337,7 +356,7 @@ def main():
         lay = str(best) if best is not None else "-"
         print(f"{model:16s}{lay:>6}{pr['f1']:>9.3f}"
               f"{'['+format(pr['lo'],'.2f')+','+format(pr['hi'],'.2f')+']':>16}"
-              f"{pr['p']:>9.3f}{pr['maj']:>8.3f}")
+              f"{pr['chance']:>8.3f}{pr['p']:>9.3f}{pr['maj']:>8.3f}")
 
     print("\n" + "=" * 74)
     print("B. CONTEXT-WINDOW SWEEP  (macro-F1 at each model's best layer)")

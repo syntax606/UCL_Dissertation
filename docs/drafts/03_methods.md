@@ -137,7 +137,18 @@ feature matrices can be joined unambiguously downstream.
 features, with balanced class weights to offset the neutral minority. All reported scores are
 **out-of-fold under GroupKFold by episode**: no episode's clips ever appear in both training and
 test, which prevents leakage through shared speaker, topic, or recording conditions. The primary
-metric is macro-F1 over the three stance classes, reported against a majority-class baseline.
+metric is macro-F1 over the three stance classes.
+
+**Choice of chance level.** Macro-F1 has no fixed chance value, so the reference matters. A
+majority-class constant predictor scores only 0.196 here, because macro-F1 assigns zero to each
+of the two classes such a predictor never emits. That is not the right comparison for this probe:
+balanced class weights mean it distributes predictions across all three classes, so its no-skill
+counterpart is not degenerate. The reference used throughout is therefore the **empirical
+permutation null**, obtained by refitting the entire pipeline on shuffled stance labels, which
+places chance near 0.33 (uniform and prior-matched random guessing give 0.322 and 0.333
+respectively, closely agreeing). The majority figure is reported alongside for completeness only.
+Using the permutation null rather than the majority score materially changes interpretation of
+the weaker representations, as Chapter 4 discusses.
 
 **Uncertainty and significance.** Two procedures accompany every headline score. A 95%
 confidence interval is obtained by an **episode-cluster bootstrap** that resamples whole episodes

@@ -1,16 +1,21 @@
 labelled clips in manifest: 873
 stance dist: {'affiliative': 364, 'neutral': 147, 'adversarial': 362}
 
-==========================================================================
+========================================================================================
 A. POOLED 3-WAY STANCE DECODABILITY  (primary window W2_segment)
-==========================================================================
-model            layer  macroF1          95% CI   perm p   major
-wavlm               20    0.573     [0.54,0.61]    0.005   0.196
-hubert              23    0.520     [0.49,0.56]    0.005   0.196
-whisper              9    0.564     [0.53,0.60]    0.005   0.196
-mimi                 -    0.352     [0.33,0.38]    0.010   0.196
-text:targetonly      -    0.487     [0.46,0.52]    0.005   0.196
-text:context         -    0.378     [0.35,0.41]    0.010   0.196
+   'chance' = mean of the empirical permutation null (probe refit on shuffled
+   labels). This is the reference to judge macroF1 against. 'major' is the
+   majority-class constant predictor, reported for completeness only: macro-F1
+   punishes a constant predictor far harder than a no-skill probe, so it
+   understates chance (0.196 here) and would flatter every model.
+========================================================================================
+model            layer  macroF1          95% CI  chance   perm p   major
+wavlm               20    0.573     [0.54,0.61]   0.332    0.005   0.196
+hubert              23    0.520     [0.49,0.56]   0.334    0.005   0.196
+whisper              9    0.564     [0.53,0.60]   0.332    0.005   0.196
+mimi                 -    0.352     [0.33,0.38]   0.312    0.010   0.196
+text:targetonly      -    0.487     [0.46,0.52]   0.313    0.005   0.196
+text:context         -    0.378     [0.35,0.41]   0.333    0.010   0.196
 
 ==========================================================================
 B. CONTEXT-WINDOW SWEEP  (macro-F1 at each model's best layer)
