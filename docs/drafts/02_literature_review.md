@@ -1,12 +1,12 @@
 # Chapter 2: Literature Review
 
-*(Draft. Target budget ~2,300 words. Compressed from the long-form draft; citations are the
+*(Draft. Target budget ~2,300 words. Compressed from the long-form draft, and citations are the
 verified set in docs/literature_references_verified.md. Two claims flagged [verify] must be
 checked against the paper bodies before submission.)*
 
 ## 2.1 Introduction
 
-This chapter situates the dissertation within three converging literatures: the move to
+This chapter situates the dissertation within three converging literatures, namely the move to
 discrete speech tokens in speech-language modelling, the body of probing work on what speech
 representations encode about prosody and paralinguistics, and the linguistic study of how
 identical words perform different speech acts. The argument the chapter builds toward is
@@ -23,16 +23,16 @@ that tokenisation, as deployed, drops the meaning-bearing part of speech.
 Speech-language modelling increasingly converts continuous waveforms into sequences of discrete
 tokens before passing them to language-model architectures (Guo et al., 2025). This makes
 speech tractable for autoregressive models trained on text and underpins deployed
-speech-to-speech systems, but it raises the question this dissertation pursues: whether the
+speech-to-speech systems, but it raises the question this dissertation pursues, which is whether the
 tokens preserve the parts of speech that are invisible in the transcript.
 
 The literature divides speech tokens into two families. *Acoustic* tokens derive from neural
-codecs optimised for reconstruction and preserve signal-level detail; *semantic* tokens derive
+codecs optimised for reconstruction and preserve signal-level detail. *Semantic* tokens derive
 from self-supervised or supervised speech models and encode phonetic or linguistic content. The
 distinction is real but imperfect, and the review literature is explicit that "semantic" tokens
 often behave phonetically, capturing the sounds that distinguish words rather than the meanings
 those words carry (Guo et al., 2025). This matters directly here, because pragmatic meaning sits
-in neither category cleanly: sarcasm, reluctance, and ironic agreement are not lexical content,
+in neither category cleanly, since sarcasm, reluctance, and ironic agreement are not lexical content,
 but they are also not the arbitrary acoustic detail a codec preserves for reconstruction. They
 live in a middle band of prosody, timing, and emphasis that current tokenisation was not
 designed to retain.
@@ -41,39 +41,39 @@ Benchmark evidence confirms that this middle band is where discretisation is wea
 Discrete Audio and Speech Benchmark (Mousavi et al., 2026) finds discrete representations
 systematically less robust than continuous ones, with preserving phonetic content, speaker
 identity, and paralinguistic cues simultaneously an open problem. The relevance for deployed
-systems is sharpened by speech-to-speech behavioural evaluations: S2S-Arena (Jiang et al., 2025)
+systems is sharpened by speech-to-speech behavioural evaluations, where S2S-Arena (Jiang et al., 2025)
 and ParaS2S (Yang et al., 2026) both document that deployed systems underperform on
 paralinguistic dimensions, which is the behavioural shadow of the representational loss this
 study probes directly.
 
 ## 2.3 The representations under test
 
-This dissertation compares five representations on a single task: recovering the pragmatic force
+This dissertation compares five representations on a single task, recovering the pragmatic force
 of a phrase whose lexical content is held constant. They fall into three types. Self-supervised
 continuous encoders (WavLM, HuBERT) are trained by masked prediction without transcription
-targets; a supervised continuous encoder (the Whisper encoder) is trained to transcribe; a
-discrete neural codec (Mimi) quantises audio for speech-language models; and a transcript-only
+targets. A supervised continuous encoder (the Whisper encoder) is trained to transcribe. A
+discrete neural codec (Mimi) quantises audio for speech-language models, and a transcript-only
 text embedding serves as the control.
 
 **Self-supervised encoders.** HuBERT (Hsu et al., 2021) and WavLM (Chen et al., 2022) share a
-masked-prediction architecture and exhibit a well-documented layer-wise division of labour:
+masked-prediction architecture and exhibit a well-documented layer-wise division of labour, in which
 lower layers encode local acoustic detail, middle layers integrate prosodic and contextual
 information, and upper layers abstract toward linguistic content while suppressing speaker-
 specific cues (Pasad et al., 2021; Chiu et al., 2025). For affective and prosodic tasks this
 places the useful signal in the middle band rather than the final layer. Two qualifications bear
-on the design. First, the mid-layer optimum is not absolute: ParaLBench (Zhang et al., 2024)
+on the design. First, the mid-layer optimum is not absolute, since ParaLBench (Zhang et al., 2024)
 finds the strongest WavLM performance across paralinguistic tasks did not always come from the
 final layers, which is why this study probes the full layer stack rather than assuming a fixed
 optimum [Ch.4]. Second, WavLM augments the HuBERT objective with simulated noise and overlapped-
 speech mixing, the documented reason it tends to outperform HuBERT on speaker and paralinguistic
-tasks; this grounds the expectation that WavLM preserves pragmatic contrast at least as well as
+tasks. This grounds the expectation that WavLM preserves pragmatic contrast at least as well as
 HuBERT, but it also makes WavLM strong on speaker identity, a nuisance variable for any
 distance-based contrast measure [3.6].
 
 **Supervised encoder.** The Whisper encoder (Radford et al., 2023) is the theoretically
 interesting case, because its transcription objective predicts a lexical bias the self-
 supervised encoders do not share. Whisper features carry paralinguistic information, but the
-supervised objective leaves a trace: acoustic information in the final encoder layers is reduced
+supervised objective leaves a trace, in that acoustic information in the final encoder layers is reduced
 in favour of transcription capability. The consequence is that if Whisper recovers a pragmatic
 contrast, it may be leaning on surrounding lexical material rather than on phrase-level delivery,
 since its representations are organised around what was said. The context-window comparison
@@ -119,7 +119,7 @@ probes every codebook individually instead of accepting a stream's conventional 
 
 **The transcript baseline.** The text embedding is two objects with two roles [3.5]. Because the
 study holds the target word constant, an embedding of the word alone is identical across clips
-and at chance by construction; it is a manipulation check, not a competitor. An embedding of the
+and at chance by construction, so it is a manipulation check rather than a competitor. An embedding of the
 surrounding discourse context is the substantive text baseline, because pragmatic cues leak into
 neighbouring words. Distinguishing the two is essential to interpreting the results.
 
@@ -129,13 +129,13 @@ A growing body of work supports the concern that discretisation specifically dam
 and paralinguistic information, and it is this work that both motivates the central hypothesis
 and constrains how strongly it can be stated. On prosody, ProsodyLM (Qian et al., 2025) argues
 that mainstream token-then-model training is suboptimal for prosody and proposes explicit word-
-level prosody tokens; Segmentation-Variant Codebooks (Sanders et al., 2025) makes the
+level prosody tokens. Segmentation-Variant Codebooks (Sanders et al., 2025) makes the
 complementary argument that a single flat token rate fails to preserve prosodic and paralinguistic
 information. Both imply that standard tokenisation is not built to retain what this study targets.
 
 The most precise recent evidence both supports and tempers the loss hypothesis. A study of speech
 emotion recognition from discrete tokens (Sun et al., 2026) quantifies a substantial drop in
-macro-F1 relative to continuous features [verify: exact figure], but crucially shows the loss is
+macro-F1 relative to continuous features [verify exact figure], but crucially shows the loss is
 largely recoverable through attention-based multi-layer fusion and the explicit reintroduction of
 paralinguistic features. This recoverability is the single most important constraint on the
 framing. The defensible claim is therefore not that tokenisation destroys paralinguistic content,
@@ -144,21 +144,21 @@ recoverable only with deliberate intervention, and that deployed systems consume
 the shelf. The dissertation tests the deployment-relevant condition and frames its claim
 accordingly. A related line (Wang et al., 2026) identifies paralinguistic complexity as a
 disruptive factor in speech-language modelling, reinforcing that this information is structurally
-important rather than decorative: poorly represented, it does not merely go missing, it can
+important rather than decorative. Poorly represented, it does not merely go missing, it can
 destabilise modelling.
 
 ## 2.5 Pragmatics and same-word meaning contrasts
 
-The linguistic grounding of the project is a basic but powerful observation: identical lexical
+The linguistic grounding of the project is a basic but powerful observation, which is that identical lexical
 material can perform different speech acts depending on delivery and discourse context. "Yeah"
-can signal agreement, backchannelling, disbelief, or impatience; "right" can signal agreement,
-correction, sarcasm, or challenge; "sure" can signal consent, reluctance, or disbelief; "great"
+can signal agreement, backchannelling, disbelief, or impatience. "Right" can signal agreement,
+correction, sarcasm, or challenge. "Sure" can signal consent, reluctance, or disbelief. "Great"
 can signal approval, sarcasm, or resignation. In each, the words are fixed and the meaning is
 carried by something else.
 
 Operationalising pragmatic meaning through controlled same-phrase contrasts is what distinguishes
 a substantive claim from a weak one. The weak version, "prosody matters," is uncontroversial and
-untestable as a contribution. The strong version tests a concrete failure mode: whether a
+untestable as a contribution. The strong version tests a concrete failure mode, namely whether a
 representation collapses different meanings when the transcript is held constant. This framing
 also disciplines interpretation. Because the lexical item is fixed, a representation that
 separates the pragmatic classes cannot be doing so on lexical grounds, which removes the most
@@ -169,7 +169,7 @@ by labelling arousal independently and testing separability at matched arousal [
 ## 2.6 The closest precedent and the gap
 
 The work most directly adjacent to this dissertation is Lin et al. (2022), who probed self-
-supervised models on prosody-related tasks including sarcasm. Their framing matches this study's:
+supervised models on prosody-related tasks including sarcasm. Their framing matches this study's, in that
 sarcasm is prosody-intensive precisely because its marker is a mismatch between lexical content
 and prosodic delivery. Probing on the MUStARD corpus (Castro et al., 2019), they found that
 HuBERT and WavLM improved on the prior audio-only state of the art and that acoustic models
@@ -177,24 +177,24 @@ outperformed the text-only baseline, and further that integrating low-level laye
 specifically while it did not help sentiment, indicating that pragmatic-prosodic tasks draw on
 different representational depths than content-driven ones. This precedent does most of the work
 of establishing that speech representations carry pragmatic-prosodic signal that text loses, and
-must be credited as such; the generic claim that speech beats text is therefore not available as
+must be credited as such. The generic claim that speech beats text is therefore not available as
 a novel finding here.
 
 What Lin et al. did not do, and what no subsequent probing study has done, is hold lexical content
 constant. MUStARD utterances differ in their words, so the result is confounded with lexical
-content in the same way every prior sarcasm result is: the model may be exploiting word choice
+content in the same way every prior sarcasm result is, since the model may be exploiting word choice
 rather than delivery. They also used acted television speech, a single binary sarcasm label, and
 no discrete-tokeniser comparison. The gap this dissertation occupies is therefore narrow and
 precise. It removes the lexical confound by probing the same lexical item under divergent
 pragmatic force, uses naturalistic speech rather than acted corpora, and adds the continuous-
 versus-deployed-discrete comparison absent from the prior probing literature. The contribution is
-not that speech beats text; it is that speech beats text *when the word is held constant*, which
+not that speech beats text. It is that speech beats text *when the word is held constant*, which
 isolates delivery from lexical choice in a way no existing result has, and it is this isolation
 that licenses the inadequacy claim about deployed tokenisation.
 
 The literature thus establishes three things and leaves one open. It establishes that discrete
-tokenisation is lossy and weakest in the prosodic-paralinguistic band; that continuous self-
-supervised encoders retain that band better than supervised or discretised alternatives; and that
+tokenisation is lossy and weakest in the prosodic-paralinguistic band, that continuous self-
+supervised encoders retain that band better than supervised or discretised alternatives, and that
 speech representations recover pragmatic phenomena such as sarcasm better than text. What it leaves
 open, and what Chapter 3 is designed to test, is whether the loss under tokenisation is a loss of
 meaning rather than of sound.
