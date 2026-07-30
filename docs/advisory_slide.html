@@ -127,8 +127,62 @@
     padding-top: 11px;
   }
 
-  .thesis strong { color: var(--ink); font-weight: 600; }
-  .thesis em { font-style: italic; color: var(--ink); }
+  .chain {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(12px, 1.5vw, 20px);
+    margin-top: 13px;
+    padding-top: 13px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (max-width: 860px) { .chain { grid-template-columns: 1fr; } }
+
+  .step { display: flex; flex-direction: column; gap: 5px; }
+
+  .stepnum {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--surface);
+    background: var(--teal);
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+  }
+
+  .steph {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .step p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.42; }
+  .step b { color: var(--ink); font-weight: 600; }
+  .step em { color: var(--ink); font-style: italic; }
+
+  .maps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .maps li { font-size: 12.5px; color: var(--ink); }
+  .maps li span {
+    color: var(--faint);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  .maps li span::after { content: " \2192 "; color: var(--teal); text-decoration: none; }
+
+  .funnel {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+
+  .arrow { color: var(--faint); font-size: 15px; }
 
   /* ---------- body grid ---------- */
 
@@ -452,21 +506,34 @@
       Deployed speech-to-speech systems never hear audio. They hear discrete tokens.
       Do those tokens still carry what a speaker meant?
     </p>
-    <p class="thesis">
-      Systems such as Moshi convert speech into discrete tokens before any language model sees it, so
-      whatever the tokeniser discards is simply unavailable downstream. If it discards pragmatic force,
-      a system can recover every word correctly and still misread how the speaker meant them. Short
-      phrases make this sharp, because <em>yeah</em>, <em>sure</em> and <em>great</em> each perform
-      opposite speech acts, sincere agreement or sarcastic dismissal, while the transcript stays
-      identical. Earlier probing work showed that speech representations recover pragmatic phenomena
-      better than text, but the utterances in those corpora also differed in wording, so delivery
-      remained confounded with word choice. This study removes that confound by
-      <strong>holding the word constant</strong> and probing <strong>frozen</strong> representations,
-      meaning the pretrained models are never updated and only a small linear classifier is trained, so
-      any accuracy reflects what the representation already encodes. Four families are compared,
-      self-supervised encoders (WavLM, HuBERT), a supervised ASR encoder (Whisper), the tokeniser
-      deployed systems actually consume (Mimi), and transcript-only baselines.
-    </p>
+    <div class="chain">
+      <div class="step">
+        <div class="stepnum">1</div>
+        <div class="steph">Established</div>
+        <p>Speech representations recover pragmatic phenomena better than text, shown by
+        <b>Lin et al. (2022)</b> probing self-supervised models on sarcasm. Separately,
+        discretisation is known to damage paralinguistic content (DASB, Mousavi et al. 2026).
+        <em>Neither claim is reclaimed here.</em></p>
+      </div>
+      <div class="step">
+        <div class="stepnum">2</div>
+        <div class="steph">Left untested</div>
+        <p>Lin et al. probed <b>MUStARD</b>, where the utterances also differ in their words, so
+        delivery stays confounded with word choice. That corpus is acted television speech, carries
+        one binary sarcasm label, and no discrete tokeniser was compared. So whether tokenisation
+        loses <em>meaning</em> or only <em>sound</em> has never been tested.</p>
+      </div>
+      <div class="step">
+        <div class="stepnum">3</div>
+        <div class="steph">So this study</div>
+        <ul class="maps">
+          <li><span>words vary</span> word held constant</li>
+          <li><span>acted speech</span> naturalistic podcast audio</li>
+          <li><span>one binary label</span> stance and arousal on separate axes</li>
+          <li><span>no tokeniser tested</span> Mimi, what deployed systems consume</li>
+        </ul>
+      </div>
+    </div>
   </header>
 
   <div class="body">
@@ -490,22 +557,20 @@
         identical transcript <code>"yeah"</code> · opposite pragmatic force
       </div>
 
-      <div class="facts">
+      <div class="funnel">
+        <div class="fact">
+          <div class="n">7,310</div>
+          <div class="k">hours of podcast audio indexed, 6,281 episodes</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="fact">
+          <div class="n">767k</div>
+          <div class="k">occurrences of the eight phrases after quality filtering</div>
+        </div>
+        <div class="arrow">&rarr;</div>
         <div class="fact">
           <div class="n">873</div>
-          <div class="k">labelled clips</div>
-        </div>
-        <div class="fact">
-          <div class="n">8</div>
-          <div class="k">target phrases, each with a powered binary contrast</div>
-        </div>
-        <div class="fact">
-          <div class="n">753</div>
-          <div class="k">episodes across 32 shows</div>
-        </div>
-        <div class="fact">
-          <div class="n">3</div>
-          <div class="k">context windows (6 / 10 / 16 s)</div>
+          <div class="k">hand-labelled clips, 753 episodes across 32 shows</div>
         </div>
       </div>
 
