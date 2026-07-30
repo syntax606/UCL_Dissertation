@@ -98,7 +98,7 @@ const maps = [
   ["words vary", "word held constant"],
   ["acted speech", "naturalistic podcast audio"],
   ["one binary label", "stance and arousal on separate axes"],
-  ["no tokeniser tested", "Mimi, what deployed systems consume"],
+  ["continuous only", "Mimi, what deployed systems consume"],
 ];
 s.addText(
   maps.flatMap(([was, now], i) => ([
@@ -111,7 +111,7 @@ s.addText(
 
 /* ---------------- left card, the design move ---------------- */
 
-const CX = 0.5, CY = 2.82, CW = 4.05, CH = 2.98;
+const CX = 0.5, CY = 2.82, CW = 4.05, CH = 3.62;
 
 s.addShape(pres.ShapeType.roundRect, {
   x: CX, y: CY, w: CW, h: CH,
@@ -179,6 +179,28 @@ funnel.forEach(([n, k], i) => {
     });
   }
 });
+
+/* controls, the three objections an advisory group raises first */
+s.addShape(pres.ShapeType.line, {
+  x: CX + 0.22, y: 5.62, w: CW - 0.44, h: 0,
+  line: { color: RULE, width: 0.75 },
+});
+s.addText("CONTROLS", {
+  x: CX + 0.22, y: 5.70, w: CW - 0.44, h: 0.20, margin: 0,
+  fontFace: SANS, fontSize: 9, bold: true, color: TEAL, charSpacing: 1.1,
+});
+s.addText(
+  [
+    { text: "Arousal matched", options: { bold: true, color: INK } },
+    { text: ", stance still decoded within each level.", options: { color: MUTED, breakLine: true } },
+    { text: "Speaker held out", options: { bold: true, color: INK } },
+    { text: ", WavLM 0.573 to 0.530 by show.", options: { color: MUTED, breakLine: true } },
+    { text: "Non-independence", options: { bold: true, color: INK } },
+    { text: ", episode folds, bootstrap, 200 permutations.", options: { color: MUTED } },
+  ],
+  { x: CX + 0.22, y: 5.94, w: CW - 0.44, h: 0.46, margin: 0,
+    fontFace: SANS, fontSize: 8.5, lineSpacingMultiple: 1.06 }
+);
 
 /* ---------------- right, the chart ---------------- */
 
