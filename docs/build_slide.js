@@ -42,7 +42,7 @@ s.addText(
   }
 );
 
-s.addText("MSc Computational Linguistics, UCL   |   Track A, Pragmatic Contrast Preservation   |   Advisory group, July 2026", {
+s.addText("MA Computational Linguistics   |   UCL   |   C. Swartz   |   July 2026", {
   x: 0.5, y: 1.20, w: 12.3, h: 0.24, margin: 0,
   fontFace: SANS, fontSize: 9.5, color: FAINT, charSpacing: 0.6,
 });
@@ -252,26 +252,52 @@ rows.forEach(([label, val, colour, emph], i) => {
   });
 });
 
-/* how to read */
-const HY = 5.46;
-s.addShape(pres.ShapeType.roundRect, {
-  x: RX, y: HY, w: RW, h: 0.84,
-  fill: { color: "FFFFFF" }, line: { color: RULE, width: 0.75 }, rectRadius: 0.05,
+/* orientation, two halves. why-these-five also carries the colour key,
+   since the model names are coloured to match their bars */
+const HY = 5.44, HW = 3.90, HGAP = 0.22, HH = 1.00;
+
+[0, 1].forEach((i) => {
+  s.addShape(pres.ShapeType.roundRect, {
+    x: RX + i * (HW + HGAP), y: HY, w: HW, h: HH,
+    fill: { color: "FFFFFF" }, line: { color: RULE, width: 0.75 }, rectRadius: 0.05,
+  });
 });
+
 s.addText(
   [
-    { text: "How to read this.   ", options: { bold: true, color: INK } },
+    { text: "How to read this.  ", options: { bold: true, color: INK } },
     {
-      text: "Each bar is how accurately a simple classifier recovers the speaker's stance (affiliative, neutral or adversarial) from that representation alone, scored by macro-F1. Higher means more of the meaning survived. The dashed line is chance, the score the same probe reaches when the labels are shuffled, so the distance beyond it is the signal.",
+      text: "Each bar is how accurately a simple classifier recovers the speaker's stance (affiliative, neutral or adversarial) from that representation alone, scored by macro-F1. The dashed line is chance, the score the same probe reaches on shuffled labels, so the distance beyond it is the signal.",
       options: { color: MUTED },
     },
   ],
-  { x: RX + 0.16, y: HY + 0.08, w: RW - 0.32, h: 0.68, margin: 0, fontFace: SANS, fontSize: 10, lineSpacingMultiple: 1.08 }
+  { x: RX + 0.15, y: HY + 0.08, w: HW - 0.30, h: HH - 0.16, margin: 0,
+    fontFace: SANS, fontSize: 9, lineSpacingMultiple: 1.06 }
+);
+
+const WX = RX + HW + HGAP;
+s.addText(
+  [
+    { text: "Why these five.  ", options: { bold: true, color: INK } },
+    { text: "Each pair isolates one variable. ", options: { color: MUTED } },
+    { text: "WavLM", options: { bold: true, color: TEAL } },
+    { text: " and ", options: { color: MUTED } },
+    { text: "HuBERT", options: { bold: true, color: TEAL } },
+    { text: " are both self-supervised, so no result rests on one model. ", options: { color: MUTED } },
+    { text: "Whisper", options: { bold: true, color: TEAL } },
+    { text: " is the same continuous form trained to transcribe, isolating what an ASR objective costs. ", options: { color: MUTED } },
+    { text: "Mimi", options: { bold: true, color: CLAY } },
+    { text: " has its first codebook distilled from WavLM, so quantisation is measured against its own teacher. ", options: { color: MUTED } },
+    { text: "Text", options: { bold: true, color: "7C8896" } },
+    { text: " appears twice, as a check and as the real baseline.", options: { color: MUTED } },
+  ],
+  { x: WX + 0.15, y: HY + 0.08, w: HW - 0.30, h: HH - 0.16, margin: 0,
+    fontFace: SANS, fontSize: 9, lineSpacingMultiple: 1.06 }
 );
 
 /* ---------------- finding ---------------- */
 
-const TY = 6.44;
+const TY = 6.54;
 s.addShape(pres.ShapeType.roundRect, {
   x: 0.5, y: TY, w: 12.3, h: 0.70,
   fill: { color: TEAL_TINT }, line: { color: "CBE0E2", width: 0.75 }, rectRadius: 0.06,
