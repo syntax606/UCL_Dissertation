@@ -58,7 +58,7 @@ s.addShape(pres.ShapeType.line, {
   line: { color: RULE, width: 0.75 },
 });
 
-const heads = ["Established", "Left untested", "This study"];
+const heads = ["Established", "The confound", "This study"];
 heads.forEach((h, i) => {
   s.addShape(pres.ShapeType.ellipse, {
     x: COLX[i], y: CHAIN_Y, w: 0.19, h: 0.19,
@@ -301,7 +301,7 @@ s.addText(
   [
     { text: "Finding.   ", options: { bold: true, color: TEAL } },
     {
-      text: "Continuous representations preserve pragmatic stance, and holds at matched arousal and on new speakers the probe never trained on, and within each word, where WavLM reaches 0.659 against 0.534 for text. The discrete tokens consumed by deployed systems sit barely above chance.",
+      text: "Continuous representations preserve pragmatic stance, and it holds at matched arousal and on new speakers the probe never trained on, and within each word, where WavLM reaches 0.659 against 0.534 for text. The discrete tokens consumed by deployed systems sit barely above chance.",
       options: { color: INK },
     },
   ],
