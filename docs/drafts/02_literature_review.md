@@ -81,16 +81,41 @@ since its representations are organised around what was said. The context-window
 
 **Discrete tokenisation and Mimi.** This study uses Mimi (Défossez et al., 2024) rather than a
 pure acoustic codec, because Mimi is the input tokeniser for deployed speech-to-speech systems
-and is therefore the deployment-relevant test case, not a strawman. Mimi uses residual
-quantisation at 12.5 Hz, with its first codebook distilled from WavLM and the remainder carrying
-acoustic refinement. The naming of that first codebook requires care: although it is
-conventionally called the semantic stream, codec-probing work (Shi et al., 2026) shows that
-distillation from WavLM injects *phonetic* rather than semantic knowledge, and that such
-tokenisers encode a higher proportion of phonetic and acoustic than linguistic-semantic
-information. The naive prediction that pragmatic force concentrates in codebook 0 therefore has
-no support; if pragmatic prosody survives at all, it is at least as likely to sit in the acoustic-
-refinement codebooks. The codebook-level analysis [Ch.3, Ch.4] is framed around this corrected
-expectation.
+and is therefore the deployment-relevant test case rather than a strawman. Mimi applies residual
+quantisation at 12.5 Hz. Its first codebook is distilled from WavLM and the remaining seven carry
+acoustic refinement. A model built on Mimi consumes the whole stack, which is why the headline
+condition in this study is all eight codebooks together rather than any subset of them.
+
+The naming of the first codebook requires care. Although it is conventionally called the semantic
+stream, codec-probing work (Shi et al., 2026) shows that distillation from WavLM injects
+*phonetic* rather than semantic knowledge, and that such tokenisers encode a higher proportion of
+phonetic and acoustic than linguistic-semantic information. The Moshi report itself notes that
+phonetic discriminability is poor without distillation and that distillation's contribution is
+specifically phonetic.
+
+An earlier version of this chapter drew a prediction from that finding. It reasoned that because
+codebook 0 is phonetic rather than semantic, pragmatic force would not concentrate there, and
+that if pragmatic prosody survived anywhere it would more plausibly sit in the acoustic-refinement
+codebooks, which carry timbre and prosodic texture. Chapter 4 shows the reverse. Codebook 0 is
+the only codebook carrying appreciable pragmatic signal, and five of the seven acoustic codebooks
+are statistically indistinguishable from chance.
+
+The prediction failed because it rested on a category error, and the correction is worth stating
+explicitly. The semantic-versus-phonetic axis that Shi et al. characterise concerns what a token
+stream encodes about linguistic content, which is to say which words were said. Pragmatic force
+is orthogonal to that axis. It is neither semantic in their sense nor phonetic, so a finding that
+codebook 0 is phonetically rather than semantically loaded licenses no inference either way about
+whether it retains delivery. What does predict the outcome, in hindsight, is the distillation
+source. Codebook 0 is distilled from WavLM, which of the representations tested here preserves
+pragmatic contrast best, so it inherits a trace of that sensitivity, heavily degraded by
+quantisation. The acoustic codebooks, optimised for waveform reconstruction, evidently spend their
+capacity on signal detail that does not align with pragmatic categories.
+
+The wider implication is that the paralinguistic content of a distilled codebook may track its
+teacher model rather than the semantic or phonetic character conventionally attributed to that
+stream. This is a claim the literature does not currently make, and it is one this study is
+positioned to test rather than assume, which is why the codebook-level analysis in Chapter 4
+probes every codebook individually instead of accepting a stream's conventional label.
 
 **The transcript baseline.** The text embedding is two objects with two roles [3.5]. Because the
 study holds the target word constant, an embedding of the word alone is identical across clips
