@@ -195,10 +195,10 @@ s.addText(
     { text: ", stance still decoded within each level.", options: { color: MUTED, breakLine: true } },
     { text: "Unseen speakers", options: { bold: true, color: INK } },
     { text: ", train and test never share a show, 0.573 to 0.530.", options: { color: MUTED, breakLine: true } },
-    { text: "Non-independence", options: { bold: true, color: INK } },
-    { text: ", episode folds, bootstrap, 200 permutations.", options: { color: MUTED } },
+    { text: "Clustered data", options: { bold: true, color: INK } },
+    { text: ", folds and bootstrap by episode, 200 permutations.", options: { color: MUTED } },
   ],
-  { x: CX + 0.22, y: 5.94, w: CW - 0.44, h: 0.46, margin: 0,
+  { x: CX + 0.22, y: 5.94, w: CW - 0.44, h: 0.52, margin: 0,
     fontFace: SANS, fontSize: 8.5, lineSpacingMultiple: 1.06 }
 );
 
@@ -323,7 +323,7 @@ s.addText(
   [
     { text: "Finding.   ", options: { bold: true, color: TEAL } },
     {
-      text: "Continuous representations preserve pragmatic stance, and it holds at matched arousal and on new speakers the probe never trained on, and within each word, where WavLM reaches 0.659 against 0.534 for text. The discrete tokens consumed by deployed systems sit barely above chance.",
+      text: "Pragmatic stance survives in continuous representations, and it survives the lexical control, where WavLM reaches 0.659 against 0.534 for text. Most of it does not survive discretisation. The tokens deployed systems consume sit barely above chance.",
       options: { color: INK },
     },
   ],
