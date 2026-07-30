@@ -193,8 +193,8 @@ s.addText(
   [
     { text: "Arousal matched", options: { bold: true, color: INK } },
     { text: ", stance still decoded within each level.", options: { color: MUTED, breakLine: true } },
-    { text: "Speaker held out", options: { bold: true, color: INK } },
-    { text: ", WavLM 0.573 to 0.530 by show.", options: { color: MUTED, breakLine: true } },
+    { text: "Unseen speakers", options: { bold: true, color: INK } },
+    { text: ", train and test never share a show, 0.573 to 0.530.", options: { color: MUTED, breakLine: true } },
     { text: "Non-independence", options: { bold: true, color: INK } },
     { text: ", episode folds, bootstrap, 200 permutations.", options: { color: MUTED } },
   ],
@@ -350,7 +350,7 @@ Macro-F1 has no fixed chance value. A majority-class predictor scores only 0.196
 
 ROBUSTNESS
 Matched arousal. Stance is still decoded within each arousal level separately, so the probe is not simply reading loudness.
-Speaker held out. Grouping folds by show rather than episode moves WavLM only from 0.573 to 0.530, so it is not riding speaker identity.
+Unseen speakers. Folds are grouped by episode in the main analysis, but two episodes of one show share a host, so speaker identity could still leak. Grouping by show instead puts an entire show and its host either in training or in testing, never both, which forces the probe onto voices it has never heard. WavLM moves only from 0.573 to 0.530, so it is reading delivery rather than recognising who is speaking.
 Non-independence. All scores are out of fold under GroupKFold by episode, with episode-cluster bootstrap intervals and 200-permutation tests. Every representation beats chance at p at most 0.01.
 
 WHERE THE CONTRAST LIVES
