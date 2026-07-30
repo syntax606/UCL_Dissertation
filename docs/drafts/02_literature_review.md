@@ -12,9 +12,9 @@ representations encode about prosody and paralinguistics, and the linguistic stu
 identical words perform different speech acts. The argument the chapter builds toward is
 specific. Prior work has established that speech representations carry pragmatic and affective
 information that text discards, and that discretising speech into tokens loses paralinguistic
-content. What no prior probing study has tested is whether that loss is a loss of *meaning*
-rather than merely of *sound*, because none has held lexical content constant while varying
-pragmatic force. That gap is the space this dissertation occupies, and isolating it is what
+content. The question this dissertation takes up is whether that loss is a loss of *meaning*
+rather than merely of *sound*, which can only be settled by holding lexical content constant
+while pragmatic force varies. That is the space this dissertation occupies, and isolating it is what
 turns the uncontroversial observation that tokenisation is lossy into the substantive claim
 that tokenisation, as deployed, drops the meaning-bearing part of speech.
 
@@ -180,21 +180,20 @@ of establishing that speech representations carry pragmatic-prosodic signal that
 must be credited as such. The generic claim that speech beats text is therefore not available as
 a novel finding here.
 
-What Lin et al. did not do, and what no subsequent probing study has done, is hold lexical content
-constant. MUStARD utterances differ in their words, so the result is confounded with lexical
-content in the same way every prior sarcasm result is, since the model may be exploiting word choice
-rather than delivery. They also used acted television speech, a single binary sarcasm label, and
-no discrete-tokeniser comparison. The gap this dissertation occupies is therefore narrow and
-precise. It removes the lexical confound by probing the same lexical item under divergent
-pragmatic force, uses naturalistic speech rather than acted corpora, and adds the continuous-
-versus-deployed-discrete comparison absent from the prior probing literature. The contribution is
+Their design, however, lets lexical content vary. MUStARD utterances differ in their words, so the
+result is confounded with lexical content, since the model may be exploiting word choice rather
+than delivery. The corpus is also acted television speech, it carries a single binary sarcasm
+label, and the comparison is between continuous representations only. The space this dissertation
+occupies is therefore narrow and precise. It removes the lexical confound by probing the same lexical item under divergent
+pragmatic force, uses naturalistic speech rather than acted corpora, and adds a comparison between
+continuous representations and the discrete tokens deployed systems consume. The contribution is
 not that speech beats text. It is that speech beats text *when the word is held constant*, which
-isolates delivery from lexical choice in a way no existing result has, and it is this isolation
-that licenses the inadequacy claim about deployed tokenisation.
+isolates delivery from lexical choice, and it is this isolation that licenses the inadequacy
+claim about deployed tokenisation.
 
-The literature thus establishes three things and leaves one open. It establishes that discrete
+The literature thus establishes three things and frames a fourth question. It establishes that discrete
 tokenisation is lossy and weakest in the prosodic-paralinguistic band, that continuous self-
 supervised encoders retain that band better than supervised or discretised alternatives, and that
-speech representations recover pragmatic phenomena such as sarcasm better than text. What it leaves
-open, and what Chapter 3 is designed to test, is whether the loss under tokenisation is a loss of
-meaning rather than of sound.
+speech representations recover pragmatic phenomena such as sarcasm better than text. The question
+it frames, and what Chapter 3 is designed to test, is whether the loss under tokenisation is a loss
+of meaning rather than of sound.
