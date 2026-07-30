@@ -7,20 +7,26 @@ out-of-fold under GroupKFold BY EPISODE (no episode's clips ever span train and
 test, so nothing leaks through shared speaker/topic). Reported with:
   - macro-F1 (3-way stance) out-of-fold
   - 95% CI from an EPISODE-CLUSTER bootstrap (resample whole episodes)
-  - a permutation p-value (shuffle stance labels, re-fit)
-  - a majority-class baseline for reference
+  - a permutation p-value, and the mean of that same permutation null, which is
+    the chance level these scores should be judged against (near 0.33 here, NOT
+    the 0.196 a majority-class predictor scores; see permutation_null)
 
-Three views:
+Eight views:
   A. Pooled 3-way stance decodability per representation (best layer for the
      audio models), on the primary window W2_segment.
   B. Context-window sweep (W1/W2/W3) at each model's best layer.
   C. Per-phrase WITHIN-WORD binary contrast: the lexical control. Same word,
      two stances -> can the probe still separate them? Averaged over phrases.
+  D. Matched-arousal test: stance decoded within each arousal level.
+  E. Speaker-identity control: fold-grouping by show vs by episode.
+  F. Training-free contrast-preservation score, within speaker x word.
+  G. Layer-wise curve: where in the stack the contrast is carried.
+  H. Mimi codebook-level probe: where inside the tokenizer anything survives.
 
 Usage:
-  python3 src/17_probe.py                     # all models, full analysis
-  python3 src/17_probe.py --models wavlm text
-  python3 src/17_probe.py --perm 0            # skip permutation (faster)
+  python3 src/18_probe.py                     # all models, full analysis
+  python3 src/18_probe.py --models wavlm text
+  python3 src/18_probe.py --perm 0            # skip permutation (faster)
 """
 import argparse, csv, sys, warnings
 from collections import Counter, defaultdict
@@ -319,6 +325,41 @@ def cps(model_tag, man, best_layers, min_each=3):
     return dict(cps=correct / tot if tot else float("nan"), cells=cells, n=tot)
 
 
+def mimi_codebooks(man, perm=100, K=2048):
+    """H. Where inside the tokenizer does anything survive? Probe each codebook alone.
+
+    Codebook 0 is the WavLM-distilled stream, 1..7 are acoustic refinement. Chapter 2
+    predicted pragmatics would more plausibly sit in 1..7, since the codec-probing
+    literature shows codebook 0 is phonetic rather than semantic. The data says the
+    reverse, so this view is reported as a correction to that expectation.
+    """
+    f = load_feat("mimi", PRIMARY)
+    if not f:
+        return []
+    ids, X = f
+    k, y, ar, ph, g = align(ids, man)
+    Xk = X[k]
+    n_cb = Xk.shape[1] // K
+    out = []
+
+    def one(tag, blk):
+        pred = oof_predict(blk, y, g)
+        if pred is None:
+            return
+        f1 = f1_score(y, pred, average="macro")
+        null = permutation_null(blk, y, g, P=perm)
+        out.append(dict(tag=tag, f1=f1, chance=float(null.mean()),
+                        p=(int((null >= f1).sum()) + 1) / (len(null) + 1)))
+
+    for j in range(n_cb):
+        one(f"codebook {j}" + (" (WavLM-distilled)" if j == 0 else ""),
+            Xk[:, j * K:(j + 1) * K])
+    one(f"all {n_cb}, the deployed condition", Xk)
+    if n_cb > 1:
+        one("1 to 7, acoustic refinement only", Xk[:, K:])
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+",
@@ -340,6 +381,7 @@ def main():
     print(f"{'model':16s}{'layer':>6}{'macroF1':>9}{'95% CI':>16}{'chance':>8}{'perm p':>9}{'major':>8}")
     best_layers = {}
     windows_tbl = {}
+    layer_curves = {}
     for model in args.models:
         pr, best, byw = analyze_model(model, man, args.perm)
         if model == "text":
@@ -353,6 +395,8 @@ def main():
             print(f"{model:16s}  (no features found)"); continue
         best_layers[model] = best
         windows_tbl[model] = byw
+        if pr.get("per_layer"):
+            layer_curves[model] = pr["per_layer"]
         lay = str(best) if best is not None else "-"
         print(f"{model:16s}{lay:>6}{pr['f1']:>9.3f}"
               f"{'['+format(pr['lo'],'.2f')+','+format(pr['hi'],'.2f')+']':>16}"
@@ -424,6 +468,28 @@ def main():
         if not r:
             continue
         print(f"{t:16s}{r['cps']:>8.3f}{r['cells']:>8}{r['n']:>11}")
+
+    print("\n" + "=" * 74)
+    print("G. LAYER-WISE CURVE  (3-way stance macro-F1 per layer, W2_segment)")
+    print("   where in the stack the contrast is carried")
+    print("=" * 74)
+    for model, curve in layer_curves.items():
+        best = int(np.argmax(curve))
+        print(f"\n{model}  (best L{best} at {curve[best]:.3f})")
+        for l, v in enumerate(curve):
+            bar = "#" * int(round(max(v - 0.15, 0) / 0.45 * 44))
+            print(f"   L{l:>2} {v:.3f} {bar}{'  <- best' if l == best else ''}")
+
+    print("\n" + "=" * 74)
+    print("H. MIMI CODEBOOK-LEVEL PROBE  (W2_segment)")
+    print("   codebook 0 is the WavLM-distilled stream, 1..7 acoustic refinement")
+    print("=" * 74)
+    rows_h = mimi_codebooks(man, perm=args.perm or 100)
+    if rows_h:
+        print(f"{'block':36s}{'macroF1':>9}{'chance':>9}{'margin':>9}{'perm p':>9}")
+        for r in rows_h:
+            print(f"  {r['tag']:34s}{r['f1']:>9.3f}{r['chance']:>9.3f}"
+                  f"{r['f1']-r['chance']:>+9.3f}{r['p']:>9.3f}")
 
 
 if __name__ == "__main__":

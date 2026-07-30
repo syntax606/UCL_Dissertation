@@ -134,8 +134,8 @@ const rows = [
   ["Whisper encoder", 0.564, TEAL, false],
   ["HuBERT", 0.520, TEAL, false],
   ["Text, word only", 0.487, GREY_BAR, false],
+  ["Mimi, deployed tokeniser", 0.381, CLAY, true],
   ["Text, with context", 0.378, GREY_BAR, false],
-  ["Mimi, deployed tokeniser", 0.352, CLAY, true],
 ];
 
 // gridlines behind the bars
@@ -267,7 +267,7 @@ Speaker held out. Grouping folds by show rather than episode moves WavLM only fr
 Non-independence. All scores are out of fold under GroupKFold by episode, with episode-cluster bootstrap intervals and 200-permutation tests. Every representation beats chance at p at most 0.01.
 
 WHERE THE CONTRAST LIVES
-WavLM peaks at layer 20 of 24 and falls away above it, consistent with upper layers shedding paralinguistics. Whisper plateaus across its top third. Inside Mimi the loss is not localised, since refinement codebooks 1 to 7 each score between 0.33 and 0.37 and stacking them adds nothing.
+WavLM peaks at layer 20 of 24 and falls away above it, consistent with upper layers shedding paralinguistics. Whisper plateaus across its top third. Inside Mimi, what little survives sits in codebook 0, the WavLM-distilled stream, at 0.402. The seven acoustic refinement codebooks are at or near chance. Chapter 2 predicted the opposite, so this is reported as a correction.
 
 CAVEATS TO RAISE
 Pooled target-only text sits above chance only because the eight phrases differ in stance base rate, which is why the within-word figure is the clean lexical control.
@@ -275,7 +275,7 @@ Mimi is significantly above chance, so the honest claim is that default tokenisa
 The training-free contrast-preservation score points the same way but is underpowered at 191 decisions and sensitive to the distance metric, so it is reported as corroborating only.
 
 NEXT
-Probe Mimi codebook 0, the WavLM-distilled stream, which was not extracted in the first run. It is the one remaining untested possibility for where pragmatic information might survive inside the tokeniser.`
+Done. Codebook 0 is now extracted and probed. The headline Mimi figure is all 8 codebooks, the condition a deployed model actually consumes, at 0.381 against a chance of 0.311.`
 );
 
 pres.writeFile({ fileName: process.argv[2] || "advisory_slide.pptx" })

@@ -544,13 +544,13 @@
         <div class="track"><div class="bar text" style="width:78.5%"></div></div>
         <div class="row-val">0.487 <span class="ci">±.03</span></div>
 
+        <div class="row-label">Mimi <span class="sub">deployed S2S tokeniser</span></div>
+        <div class="track"><div class="bar disc" style="width:61.5%"></div></div>
+        <div class="row-val">0.381 <span class="ci">±.03</span></div>
+
         <div class="row-label">Text <span class="sub">+ discourse</span></div>
         <div class="track"><div class="bar text" style="width:61.0%"></div></div>
         <div class="row-val">0.378 <span class="ci">±.03</span></div>
-
-        <div class="row-label">Mimi <span class="sub">deployed S2S tokeniser</span></div>
-        <div class="track"><div class="bar disc" style="width:56.8%"></div></div>
-        <div class="row-val">0.352 <span class="ci">±.03</span></div>
 
         <div class="axis">
           <span>0</span>
@@ -564,7 +564,7 @@
         <b>0.659</b> against text-plus-discourse <b>0.534</b>, so the contrast survives even when the
         word itself cannot help. Chance here is about <b>0.33</b>, the mean of the permutation null, not the 0.196 a
         majority-class predictor would score. Against that line the three continuous encoders
-        sit far above, while Mimi at 0.352 clears it only narrowly, though still significantly
+        sit far above, while Mimi at 0.381 clears it only narrowly, though still significantly
         (p ≤ 0.01). Pooled target-only text sits above
         chance only because the eight phrases differ in stance base rate, which is why the within-word
         figure is the clean test.
@@ -572,9 +572,9 @@
 
       <div class="chart-foot" style="border-top:0; padding-top:0">
         <b>Where it lives.</b> WavLM peaks at layer 20 of 24 and falls away above it, consistent with
-        upper layers shedding paralinguistics, while Whisper plateaus across its top third. Inside Mimi
-        the loss is not localised, since refinement codebooks 1 to 7 score 0.33 to 0.37 individually and
-        stacking them adds nothing.
+        upper layers shedding paralinguistics, while Whisper plateaus across its top third. Inside Mimi what little
+        survives sits in codebook 0, the WavLM-distilled stream, at 0.402. The seven acoustic
+        refinement codebooks are at or near chance, so adding them to codebook 0 gains nothing.
       </div>
     </section>
   </div>

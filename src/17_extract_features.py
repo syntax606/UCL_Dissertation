@@ -7,9 +7,10 @@ representation, a fixed-length vector suitable for a linear probe:
 
   wavlm / hubert / whisper : mean+std pooled hidden states, saved PER LAYER
                              -> X shape (n_clips, n_layers, 2*hidden)
-  mimi                     : per-codebook unigram histograms, codebooks 1..7
-                             (codebook 0 is the WavLM-distilled/phonetic stream)
-                             -> X shape (n_clips, 7*codebook_size)
+  mimi                     : per-codebook unigram histograms, ALL codebooks 0..7
+                             (block j of 2048 dims == codebook j; the probe slices
+                              these, e.g. all-8 for the deployed condition)
+                             -> X shape (n_clips, 8*codebook_size)
   text                     : sentence-embedding of (a) the target phrase alone
                              and (b) the discourse context (prev+seg+next)
                              -> X shape (n_clips, dim)   [window-independent]
@@ -122,12 +123,21 @@ def run_whisper(rows, windows, device, args):
 
 
 def run_mimi(rows, windows, device, args, n_codebooks=8):
+    """All 8 codebooks are kept, codebook 0 included.
+
+    Codebook 0 is the WavLM-distilled stream; the codec-probing literature shows it
+    carries phonetic rather than semantic content, which is why an earlier version of
+    this script skipped it. That was the wrong call for two reasons. A model built on
+    Mimi consumes the whole stack, so the deployment-relevant condition is all 8, and
+    skipping codebook 0 leaves the one place pragmatic information might survive
+    untested. The probe slices this matrix into per-codebook blocks.
+    """
     import torch
     from transformers import AutoFeatureExtractor, MimiModel
     fe = AutoFeatureExtractor.from_pretrained(CKPT["mimi"])
     model = MimiModel.from_pretrained(CKPT["mimi"]).to(device).eval()
     K = model.config.codebook_size
-    probe_books = list(range(1, n_codebooks))     # skip codebook 0 (phonetic)
+    probe_books = list(range(n_codebooks))        # 0..7, block j == codebook j
     for w in windows:
         out = OUT / "mimi" / f"{w}.npz"
         if out.exists() and not args.overwrite:
