@@ -323,7 +323,7 @@ s.addText(
   [
     { text: "Finding.   ", options: { bold: true, color: TEAL } },
     {
-      text: "Pragmatic stance survives in continuous representations, and it survives the lexical control, where WavLM reaches 0.659 against 0.534 for text. Most of it does not survive discretisation. The tokens deployed systems consume sit barely above chance.",
+      text: "Pragmatic stance survives in continuous representations, it holds under every control opposite, and it survives the lexical control, where WavLM reaches 0.659 against 0.534 for text. Most of it does not survive discretisation. The tokens deployed systems consume sit barely above chance.",
       options: { color: INK },
     },
   ],
