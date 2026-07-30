@@ -35,7 +35,7 @@ s.addText("Transcript-Equivalent Pragmatic Contrast in Speech Representations", 
 });
 
 s.addText(
-  "Deployed speech-to-speech systems never hear audio. They hear discrete tokens. Do those tokens still carry what a speaker meant?",
+  "Deployed speech-to-speech systems never hear raw audio. They hear discrete tokens. Do those tokens still retain untranscribed meaning?",
   {
     x: 0.5, y: 0.84, w: 12.3, h: 0.38, margin: 0,
     fontFace: SERIF, fontSize: 14, italic: true, color: TEAL,
@@ -58,7 +58,7 @@ s.addShape(pres.ShapeType.line, {
   line: { color: RULE, width: 0.75 },
 });
 
-const heads = ["Established", "Left untested", "So this study"];
+const heads = ["Established", "Left untested", "This study"];
 heads.forEach((h, i) => {
   s.addShape(pres.ShapeType.ellipse, {
     x: COLX[i], y: CHAIN_Y, w: 0.19, h: 0.19,
@@ -80,8 +80,7 @@ s.addText(
   [
     { text: "Speech representations recover pragmatic phenomena better than text, shown by ", options: { color: MUTED } },
     { text: "Lin et al. (2022)", options: { bold: true, color: INK } },
-    { text: " probing self-supervised models on sarcasm. Separately, discretisation is known to damage paralinguistic content (DASB, Mousavi et al. 2026). ", options: { color: MUTED } },
-    { text: "Neither claim is reclaimed here.", options: { italic: true, color: INK } },
+    { text: " probing self-supervised models on sarcasm. Separately, discretisation is known to damage paralinguistic content (DASB, Mousavi et al. 2026).", options: { color: MUTED } },
   ],
   { x: COLX[0], y: CHAIN_Y + 0.28, w: COLW, h: 0.92, margin: 0, fontFace: SANS, fontSize: 9.5, lineSpacingMultiple: 1.08 }
 );
@@ -90,11 +89,7 @@ s.addText(
   [
     { text: "Lin et al. probed ", options: { color: MUTED } },
     { text: "MUStARD", options: { bold: true, color: INK } },
-    { text: ", where the utterances also differ in their words, so delivery stays confounded with word choice. That corpus is acted television speech, carries one binary sarcasm label, and no discrete tokeniser was compared. So whether tokenisation loses ", options: { color: MUTED } },
-    { text: "meaning", options: { italic: true, color: INK } },
-    { text: " or only ", options: { color: MUTED } },
-    { text: "sound", options: { italic: true, color: INK } },
-    { text: " has never been tested.", options: { color: MUTED } },
+    { text: ", where the utterances also differ in their words, so delivery stays confounded with word choice. That corpus is acted television speech, carries one binary sarcasm label, and no discrete tokeniser was compared.", options: { color: MUTED } },
   ],
   { x: COLX[1], y: CHAIN_Y + 0.28, w: COLW, h: 0.92, margin: 0, fontFace: SANS, fontSize: 9.5, lineSpacingMultiple: 1.08 }
 );
@@ -150,7 +145,7 @@ s.addText("SARCASTIC DISMISSAL", {
   fontFace: SANS, fontSize: 8, bold: true, color: MUTED, align: "center", charSpacing: 0.5,
 });
 
-s.addText("Identical transcript. Opposite meaning.", {
+s.addText("Identical word, different meaning.", {
   x: CX + 0.22, y: CY + 1.25, w: CW - 0.44, h: 0.24, margin: 0,
   fontFace: SERIF, fontSize: 12, italic: true, color: INK, align: "center",
 });
@@ -306,7 +301,7 @@ s.addText(
   [
     { text: "Finding.   ", options: { bold: true, color: TEAL } },
     {
-      text: "Continuous representations preserve pragmatic stance, and it holds at matched arousal, on speakers the probe never trained on, and within each word, where WavLM reaches 0.659 against 0.534 for text. The discrete tokens deployed systems actually consume sit barely above chance.",
+      text: "Continuous representations preserve pragmatic stance, and holds at matched arousal and on new speakers the probe never trained on, and within each word, where WavLM reaches 0.659 against 0.534 for text. The discrete tokens consumed by deployed systems sit barely above chance.",
       options: { color: INK },
     },
   ],
