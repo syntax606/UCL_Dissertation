@@ -156,6 +156,8 @@ exports live in.
 ```bash
 python3 src/13_ingest_annotations.py "path/to/exports/*.json"
 #   -> updates annotations.db and re-derives data/annotations/annotation_sheet_labeled.csv
+python3 src/13b_fold_target_phrases.py
+#   -> folds oh_/yeah_right pull labels back to the 8 base phrases (see Dataset summary)
 ```
 
 ---
@@ -178,13 +180,31 @@ word identity alone is informative about stance, so the *pooled* three-way score
 are partly recoverable from lexis. The within-word analysis (view C) is the control that
 removes this, and is the result the design's claim rests on. See "Probing and analysis" below.
 
-**Phrase folding.** The targeted pulls in `src/10`–`src/12` emit their own `target_phrase`
-values (`oh_yeah`, `yeah_right`, and per-pull labels). These were folded back into the eight
-base phrases before Phase 2: 168 of the 873 clips carry an `oh_`/`yr_` id prefix but a base
-`target_phrase`. **No script in this repo performs that fold** — it must be re-applied by hand
-to reproduce the published per-phrase cells. Note also that the folded cells therefore contain
-lexical variants ("oh come on" alongside "come on"), so view C holds the word family constant
-rather than the exact string; the variant is recoverable from the `candidate_id` prefix.
+**Phrase folding (`src/13b`).** The targeted pulls in `src/10`–`src/12` emit their own
+`target_phrase` values, which are folded back into the eight base phrases before Phase 2.
+This step was originally done by hand and is now scripted:
+
+```bash
+python3 src/13b_fold_target_phrases.py                        # fold the labeled sheet
+python3 src/13b_fold_target_phrases.py --verify labels/labels.csv   # check the rules
+```
+
+Only two rules fire, covering 168 of the 873 clips — `src/12` assigns a base phrase at pull
+time via `--label`, so its clips need no folding:
+
+| pull-time value | folded to | source | n |
+|---|---|---|---|
+| `oh_<base>` | `<base>` | `src/10` | 143 |
+| `yeah_right` | `right` | `src/11` | 25 |
+
+The verify mode reconstructs each clip's pull-time phrase from its `candidate_id` prefix and
+confirms the rules reproduce `labels/labels.csv` exactly (0 mismatches), so the published
+per-phrase cells are now reproducible without the raw data.
+
+Note that folding puts lexical variants in the same cell — "oh come on" alongside "come on" —
+so view C holds the word *family* constant rather than the exact string. `src/13b` preserves
+the pull-time value in a `target_phrase_raw` column so this can be measured rather than
+assumed.
 
 The premise check (a counterbalanced subset judged transcript-only vs. audio) validates
 that the contrast is speech-borne before any modelling; it is the go/no-go gate for

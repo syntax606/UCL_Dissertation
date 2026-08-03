@@ -39,9 +39,10 @@ redistribution. Therefore:
   that the *text* baseline in `src/17` reads `prev_text` / `segment_text` / `next_text`, which
   are verbatim transcript and are excluded from `labels.csv` for the copyright reasons above,
   so the text features cannot be regenerated from the shipped labels alone.
-- **Per-phrase cells:** reproducing the published per-phrase results (view C) also requires
-  re-applying the phrase fold described under "Dataset summary" in the README, which no
-  script in this repository performs.
+- **Per-phrase cells:** reproducing the published per-phrase results (view C) requires the
+  phrase fold in `src/13b_fold_target_phrases.py`, which maps the targeted pulls' labels
+  (`oh_<base>`, `yeah_right`) back onto the eight base phrases. Its `--verify` mode checks
+  the rules against `labels/labels.csv` and needs neither audio nor features.
 - **Full pipeline from audio:** point the pipeline at **your own** audio + word-level
   transcripts (see the corpus schema in the README), then run `src/02` onward. The
   labels here are keyed by `candidate_id`, which encodes `episode_id` + segment; they
