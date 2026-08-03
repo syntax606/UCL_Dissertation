@@ -180,6 +180,65 @@ word identity alone is informative about stance, so the *pooled* three-way score
 are partly recoverable from lexis. The within-word analysis (view C) is the control that
 removes this, and is the result the design's claim rests on. See "Probing and analysis" below.
 
+### Dataset balance: what was topped up, and what deliberately wasn't
+
+Three kinds of imbalance are present. They need different responses, and only one of
+them is worth collecting more data for.
+
+**1. Per-word stance skew — handled in analysis, not by collecting.** Each word leans
+toward one stance, which is what makes the pooled view A lexically confounded:
+
+| word | contrast | skew | balanced subsample |
+|---|---|---|---|
+| really | adv 52 / aff 51 | 50% | 102 |
+| okay | neu 70 / adv 46 | 60% | 92 |
+| right | aff 63 / neu 44 | 59% | 88 |
+| great | adv 53 / aff 43 | 55% | 86 |
+| come_on | adv 91 / aff 36 | 72% | 72 |
+| sure | aff 67 / adv 36 | 65% | 72 |
+| yeah | aff 64 / neu 31 | 67% | 62 |
+| fine | adv 40 / aff 28 | 59% | 56 |
+| | | | **630 of 873** |
+
+View A2 equalises the two commonest stances within each phrase and re-runs the pooled
+analysis on the resulting 630 clips, so word identity can no longer predict stance from
+base rates. This costs nothing and needs no new annotation. Note that it does **not**
+force a word-identity probe to chance — knowing the phrase still narrows three stances
+to two, since come_on is never neutral — which is why `text:targetonly` is reported in
+the same table as the empirical baseline to beat.
+
+**2. Thin neutral (147 vs 364/362) — linguistic, not fixable.** Neutral concentrates in
+the agreement particles: 145 of the 147 are okay, right or yeah. `come_on`, `great` and
+`really` have **zero** neutrals, because a neutral "come on" barely exists in English.
+Forcing three-way balance would mean manufacturing a category the language does not have.
+This is also why view C uses each phrase's two commonest stances rather than all three:
+neutral only participates where it genuinely occurs. Arousal shows the same pattern —
+high-arousal neutral is only 26 clips — so view D's high-arousal row rests on a thin cell.
+
+**3. Contrast-Preservation cells (view F) — the one place more data would help.** The
+measure needs the same show saying the same word with both stances, at least three times
+each. Eligibility is very sensitive to that threshold:
+
+| minimum per stance | eligible (show, word) cells |
+|---|---|
+| 2 | 42 |
+| **3** (current) | **15** |
+| 4 | 8 |
+| 5 | 5 |
+
+**27 cells sit at exactly two**, one clip short each. Roughly 27 precisely targeted clips
+would take view F from 15 cells to 42, nearly tripling its sample; `src/12`'s `--shows`
+flag can pull by exact show and pattern, and at the observed ~50% keep rate that means
+labelling perhaps 60–80 candidates. Weigh that against the fact that every representation
+currently scores *below* the within-cell majority baseline: more power would most likely
+confirm that null more precisely rather than reverse it. `docs/limitations.md` scopes this
+as future work requiring depth-first collection.
+
+**Not worth collecting:** `fine` (n=68) sits near chance for every representation including
+the audio models, and at that sample size "carries no stance contrast" cannot be separated
+from "too few clips to see one". It is one of eight cells and the study's claim does not
+rest on it, so it is reported as inconclusive rather than topped up.
+
 **Phrase folding (`src/13b`).** The targeted pulls in `src/10`–`src/12` emit their own
 `target_phrase` values, which are folded back into the eight base phrases before Phase 2.
 This step was originally done by hand and is now scripted:
@@ -298,7 +357,7 @@ needs (`stance`, `arousal`, `target_phrase`, `episode_id`, `show_name`). Regener
 `--perm-secondary` (default 100) governs the cheaper views C–F. `--perm 0` disables every
 permutation test, view H included.
 
-It prints nine sections (A, B, C, C2, D, E, F, G, H):
+It prints ten sections (A, A2, B, C, C2, D, E, F, G, H):
 
 - **A. Pooled 3-way stance decodability** per representation (best layer for the audio
   models), on the primary window `W2_segment`, against the empirical permutation null
@@ -306,6 +365,12 @@ It prints nine sections (A, B, C, C2, D, E, F, G, H):
   as macro-F1 penalises a constant predictor far more than a genuinely no-skill probe).
   Read alongside the base-rate caveat under "Dataset summary": `text:targetonly` reaches
   0.487 from word identity alone, so the pooled figures are not a pure measure of delivery.
+- **A2. Pooled 3-way on a phrase-balanced subsample** — the same analysis with stance
+  equalised *within* each phrase (630 of 873 clips), so word identity can no longer
+  predict stance from base rates. Any margin the audio models keep here is delivery
+  rather than lexis. `text:targetonly` on the same subsample is the baseline to beat;
+  balancing narrows but does not eliminate what word identity tells you, so that row is
+  reported empirically rather than assumed to sit at chance. `--no-balanced` skips it.
 - **B. Context-window sweep** — macro-F1 at each model's best layer across W1/W2/W3.
 - **C. Per-phrase within-word binary contrast** — the lexical control: hold the word
   constant, vary only stance, and ask whether the probe still separates the two. This is

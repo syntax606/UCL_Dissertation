@@ -20,9 +20,12 @@ which is optimistically biased and is kept only to reproduce earlier runs.
 Label permutation preserves EPISODE CLUSTERING (whole episodes' label blocks are
 exchanged, rather than labels being shuffled freely), matching the bootstrap.
 
-Eight views:
+Nine views:
   A. Pooled 3-way stance decodability per representation, on the primary window
      W2_segment. Audio models use nested layer selection.
+  A2. The same, on a subsample where stance is balanced WITHIN each phrase, so word
+     identity cannot predict stance from base rates. Removes the lexical confound
+     from the pooled figure.
   B. Context-window sweep (W1/W2/W3).
   C. Per-phrase WITHIN-WORD binary contrast: the lexical control. Same word,
      two stances -> can the probe still separate them? Averaged over phrases,
@@ -41,6 +44,7 @@ Usage:
   python3 src/18_probe.py --models wavlm text
   python3 src/18_probe.py --perm 0              # skip all permutation tests
   python3 src/18_probe.py --layer-selection best --perm 200   # reproduce the older run
+  python3 src/18_probe.py --no-balanced         # skip view A2 (roughly halves runtime)
 
 Cost note: nested selection costs roughly (outer folds x layers x inner folds)
 model fits per audio model, ~500 for a 25-layer model. The headline permutation
@@ -101,6 +105,38 @@ def load_manifest():
         if r.get("stance", "").strip() in STANCES:
             m[r["candidate_id"]] = r
     return m
+
+
+def balanced_manifest(man, tag="A2"):
+    """Restrict to a subsample where stance is 50/50 WITHIN each phrase.
+
+    The pooled view A is confounded by lexis: per-phrase stance base rates are
+    strongly non-uniform (come_on is 72% adversarial, okay 60% neutral), so a probe
+    scores above chance from word identity alone. Equalising the two commonest
+    stances within each phrase removes that signal, at the cost of some clips.
+
+    NOTE this does not reduce a word-identity probe to chance. Knowing the phrase
+    still narrows the candidate stances from three to two, even when those two are
+    equiprobable -- come_on is never neutral. So `text:targetonly` on this subsample
+    is the empirical baseline to beat, not a guaranteed floor. It is reported in the
+    same table for exactly that reason.
+    """
+    rng = rng_for(tag)
+    by_phrase = defaultdict(lambda: defaultdict(list))
+    for cid, r in man.items():
+        by_phrase[r["target_phrase"]][r["stance"]].append(cid)
+    keep = []
+    for phrase in sorted(by_phrase):
+        by_st = by_phrase[phrase]
+        top2 = sorted(by_st.items(), key=lambda kv: (-len(kv[1]), kv[0]))[:2]
+        if len(top2) < 2:
+            continue
+        k = min(len(v) for _, v in top2)
+        for _, cids in top2:
+            ordered = sorted(cids)                      # deterministic before shuffling
+            pick = rng.permutation(len(ordered))[:k]
+            keep.extend(ordered[i] for i in pick)
+    return {cid: man[cid] for cid in keep}
 
 
 def variant_of(cid, row):
@@ -637,6 +673,8 @@ def main():
                          "under each permutation (~100x slower)")
     ap.add_argument("--layer-selection", choices=["nested", "best"], default="nested",
                     help="nested (default, unbiased) or best (legacy, optimistic)")
+    ap.add_argument("--no-balanced", action="store_true",
+                    help="skip view A2, the phrase-balanced subsample (roughly halves runtime)")
     args = ap.parse_args()
     if args.perm == 0:
         args.perm_secondary = 0
@@ -690,6 +728,37 @@ def main():
         print("\n   NOTE: the audio p-values permute at a fixed layer, so the null does not")
         print("   itself benefit from layer selection and they are slightly optimistic.")
         print("   Use --perm-nested for the exact (much slower) test.")
+
+    if not args.no_balanced:
+        man_bal = balanced_manifest(man)
+        print("\n" + "=" * 92)
+        print("A2. POOLED 3-WAY ON A PHRASE-BALANCED SUBSAMPLE")
+        print("   Same analysis as A, but stance is equalised WITHIN each phrase, so word")
+        print("   identity no longer predicts stance from base rates. Any margin the audio")
+        print("   models keep here is delivery, not lexis.")
+        print("   Compare each model against text:targetonly on THIS subsample -- that row")
+        print("   is the word-identity-only baseline. Balancing does not force it to chance:")
+        print("   knowing the phrase still narrows three stances to two.")
+        print("=" * 92)
+        print(f"   n = {len(man_bal)} of {len(man)} clips | "
+              f"stance {dict(Counter(r['stance'] for r in man_bal.values()))}")
+        print(f"{'model':16s}{'macroF1':>9}{'95% CI':>16}{'chance':>8}{'perm p':>9}"
+              f"{'major':>8}   layers")
+        for model in args.models:
+            pr, chosen, _, _ = analyze_model(model, man_bal, args)
+            if model == "text":
+                for variant, r in (pr or {}).items():
+                    if r:
+                        print(f"{'text:'+variant:16s}{r['f1']:>9.3f}"
+                              f"{'['+format(r['lo'],'.2f')+','+format(r['hi'],'.2f')+']':>16}"
+                              f"{_fmt(r['chance'],8)}{_fmt(r['p'],9)}{r['maj']:>8.3f}")
+                continue
+            if pr is None:
+                continue
+            lay = ",".join(str(c) for c in chosen) if chosen else "-"
+            print(f"{model:16s}{pr['f1']:>9.3f}"
+                  f"{'['+format(pr['lo'],'.2f')+','+format(pr['hi'],'.2f')+']':>16}"
+                  f"{_fmt(pr['chance'],8)}{_fmt(pr['p'],9)}{pr['maj']:>8.3f}   {lay}")
 
     print("\n" + "=" * 74)
     print("B. CONTEXT-WINDOW SWEEP  (macro-F1; audio at the modal selected layer)")
