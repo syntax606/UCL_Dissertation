@@ -64,15 +64,24 @@ pip install -r requirements.txt
 #   macOS: brew install ffmpeg
 ```
 
-**Configuration.** Machine-specific paths are not hardcoded. Point the pipeline at your
-audio and transcripts by copying the template and editing it:
+**Configuration.** The source audio and transcript directories are configurable. Copy the
+template and edit it:
 
 ```bash
 cp configs/paths.example.yaml configs/paths.yaml   # git-ignored; set audio_dir + transcripts_dir
 # or override per-run with env vars: PC_AUDIO_DIR=... PC_TRANSCRIPTS_DIR=...
 ```
 
-`src/config.py` reads these; everything else derives from the repo location.
+`src/config.py` reads these, and `src/05`, `src/09` and `src/10` use them. Write the paths
+unquoted (`audio_dir: /Users/you/audio`) — the minimal parser in `config.py` does not strip
+surrounding quotes, and treats `#` as starting a comment anywhere in the line.
+
+> **Known limitation — the working directory is still hardcoded.** Only the Phase 2/3
+> scripts (`src/14`–`src/18`) derive their paths from the repository location. `src/00`–`src/04`
+> and `src/09`–`src/13` hardcode `~/Desktop/pragmatic_contrast` (and `~/Desktop/podcast_transcripts`
+> in `src/00`/`src/01`), so a fresh checkout will not run Phases 0–1 end-to-end without editing
+> those constants. Relatedly, the `annotations.db` committed at the repo root is a snapshot for
+> inspection: `src/13` reads and writes the copy under `~/Desktop/pragmatic_contrast/`.
 
 ---
 
@@ -153,11 +162,29 @@ python3 src/13_ingest_annotations.py "path/to/exports/*.json"
 
 ## Dataset summary
 
-~873 labelled clips across 8 target phrases (yeah, okay, right, sure, great, fine, really,
-come_on), 753 distinct episodes, 32 shows. Each phrase carries a well-powered binary
-stance contrast with arousal represented on both sides. Overall stance is balanced
-(affiliative ≈ neutral-plus ≈ adversarial); neutral is concentrated in the agreement
-particles, which is a linguistic property of the words, not a sampling gap.
+873 labelled clips across 8 target phrases (yeah, okay, right, sure, great, fine, really,
+come_on), 753 distinct episodes, 32 shows. Each phrase carries a binary stance contrast
+with arousal represented on both sides (arousal: 528 low / 345 high).
+
+**Stance is balanced between the two poles, not across all three classes:** affiliative 364,
+adversarial 362, **neutral 147**. Neutral is concentrated in the agreement particles
+(145 of the 147 are okay/right/yeah), which is a linguistic property of those words rather
+than a sampling gap — but the three-way class distribution is skewed, and the probes use
+`class_weight="balanced"` for that reason.
+
+The per-phrase stance base rates are strongly non-uniform (e.g. come_on is 91/127
+adversarial with no neutrals; okay is 70/128 neutral). This matters for interpretation:
+word identity alone is informative about stance, so the *pooled* three-way scores in view A
+are partly recoverable from lexis. The within-word analysis (view C) is the control that
+removes this, and is the result the design's claim rests on. See "Probing and analysis" below.
+
+**Phrase folding.** The targeted pulls in `src/10`–`src/12` emit their own `target_phrase`
+values (`oh_yeah`, `yeah_right`, and per-pull labels). These were folded back into the eight
+base phrases before Phase 2: 168 of the 873 clips carry an `oh_`/`yr_` id prefix but a base
+`target_phrase`. **No script in this repo performs that fold** — it must be re-applied by hand
+to reproduce the published per-phrase cells. Note also that the folded cells therefore contain
+lexical variants ("oh come on" alongside "come on"), so view C holds the word family constant
+rather than the exact string; the variant is recoverable from the `candidate_id` prefix.
 
 The premise check (a counterbalanced subset judged transcript-only vs. audio) validates
 that the contrast is speech-borne before any modelling; it is the go/no-go gate for
@@ -170,8 +197,15 @@ python3 src/15_score_premise.py aux1.json aux2.json   # accuracy / kappa / go-no
 
 The hidden reference (`data/annotations/premise_key.csv`) is kept local. Result on this
 dataset: transcript-with-context ≈ 0.65 accuracy, audio+transcript ≈ 0.73 (3-way chance
-≈ 0.33), so stance is partly text-recoverable but audio adds a real increment — the
-target-only text condition is the clean control that sits at chance by construction.
+≈ 0.33), so stance is partly text-recoverable but audio adds a real increment. Both figures
+are computed over answered items only — "unsure" responses are excluded from the denominator
+rather than counted as errors (`src/15`), so they are accuracy *conditional on committing*.
+
+`src/16` runs the same 60 clips as a target-only manipulation check (bare word, no context,
+no audio) for human annotators. Note that "at chance by construction" holds *within* a phrase,
+where the word is constant; **pooled across phrases it does not**, because the phrases differ
+in their stance base rates. The probe's `text:targetonly` condition makes this concrete: it
+scores 0.487 macro-F1 against a 0.313 permutation null using nothing but word identity.
 
 ---
 
@@ -189,7 +223,7 @@ padded to 30 s internally, so only the valid frames are pooled.
 | WavLM | `microsoft/wavlm-large` | mean+std pooled hidden states, **per layer** | `(n, 25, 2048)` |
 | HuBERT | `facebook/hubert-large-ll60k` | same | `(n, 25, 2048)` |
 | Whisper encoder | `openai/whisper-small` | same, valid-frame pooled | `(n, 13, 1536)` |
-| Mimi | `kyutai/mimi` | per-codebook unigram histograms, **codebooks 1–7** (skips the phonetic codebook 0) | `(n, 14336)` |
+| Mimi | `kyutai/mimi` | per-codebook unigram histograms, **all 8 codebooks (0–7)**; block *j* of 2048 dims is codebook *j* | `(n, 16384)` |
 | Text | `sentence-transformers/all-mpnet-base-v2` | sentence embedding of target-word-only **and** discourse context | `(n, 768)` ×2 |
 
 **This is a GPU job.** It was run on a single A100 (Lambda Cloud, ~10 min for all 873
@@ -199,9 +233,20 @@ clips × 5 models × 3 windows). On a fresh CUDA box:
 pip install torch transformers soundfile librosa sentence-transformers "numpy<2"
 # Lambda Stack already ships torch/CUDA; "numpy<2" avoids an ABI clash with the
 # prebuilt torch, and a recent transformers may need:  pip install -U Pillow
-python3 src/17_extract_features.py            # all models, all windows (W1/W2/W3)
-python3 src/17_extract_features.py --limit 5  # smoke test first
+python3 src/17_extract_features.py --limit 5             # smoke test first
+python3 src/17_extract_features.py --overwrite           # then the real run
 ```
+
+> **`--overwrite` is required after a smoke test.** `--limit N` writes to the *same*
+> `features/<model>/<window>.npz` paths as a full run, and the script skips any output that
+> already exists unless `--overwrite` is passed. Without it, the full run silently reports
+> "exists, skip" and leaves you analysing N clips. Alternatively, `rm -rf features/` between
+> the smoke test and the real run.
+
+An earlier version of `src/17` kept only Mimi codebooks 1–7, on the reasoning that codebook 0
+is the WavLM-distilled (phonetic) stream. That was reversed: a model built on Mimi consumes
+the whole stack, so all 8 are retained and the codebook-level view (H) probes each separately.
+View H shows codebook 0 alone (0.402) outscoring the full stack (0.381).
 
 `features/` is **not committed** (the WavLM/HuBERT matrices are ~156 MB per window,
 above GitHub's 100 MB limit). Regenerate it with the command above, or use git-lfs / a
@@ -211,33 +256,74 @@ release if you want to distribute it.
 
 `src/18_probe.py` fits linear logistic-regression probes on the frozen features. **All
 evaluation is out-of-fold under GroupKFold by episode**, so no episode's clips ever span
-train and test (nothing leaks through shared speaker/topic). Every score comes with a
-95% CI from an **episode-cluster bootstrap** (resampling whole episodes, not clips) and,
-for the headline configs, a **permutation p-value** (shuffle stance labels, re-fit).
+train and test (nothing leaks through shared episode topic or recording session). Every
+score comes with a 95% CI from an **episode-cluster bootstrap** (resampling whole episodes,
+not clips) and, for the headline configs, a **permutation p-value** (shuffle stance labels,
+re-fit).
 
 ```bash
 pip install scikit-learn          # on top of the CPU requirements
-python3 src/18_probe.py           # all models; --perm 0 to skip permutation (faster)
+cp labels/labels.csv manifest.csv # label source; see note below
+python3 src/18_probe.py           # all models
 ```
 
-It prints six views:
+**Label source.** `src/18` looks for `manifest.csv` (repo root, then `data/annotations/`) and
+otherwise falls back to `data/annotations/annotation_sheet_labeled.csv`, which is git-ignored
+and therefore absent from a fresh checkout. No script in this repo writes either file, so copy
+the shipped `labels/labels.csv` to `manifest.csv` as above — it carries every column `src/18`
+needs (`stance`, `arousal`, `target_phrase`, `episode_id`, `show_name`). Regenerating the
+*text* features in `src/17` additionally needs the transcript columns, which are not shippable.
+
+**`--perm 0` does not fully skip permutations.** It suppresses them in views A–F, but view H
+still runs 100 permutations per block because of an argument-defaulting bug (`args.perm or 100`).
+
+It prints eight views:
 
 - **A. Pooled 3-way stance decodability** per representation (best layer for the audio
   models), on the primary window `W2_segment`, against the empirical permutation null
   (chance is near 0.33; a majority-class predictor's 0.196 is reported for completeness only,
   as macro-F1 penalises a constant predictor far more than a genuinely no-skill probe).
+  Read alongside the base-rate caveat under "Dataset summary": `text:targetonly` reaches
+  0.487 from word identity alone, so the pooled figures are not a pure measure of delivery.
 - **B. Context-window sweep** — macro-F1 at each model's best layer across W1/W2/W3.
 - **C. Per-phrase within-word binary contrast** — the lexical control: hold the word
   constant, vary only stance, and ask whether the probe still separates the two. This is
   the core test that isolates delivery from lexis; it is averaged over the eight phrases.
 - **D. Matched-arousal test** — stance decoded *within* each arousal level, so a positive
   result can't be dismissed as the model merely encoding loudness/arousal.
-- **E. Speaker-identity control** — fold-grouping by *show* (train/test never share a
-  speaker) alongside the by-episode setting; if F1 holds, the probe isn't riding speaker
-  identity.
-- **F. Contrast-Preservation Score** — a training-free measure: within each
-  (speaker, word) cell, leave-one-out nearest-centroid on distances alone (lexis and
-  speaker both held fixed; chance = 0.50).
+- **E. Show-identity control** — fold-grouping by *show* alongside the by-episode setting;
+  if F1 holds, the probe isn't riding show-level identity. Note this controls **show, not
+  speaker**: a show has multiple speakers and guests recur across shows, so this is a weaker
+  guarantee than speaker-disjointness.
+- **F. Contrast-Preservation Score** — a training-free measure: within each (show, word)
+  cell, leave-one-out nearest-centroid on distances alone, so lexis and show are both held
+  fixed. **The correct baseline here is not 0.50.** Cell eligibility requires only 3
+  exemplars of the minority stance, so the eligible cells are class-imbalanced; on this
+  dataset the 15 qualifying cells give a within-cell majority baseline of **0.670** across
+  the 191 leave-one-out decisions. Every representation scores below it (wavlm 0.618,
+  whisper 0.618, hubert 0.613, text 0.592, mimi 0.560), so view F does **not** support a
+  positive contrast-preservation claim at this sample size. See `docs/limitations.md`.
+- **G. Layer-wise curve** — 3-way macro-F1 per layer on `W2_segment`, showing where in the
+  stack the contrast is carried.
+- **H. Mimi codebook-level probe** — each codebook probed alone, plus the full stack and
+  codebooks 1–7, against per-block permutation nulls.
+
+**Two caveats on the inference procedure.**
+
+*Best-layer selection.* For the audio models the reported layer is chosen by maximising the
+same out-of-fold macro-F1 that is then reported, so view A's audio figures are optimistically
+biased, and the permutation null — which refits at the fixed winning layer rather than
+re-running the selection — makes the p-values anticonservative. Empirically the effect is
+small here: the layer curves have broad plateaus, and the winning layer beats the runner-up
+by only 0.018 (wavlm), 0.010 (hubert) and 0.003 (whisper). The top-3 layer means are 0.561,
+0.510 and 0.561 respectively. This does not apply to mimi or text, which have no layer axis.
+
+*Permutation grouping.* The bootstrap resamples whole episodes, but the permutation test
+shuffles labels freely without respecting episode grouping. The impact is limited on this
+dataset (654 of 753 episodes contribute a single clip), but the null is not episode-clustered.
+
+The reported `perm p` of 0.005 is the floor of `(0+1)/(200+1)` at `--perm 200`; read it as
+*p < 0.005*, not as a point estimate.
 
 ---
 

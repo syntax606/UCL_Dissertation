@@ -19,14 +19,29 @@ redistribution. Therefore:
   (`labels/labels.csv`): one row per clip with `candidate_id`, `target_phrase`,
   `show_name`, `episode_id`, timing, and the analysis labels (`stance`, `arousal`,
   `literal`, `confidence`). No transcript text.
-- **Derived features** (pooled embeddings), added under `features/` once extracted.
-  Because features are derived, not audio, they can be shared and let anyone reproduce
-  the probing results exactly without the audio.
+**Shareable, but not currently in the repository:**
+- **Derived features** (pooled embeddings) under `features/`. Because features are derived
+  rather than audio, they *can* be shared without an ethics problem — but they are not
+  committed here: the WavLM/HuBERT matrices are ~156 MB per window, above GitHub's 100 MB
+  file limit, and `features/` is listed in `.gitignore`. Distributing them requires git-lfs
+  or a release attachment. Until that is done, the probing results cannot be reproduced from
+  this repository alone.
 
 ## Reproducing the results
 
-- **Probing results only:** use the shipped `features/` + `labels/labels.csv`. No audio
-  needed.
+- **Probing results only:** requires `features/`, which is **not currently shipped** (see
+  above). With a copy of `features/` in place no audio is needed: copy the shipped
+  `labels/labels.csv` to `manifest.csv` at the repository root, then run `src/18_probe.py`.
+  `labels.csv` carries every column the probe needs (`candidate_id`, `stance`, `arousal`,
+  `target_phrase`, `episode_id`, `show_name`); the copy is necessary because `src/18` looks
+  for `manifest.csv` and otherwise falls back to the git-ignored labeled annotation sheet.
+- **Re-extracting features:** requires the clips, and therefore the audio. Note additionally
+  that the *text* baseline in `src/17` reads `prev_text` / `segment_text` / `next_text`, which
+  are verbatim transcript and are excluded from `labels.csv` for the copyright reasons above,
+  so the text features cannot be regenerated from the shipped labels alone.
+- **Per-phrase cells:** reproducing the published per-phrase results (view C) also requires
+  re-applying the phrase fold described under "Dataset summary" in the README, which no
+  script in this repository performs.
 - **Full pipeline from audio:** point the pipeline at **your own** audio + word-level
   transcripts (see the corpus schema in the README), then run `src/02` onward. The
   labels here are keyed by `candidate_id`, which encodes `episode_id` + segment; they

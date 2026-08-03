@@ -18,8 +18,10 @@ Eight views:
   C. Per-phrase WITHIN-WORD binary contrast: the lexical control. Same word,
      two stances -> can the probe still separate them? Averaged over phrases.
   D. Matched-arousal test: stance decoded within each arousal level.
-  E. Speaker-identity control: fold-grouping by show vs by episode.
-  F. Training-free contrast-preservation score, within speaker x word.
+  E. Show-identity control: fold-grouping by show vs by episode. Note this controls
+     SHOW, not speaker: shows have multiple participants and guests recur across shows.
+  F. Training-free contrast-preservation score, within show x word. Its baseline is the
+     within-cell majority rate, NOT 0.50 -- see cps().
   G. Layer-wise curve: where in the stack the contrast is carried.
   H. Mimi codebook-level probe: where inside the tokenizer anything survives.
 
@@ -280,8 +282,12 @@ def matched_arousal(model_tag, man, best_layers):
 
 
 def speaker_control(model_tag, man, best_layers):
-    """E. Re-score grouping folds by SHOW (speaker). If F1 holds, the probe is not
-    riding speaker identity (train/test never share a show)."""
+    """E. Re-score grouping folds by SHOW. If F1 holds, the probe is not riding
+    show-level identity, since train/test never share a show.
+
+    This is a show control, not a speaker control: a show has a host plus guests, and
+    guests recur across shows, so train and test may still share a speaker.
+    """
     m, w, lay = _config(model_tag, best_layers)
     a = _arrays(m, w, man, lay)
     if a is None:
@@ -296,16 +302,22 @@ def speaker_control(model_tag, man, best_layers):
 
 def cps(model_tag, man, best_layers, min_each=3):
     """F. Training-free Contrast-Preservation Score. Within each (show, word) cell -
-    same speaker, same word - can leave-one-out nearest-centroid tell the two stances
-    apart from distances alone? Pure delivery: lexis and speaker are both held fixed.
-    Chance = 0.50."""
+    same show, same word - can leave-one-out nearest-centroid tell the two stances
+    apart from distances alone? Lexis and show are both held fixed.
+
+    NOT chance = 0.50. Cell eligibility only requires `min_each` exemplars of the
+    minority stance, so the qualifying cells are class-imbalanced and a coin flip is the
+    wrong reference. The baseline returned as `maj` is the within-cell majority rate:
+    the score obtained by always predicting each cell's dominant stance, over exactly the
+    same decisions CPS is scored on. A CPS below `maj` is a null result.
+    """
     m, w, lay = _config(model_tag, best_layers)
     a = _arrays(m, w, man, lay)
     if a is None:
         return None
     Xk, y, ar, ph, g, show = a
     Xs = StandardScaler().fit_transform(Xk)
-    correct = tot = cells = 0
+    correct = tot = cells = maj_correct = 0
     for sh in set(show):
         for phrase in set(ph):
             cell = (show == sh) & (ph == phrase)
@@ -317,12 +329,14 @@ def cps(model_tag, man, best_layers, min_each=3):
             if min(Counter(yc).values()) < min_each:
                 continue
             cells += 1
+            maj_correct += max(Counter(yc).values())   # always-predict-cell-majority
             for i in range(len(yc)):
                 keep = np.ones(len(yc), bool); keep[i] = False
                 cent = {c: Xc[keep][yc[keep] == c].mean(0) for c in top2}
                 pred = min(cent, key=lambda c: np.linalg.norm(Xc[i] - cent[c]))
                 correct += (pred == yc[i]); tot += 1
-    return dict(cps=correct / tot if tot else float("nan"), cells=cells, n=tot)
+    return dict(cps=correct / tot if tot else float("nan"), cells=cells, n=tot,
+                maj=maj_correct / tot if tot else float("nan"))
 
 
 def mimi_codebooks(man, perm=100, K=2048):
@@ -434,7 +448,9 @@ def main():
 
     print("\n" + "=" * 74)
     print("D. MATCHED-AROUSAL TEST  (3-way stance decoded WITHIN each arousal level)")
-    print("   stance still above majority at fixed arousal => not just loudness")
+    print("   stance still decodable at fixed arousal => not just loudness.")
+    print("   CAVEAT: 'maj' below is the majority-class score, which section A argues")
+    print("   understates chance. Judge against ~0.33, not against maj.")
     print("=" * 74)
     print(f"{'model':16s}{'low F1':>9}{'low maj':>9}{'low n':>7}"
           f"{'high F1':>10}{'high maj':>10}{'high n':>8}")
@@ -448,8 +464,10 @@ def main():
               f"{hi.get('maj',float('nan')):>10.3f}{hi.get('n',0):>8}")
 
     print("\n" + "=" * 74)
-    print("E. SPEAKER-IDENTITY CONTROL  (fold-grouping by SHOW vs by episode)")
-    print("   F1 holds under show-grouping => probe is not riding speaker identity")
+    print("E. SHOW-IDENTITY CONTROL  (fold-grouping by SHOW vs by episode)")
+    print("   F1 holds under show-grouping => probe is not riding SHOW identity.")
+    print("   Not a speaker control: guests recur across shows. 'major' understates")
+    print("   chance (see A); the permutation null is the right reference.")
     print("=" * 74)
     print(f"{'model':16s}{'by episode':>12}{'by show':>10}{'major':>8}{'#shows':>8}")
     for t in tags:
@@ -459,15 +477,19 @@ def main():
         print(f"{t:16s}{r['episode']:>12.3f}{r['show']:>10.3f}{r['maj']:>8.3f}{r['n_shows']:>8}")
 
     print("\n" + "=" * 74)
-    print("F. CONTRAST-PRESERVATION SCORE  (training-free, within speaker x word)")
-    print("   leave-one-out nearest-centroid on distances alone; chance = 0.50")
+    print("F. CONTRAST-PRESERVATION SCORE  (training-free, within show x word)")
+    print("   leave-one-out nearest-centroid on distances alone.")
+    print("   The reference is NOT 0.50: eligible cells are class-imbalanced, so the")
+    print("   baseline is 'cell-maj', always predicting each cell's dominant stance over")
+    print("   the same decisions. CPS at or below cell-maj is a NULL result.")
     print("=" * 74)
-    print(f"{'model':16s}{'CPS':>8}{'cells':>8}{'decisions':>11}")
+    print(f"{'model':16s}{'CPS':>8}{'cell-maj':>10}{'margin':>9}{'cells':>8}{'decisions':>11}")
     for t in tags:
         r = cps(t, man, best_layers)
         if not r:
             continue
-        print(f"{t:16s}{r['cps']:>8.3f}{r['cells']:>8}{r['n']:>11}")
+        print(f"{t:16s}{r['cps']:>8.3f}{r['maj']:>10.3f}{r['cps']-r['maj']:>+9.3f}"
+              f"{r['cells']:>8}{r['n']:>11}")
 
     print("\n" + "=" * 74)
     print("G. LAYER-WISE CURVE  (3-way stance macro-F1 per layer, W2_segment)")

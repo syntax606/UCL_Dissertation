@@ -1,3 +1,29 @@
+################################################################################
+# ERRATA — read before citing this file.
+#
+# This output predates the corrections in README.md and docs/limitations.md.
+# The numbers below are the actual run; three headers above them are wrong.
+#
+# 1. Section F states "chance = 0.50". That is the wrong reference. Cell
+#    eligibility requires only 3 exemplars of the minority stance, so the 15
+#    qualifying cells are class-imbalanced. Over the same 191 leave-one-out
+#    decisions, always predicting each cell's dominant stance scores 0.670.
+#    Every model below is under it (wavlm/whisper 0.618, hubert 0.613,
+#    text 0.592, mimi 0.560). Section F is a NULL result, not a weak positive.
+#    src/18_probe.py now computes and prints this baseline as 'cell-maj'.
+#
+# 2. Section E is a SHOW control, not a speaker control. Guests recur across
+#    shows, so train and test may share a speaker.
+#
+# 3. Sections D and E compare against 'major' (0.196), which Section A itself
+#    argues understates chance. Judge those rows against ~0.33.
+#
+# Also note: the audio 'layer' column in A is selected by maximising the same
+# out-of-fold score it reports, so those figures are upper bounds, and the
+# perm p values (floored at 0.005 = 1/201) are anticonservative for the audio
+# models. See docs/limitations.md.
+################################################################################
+
 labelled clips in manifest: 873
 stance dist: {'affiliative': 364, 'neutral': 147, 'adversarial': 362}
 
