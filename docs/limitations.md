@@ -30,22 +30,41 @@ than select the variant most favourable to the hypothesis, I include the full
 metric-by-preprocessing sensitivity table; the substantive claims rest on the well-powered
 probes alone.
 
-**Best-layer selection is not nested.** For the audio encoders the reported layer is the one
-that maximises out-of-fold macro-F1, and that same out-of-fold score is then reported as the
-result, so view A's audio figures are optimistically biased. The permutation null compounds
-this: it refits at the fixed winning layer rather than re-running the selection under
-permutation, so the p-values are anticonservative. The empirical magnitude is small — the
-layer curves have broad plateaus, and the winning layer exceeds the runner-up by only 0.018
-(WavLM), 0.010 (HuBERT) and 0.003 (Whisper), with top-three layer means of 0.561, 0.510 and
-0.561 — so the substantive ordering of representations is unaffected. But the point estimates
-should be read as upper bounds, and a properly nested selection would be the correct
-procedure. Mimi and the text baselines have no layer axis and are unaffected.
+**Best-layer selection was not nested in the published figures.** For the audio encoders the
+reported layer was the one maximising out-of-fold macro-F1, and that same out-of-fold score
+was then reported, so the audio figures in the published view A are optimistically biased.
+The permutation null compounded this: it refit at the fixed winning layer rather than
+re-running the selection under permutation, so those p-values are anticonservative. The
+empirical magnitude is small — the layer curves have broad plateaus, and the winning layer
+exceeds the runner-up by only 0.018 (WavLM), 0.010 (HuBERT) and 0.003 (Whisper), with
+top-three layer means of 0.561, 0.510 and 0.561 — so the substantive ordering of
+representations is unaffected. `src/18_probe.py` now performs **nested** selection by
+default: the layer is chosen by inner cross-validation on each outer fold's training data
+only, and the layer chosen in each fold is reported so its stability is visible. The
+published figures predate this and should be read as upper bounds until re-run;
+`--layer-selection best` reproduces the older behaviour. Mimi and the text baselines have no
+layer axis and are unaffected. The default permutation still permutes at a fixed layer,
+which is flagged in the output as slightly optimistic; `--perm-nested` makes it exact at
+roughly a hundredfold cost.
 
-**The permutation test is not episode-clustered.** The confidence intervals are: they come
-from a bootstrap that resamples whole episodes, respecting the nesting of clips within
-episodes. The permutation test does not — it shuffles stance labels freely. Because 654 of
-the 753 episodes contribute a single clip, the practical effect is small, but the null is not
-clustered and should not be described as though it were.
+**The permutation test was not episode-clustered in the published figures.** The confidence
+intervals always were: they come from a bootstrap that resamples whole episodes, respecting
+the nesting of clips within episodes. The permutation shuffled stance labels freely.
+`src/18_probe.py` now exchanges whole episodes' label blocks between episodes of equal size,
+so the null matches the bootstrap. Because 654 of the 753 episodes contribute a single clip
+the practical effect is small, but the published p-values were computed under the unclustered
+null.
+
+**Binary contrasts in view C were compared against the wrong reference.** The published view C
+reports a majority-class figure (0.335–0.417 across phrases) beside each within-word binary
+macro-F1. For a two-class probe with balanced class weights the majority score understates
+chance for the same reason set out above, and the empirical permutation null for a binary
+contrast sits near 0.50. `src/18_probe.py` now computes that null per phrase. This matters
+for interpretation in both directions: it widens the margin for the continuous audio models,
+and it means Mimi's published per-phrase mean of 0.466 is likely at or below chance rather
+than modestly above the majority baseline. That is a *stronger* result for the study's central
+claim — the tokenizer collapses the contrast — but it must be confirmed on a re-run rather
+than inferred from the published table.
 
 **Pooled decodability is partly lexical, and the speaker control is a show control.** The
 per-phrase stance base rates are strongly non-uniform, so word identity alone is informative:

@@ -33,6 +33,9 @@ dissertation_env/
 .DS_Store
 .ipynb_checkpoints/
 
+# Label source for src/18, created by copying labels/labels.csv (see README)
+manifest.csv
+
 # Machine-specific real paths (keep local)
 configs/paths.yaml
 # Abandoned Label Studio prep (superseded by offline annotator; held local paths)

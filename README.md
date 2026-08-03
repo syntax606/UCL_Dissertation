@@ -294,10 +294,11 @@ the shipped `labels/labels.csv` to `manifest.csv` as above — it carries every 
 needs (`stance`, `arousal`, `target_phrase`, `episode_id`, `show_name`). Regenerating the
 *text* features in `src/17` additionally needs the transcript columns, which are not shippable.
 
-**`--perm 0` does not fully skip permutations.** It suppresses them in views A–F, but view H
-still runs 100 permutations per block because of an argument-defaulting bug (`args.perm or 100`).
+**Permutation budget.** `--perm` (default 200) governs the headline views A and H;
+`--perm-secondary` (default 100) governs the cheaper views C–F. `--perm 0` disables every
+permutation test, view H included.
 
-It prints eight views:
+It prints nine sections (A, B, C, C2, D, E, F, G, H):
 
 - **A. Pooled 3-way stance decodability** per representation (best layer for the audio
   models), on the primary window `W2_segment`, against the empirical permutation null
@@ -309,8 +310,14 @@ It prints eight views:
 - **C. Per-phrase within-word binary contrast** — the lexical control: hold the word
   constant, vary only stance, and ask whether the probe still separates the two. This is
   the core test that isolates delivery from lexis; it is averaged over the eight phrases.
+  Each phrase carries its own permutation null, which for a binary contrast sits near 0.50 —
+  well above the majority figure the published run compared against.
+- **C2. View C excluding folded lexical variants** — re-runs C on bare tokens only, dropping
+  the `oh X` and `yeah right` clips that `src/13b` folds in, to show whether the result
+  depends on the folding.
 - **D. Matched-arousal test** — stance decoded *within* each arousal level, so a positive
-  result can't be dismissed as the model merely encoding loudness/arousal.
+  result can't be dismissed as the model merely encoding loudness/arousal. Reported against a
+  permutation null rather than the majority score.
 - **E. Show-identity control** — fold-grouping by *show* alongside the by-episode setting;
   if F1 holds, the probe isn't riding show-level identity. Note this controls **show, not
   speaker**: a show has multiple speakers and guests recur across shows, so this is a weaker
@@ -322,28 +329,50 @@ It prints eight views:
   dataset the 15 qualifying cells give a within-cell majority baseline of **0.670** across
   the 191 leave-one-out decisions. Every representation scores below it (wavlm 0.618,
   whisper 0.618, hubert 0.613, text 0.592, mimi 0.560), so view F does **not** support a
-  positive contrast-preservation claim at this sample size. See `docs/limitations.md`.
+  positive contrast-preservation claim at this sample size. The script now prints this
+  baseline as `cell-maj` with the margin, alongside a permutation null that shuffles stance
+  *within* each cell so every cell's class balance is preserved. See `docs/limitations.md`.
 - **G. Layer-wise curve** — 3-way macro-F1 per layer on `W2_segment`, showing where in the
   stack the contrast is carried.
 - **H. Mimi codebook-level probe** — each codebook probed alone, plus the full stack and
   codebooks 1–7, against per-block permutation nulls.
 
-**Two caveats on the inference procedure.**
+**Inference procedure.**
 
-*Best-layer selection.* For the audio models the reported layer is chosen by maximising the
-same out-of-fold macro-F1 that is then reported, so view A's audio figures are optimistically
-biased, and the permutation null — which refits at the fixed winning layer rather than
-re-running the selection — makes the p-values anticonservative. Empirically the effect is
-small here: the layer curves have broad plateaus, and the winning layer beats the runner-up
-by only 0.018 (wavlm), 0.010 (hubert) and 0.003 (whisper). The top-3 layer means are 0.561,
-0.510 and 0.561 respectively. This does not apply to mimi or text, which have no layer axis.
+*Layer selection is nested.* For the audio models the layer is chosen by inner
+cross-validation on each outer fold's **training data only**, so the reported score never sees
+the layer choice. The layer picked in each fold is printed, making its stability visible.
+`--layer-selection best` restores the older non-nested behaviour, which maximises the same
+out-of-fold score it then reports and is therefore optimistically biased; it exists only to
+reproduce earlier runs. Empirically the bias is small here — the layer curves have broad
+plateaus and the winning layer beats the runner-up by 0.018 (wavlm), 0.010 (hubert), 0.003
+(whisper) — but nested selection removes it rather than bounding it.
 
-*Permutation grouping.* The bootstrap resamples whole episodes, but the permutation test
-shuffles labels freely without respecting episode grouping. The impact is limited on this
-dataset (654 of 753 episodes contribute a single clip), but the null is not episode-clustered.
+*Permutation preserves episode clustering.* Whole episodes' label blocks are exchanged
+between episodes of the same size, rather than labels being shuffled freely, so the null
+matches the episode-cluster bootstrap. The default permutation for the audio models still
+runs at a fixed layer and is flagged in the output as slightly optimistic; `--perm-nested`
+makes it exact by redoing the nested selection under each permutation, at roughly a
+hundredfold cost.
 
-The reported `perm p` of 0.005 is the floor of `(0+1)/(200+1)` at `--perm 200`; read it as
-*p < 0.005*, not as a point estimate.
+*Reading p-values.* A `perm p` of 0.005 is the floor of `(0+1)/(200+1)` at `--perm 200`; read
+it as *p < 0.005*, not as a point estimate.
+
+> **`results/probe_results.txt` predates all of this.** It was produced with non-nested layer
+> selection, an unclustered permutation null, and majority-class baselines in views C–F. It
+> carries an errata header. Re-run `src/18_probe.py` to regenerate it.
+
+**Testing without a GPU.** `features/` is not committed and re-extracting it needs the audio,
+so `tests/make_synthetic_features.py` writes a fake `features/` with the same contract `src/17`
+produces. That lets the whole analysis be exercised end to end in minutes before committing
+GPU time. Its scores are meaningless by construction — never cite them.
+
+```bash
+python3 tests/make_synthetic_features.py
+cp labels/labels.csv manifest.csv
+python3 src/18_probe.py --perm 20 --perm-secondary 10
+rm -rf features manifest.csv
+```
 
 ---
 
