@@ -1,0 +1,10 @@
+IS THE RESIDUAL STANCE SIGNAL JUST AROUSAL?
+stance decoded WITHIN each arousal level. If a model's margin collapses here
+but survives pooled, its apparent stance signal was arousal in disguise.
+==============================================================================================
+model                             pooled             low arousal            high arousal
+                               margin  p          margin  p  (n)          margin  p  (n)
+WavLM                +0.238  0.008         +0.203  0.008  (528)   +0.223  0.008  (345)
+Mimi pre-quant       +0.136  0.008         +0.098  0.008  (528)   +0.137  0.008  (345)
+Mimi post-quant      +0.102  0.008         +0.070  0.008  (528)   +0.088  0.008  (345)
+Mimi histogram       +0.070  0.008         +0.044  0.025  (528)   +0.051  0.017  (345)
