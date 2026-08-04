@@ -1,0 +1,17 @@
+THREE-POINT LADDER, 3-way stance macro-F1, W2_segment
+====================================================================================
+full stack, 8 codebooks
+  WavLM, continuous teacher            0.573   chance 0.333   margin +0.239   p 0.007
+  Mimi pre-quantisation, continuous    0.466   chance 0.336   margin +0.130   p 0.007
+  Mimi post-quantisation, quantised    0.434   chance 0.334   margin +0.100   p 0.007
+  Mimi unigram histogram (src/17)      0.381   chance 0.312   margin +0.069   p 0.007
+
+  distillation + codec encoder costs +0.109
+  QUANTISATION ALONE costs           +0.030
+  histogram readout costs a further  +0.031
+
+semantic stream only, codebook 0, the WavLM-distilled one
+  Mimi pre-quantisation, semantic      0.445   chance 0.334   margin +0.110   p 0.007
+  Mimi post-quantisation, semantic     0.416   chance 0.332   margin +0.084   p 0.007
+
+  quantisation alone, semantic stream +0.026
