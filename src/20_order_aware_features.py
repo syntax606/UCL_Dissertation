@@ -94,8 +94,12 @@ def frames_whisper(enc, fe, wav, device, layer):
     return hs[layer][0, :valid].float().cpu().numpy()
 
 
-def frames_mimi(model, wav, device):
-    """Post-quantisation latent in the quantiser's projected space, per frame."""
+def frames_mimi(model, wav, device, stage="post"):
+    """Latent in the quantiser's projected space, per frame.
+
+    stage="post" returns the summed codebook vectors, stage="pre" returns
+    input_proj(encoder latent), the same vector before quantisation. Both live in
+    the same space, so a readout comparison between them isolates quantisation."""
     import torch
     x = torch.tensor(wav)[None, None].to(device)
     with torch.no_grad():
@@ -111,7 +115,7 @@ def frames_mimi(model, wav, device):
             post = torch.zeros_like(pre)
             for i, idx in enumerate(cb.transpose(0, 1)):
                 post = post + rvq.layers[i].decode(idx)
-            parts.append(post)
+            parts.append(pre if stage == "pre" else post)
         f = torch.cat(parts, dim=1)          # (1, D, T)
     return f[0].transpose(0, 1).float().cpu().numpy()   # (T, D)
 
@@ -122,6 +126,8 @@ def main():
     ap.add_argument("--window", default="W2_segment")
     ap.add_argument("--segments", type=int, default=4)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--stage", default="post", choices=["pre", "post"],
+                    help="mimi only: quantiser-space latent before or after quantisation")
     args = ap.parse_args()
 
     import torch
@@ -136,7 +142,7 @@ def main():
         if model_key == "mimi":
             from transformers import MimiModel
             model = MimiModel.from_pretrained(CKPT["mimi"]).to(device).eval()
-            get, sr = (lambda w: frames_mimi(model, w, device)), 24000
+            get, sr = (lambda w: frames_mimi(model, w, device, args.stage)), 24000
         elif model_key == "wavlm":
             from transformers import AutoFeatureExtractor, AutoModel
             fe = AutoFeatureExtractor.from_pretrained(CKPT["wavlm"])
@@ -162,7 +168,8 @@ def main():
 
         for k, X in acc.items():
             X = np.asarray(X, dtype=np.float32)
-            p = OUT / f"{model_key}_{k}" / f"{args.window}.npz"
+            suffix = f"_{args.stage}" if model_key == "mimi" and args.stage == "pre" else ""
+            p = OUT / f"{model_key}{suffix}_{k}" / f"{args.window}.npz"
             p.parent.mkdir(parents=True, exist_ok=True)
             np.savez_compressed(p, ids=np.array(ids), X=X,
                                 meta=np.array([f"readout={k}", f"segments={args.segments}"]))

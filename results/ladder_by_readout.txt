@@ -1,0 +1,15 @@
+QUANTISATION COST UNDER BOTH READOUTS (W2, 3-way stance margin)
+========================================================================
+readout       pre-quant   post-quant   quantisation
+meanstd          +0.132       +0.099         +0.033
+seg4             +0.152       +0.096         +0.056
+delta            +0.118       +0.153         -0.036
+
+FULL LADDER, primary readout meanstd, with delta in brackets
+========================================================================
+  WavLM teacher            +0.248   [+0.239]
+  Mimi pre-quantisation    +0.132   [+0.118]
+  Mimi post-quantisation   +0.099   [+0.153]
+
+  encoder + distillation   +0.116   [+0.121]
+  quantisation alone       +0.033   [-0.036]
