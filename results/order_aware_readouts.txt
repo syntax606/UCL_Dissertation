@@ -1,0 +1,22 @@
+DOES TEMPORAL ORDER CARRY STANCE?
+same forward pass, only the readout changes. W2_segment, 3-way stance.
+==========================================================================================
+model   readout      dims   macroF1   chance   margin       p   vs meanstd
+wavlm   meanstd      2048     0.577    0.333   +0.244   0.007       +0.000
+wavlm   seg4         8192     0.580    0.330   +0.250   0.007       +0.006
+wavlm   delta        4096     0.571    0.330   +0.241   0.007       -0.003
+
+mimi    meanstd      1024     0.434    0.334   +0.100   0.007       +0.000
+mimi    seg4         4096     0.429    0.332   +0.097   0.007       -0.004
+mimi    delta        2048     0.485    0.332   +0.153   0.007       +0.053
+
+AROUSAL, for comparison
+==========================================================================================
+wavlm   meanstd      2048     0.634    0.500   +0.134   0.007       +0.000
+wavlm   seg4         8192     0.681    0.497   +0.183   0.007       +0.049
+wavlm   delta        4096     0.635    0.500   +0.135   0.007       +0.001
+
+mimi    meanstd      1024     0.568    0.500   +0.068   0.007       +0.000
+mimi    seg4         4096     0.574    0.499   +0.076   0.007       +0.008
+mimi    delta        2048     0.555    0.498   +0.057   0.013       -0.011
+
