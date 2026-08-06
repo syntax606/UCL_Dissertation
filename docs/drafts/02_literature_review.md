@@ -1,8 +1,8 @@
 # Chapter 2: Literature Review
 
 *(Draft. Target budget ~2,300 words. Compressed from the long-form draft, and citations are the
-verified set in docs/literature_references_verified.md. Two claims flagged [verify] must be
-checked against the paper bodies before submission.)*
+verified set in docs/literature_references_verified.md. One claim flagged [verify] remains to be
+checked against the paper body before submission.)*
 
 ## 2.1 Introduction
 
@@ -133,11 +133,15 @@ level prosody tokens. Segmentation-Variant Codebooks (Sanders et al., 2025) make
 complementary argument that a single flat token rate fails to preserve prosodic and paralinguistic
 information. Both imply that standard tokenisation is not built to retain what this study targets.
 
-The most precise recent evidence both supports and tempers the loss hypothesis. A study of speech
-emotion recognition from discrete tokens (Sun et al., 2026) quantifies a substantial drop in
-macro-F1 relative to continuous features [verify exact figure], but crucially shows the loss is
-largely recoverable through attention-based multi-layer fusion and the explicit reintroduction of
-paralinguistic features. This recoverability is the single most important constraint on the
+The most precise recent evidence both supports and tempers the loss hypothesis. Sun et al. (2026)
+discretise a fine-tuned WavLM and evaluate speech emotion recognition on MSP-Podcast, reporting
+that discrete tokens reach macro-F1 between 0.3133 and 0.3479, a 6 to 14 per cent drop relative to
+continuous features. Two details of that result matter here beyond the headline figure. The loss is
+largely recoverable, through attention-based multi-layer fusion and the explicit reintroduction of
+paralinguistic features, which is the constraint discussed below. And continuous features are
+stable across layer configurations while discrete ones fluctuate, so instability across
+configurations is itself a signature of information loss, a diagnostic this study returns to in
+[Ch.4]. This recoverability is the single most important constraint on the
 framing. The defensible claim is therefore not that tokenisation destroys paralinguistic content,
 which that recovery falsifies, but that *default* tokenisation discards content that is
 recoverable only with deliberate intervention, and that deployed systems consume the defaults off
@@ -190,6 +194,23 @@ continuous representations and the discrete tokens deployed systems consume. The
 not that speech beats text. It is that speech beats text *when the word is held constant*, which
 isolates delivery from lexical choice, and it is this isolation that licenses the inadequacy
 claim about deployed tokenisation.
+
+A note on convergent design. Yang et al. (2026) independently adopt the same control at the level
+of whole systems, requiring benchmark queries to carry neutral textual content so that a model
+"cannot infer the speaker's state from words alone and must attend to vocal cues". That their
+construction rule and this study's lexical control were arrived at separately is evidence the move
+is the right one rather than an idiosyncrasy of this design. Their result also supplies the stake.
+A cascaded pipeline that transcribes the query and discards speaking style entirely scores 3.18 on
+their benchmark, while leading end-to-end speech-to-speech models reach only 3.37, and two score
+below the pipeline. Systems built to preserve paralinguistic information perform close to systems
+that throw it away. The present study asks whether the representation those systems consume is part
+of the reason.
+
+The two studies are complementary rather than overlapping. Theirs is behavioural and asks whether a
+system responds appropriately, this one is representational and asks whether the contrast is
+present to be responded to. Theirs uses mostly synthesised queries and acted corpora, this one
+spontaneous speech. Theirs covers emotion, sarcasm, age and gender at the level of a dialogue turn,
+this one pragmatic force within a single held-constant word.
 
 The literature thus establishes three things and frames a fourth question. It establishes that discrete
 tokenisation is lossy and weakest in the prosodic-paralinguistic band, that continuous self-

@@ -122,6 +122,18 @@ Keeping the full stack matters for two reasons. It represents Mimi at the granul
 model built on it would actually consume, and it allows the codebook-level analysis in [Ch.4] to
 probe each stream separately rather than assuming in advance where pragmatic information sits.
 
+Codebook-level analysis is ordinarily confounded, and it is worth stating why this design escapes
+that. Shi et al. (2026) show that the phonetic content of a Mimi code stream is not confined to
+the distilled first codebook, finding that "even without the first layer, as the acoustic codebook
+layers go deeper, the speech features from these layers also accumulate a substantial" amount of
+phonetic information. For an uncontrolled study that is a serious problem, because a probe
+separating classes at codebook level cannot be shown to be reading paralinguistic rather than
+phonetic structure. Here it is not a problem. Because the target word is held constant across the
+contrast, phonetic content is constant across it too, so any discriminative signal a probe
+recovers cannot be phonetic in origin. The lexical control neutralises the confound that pervades
+codebook-level analysis, which is a second reason for the design beyond isolating delivery from
+lexical choice.
+
 **Text baseline.** A sentence-transformer (MPNet) encodes two texts per clip, following the two
 roles the premise check established. The **target-only** embedding encodes the bare target word.
 Because the word is held constant within a phrase, this embedding is near-identical across that
@@ -143,6 +155,13 @@ features, with balanced class weights to offset the neutral minority. All report
 **out-of-fold under GroupKFold by episode**, so no episode's clips ever appear in both training and
 test, which prevents leakage through shared speaker, topic, or recording conditions. The primary
 metric is macro-F1 over the three stance classes.
+
+**Choice of readout.** Frame-level representations are summarised by concatenating the per-dimension
+mean and standard deviation over time, which is the convention in the probing literature and is
+applied identically to every representation. This readout is fixed as primary in advance of the
+analyses reported in [Ch.4]. Because it is order-free, alternatives that retain temporal structure
+are reported as a sensitivity analysis rather than as competing headline figures, and the choice of
+primary readout is not revisited in light of those results.
 
 **Choice of chance level.** Macro-F1 has no fixed chance value, so the reference matters. A
 majority-class constant predictor scores only 0.196 here, because macro-F1 assigns zero to each

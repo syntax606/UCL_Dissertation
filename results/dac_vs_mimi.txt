@@ -1,0 +1,21 @@
+ACOUSTIC vs HYBRID CODEC, matched at 8 codebooks, meanstd readout, W2
+========================================================================================
+representation                          macroF1   chance   margin       p
+WavLM  continuous                         0.577    0.333   +0.244   0.007
+DAC    pre-quant  (acoustic only)         0.395    0.333   +0.062   0.007
+DAC    post-quant (acoustic only)         0.419    0.331   +0.087   0.007
+Mimi   pre-quant  (WavLM-distilled)       0.465    0.333   +0.132   0.007
+Mimi   post-quant (WavLM-distilled)       0.434    0.335   +0.099   0.007
+
+  quantisation cost, DAC   -0.025
+  quantisation cost, Mimi  +0.034
+  encoder cost, DAC        +0.182
+  encoder cost, Mimi       +0.112
+
+AROUSAL, same representations
+========================================================================================
+WavLM  continuous                         0.634    0.499   +0.135   0.007
+DAC    pre-quant  (acoustic only)         0.574    0.499   +0.075   0.007
+DAC    post-quant (acoustic only)         0.538    0.501   +0.037   0.020
+Mimi   pre-quant  (WavLM-distilled)       0.605    0.497   +0.108   0.007
+Mimi   post-quant (WavLM-distilled)       0.568    0.500   +0.068   0.007
