@@ -82,6 +82,29 @@ with 1024-entry codebooks against Mimi's 12.5 Hz and 2048, so frame rate and cod
 alongside the training objective. The direction of the effect is large, roughly a factor of two,
 but it is not a clean ablation of distillation alone.
 
+## Linear probing measures accessibility, and that was tested
+
+A linear probe reports whether information is linearly accessible rather than whether it is
+present, so a low score is in principle ambiguous between a representation having lost the
+distinction and a representation encoding it in a form the probe cannot reach. That ambiguity would
+bear most heavily on the continuous-against-discrete comparison, since quantised vectors occupy a
+finite set of fixed positions and there is no guarantee they are as linearly separable as a
+continuous manifold carrying equivalent information.
+
+The concern was tested rather than argued around. A small non-linear probe on identical features
+and identical folds recovers no additional stance from any representation, with gains between
+-0.059 and -0.009. It is functioning, clearing its own permutation null on both WavLM and Mimi at
+p 0.032, so the shortfall is the cost of fitting a more flexible model to 873 examples. Crucially
+the direction runs against the confound. Had discreteness been penalising the linear probe, Mimi
+should have gained most from the extra flexibility, and it gained least.
+
+Two residual points remain. The non-linear probe was kept deliberately small and strongly
+regularised, because a sufficiently powerful probe can learn a task from almost any representation
+and thereby report on itself, so this rules out modest non-linear encoding rather than any
+conceivable encoding. And accessibility to a probe is not the same as usability by a downstream
+model, which is why the claims in the discussion are framed as a ceiling rather than a prediction
+about system behaviour.
+
 ## Other constraints
 
 Target-only text is at chance only within a phrase, not pooled across phrases, because the

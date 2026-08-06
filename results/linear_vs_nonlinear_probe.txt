@@ -1,0 +1,18 @@
+LINEAR vs NON-LINEAR PROBE, 3-way stance, W2, identical features and folds
+A large non-linear gain would mean the information was present but not linearly
+accessible, and that the linear figures understate that representation.
+======================================================================================
+representation          linear       MLP      gain
+WavLM                    0.573     0.536    -0.037
+Whisper encoder          0.564     0.505    -0.059
+HuBERT                   0.520     0.467    -0.053
+Mimi pre-quant           0.466     0.446    -0.020
+Mimi post-quant          0.434     0.425    -0.009
+Mimi histogram           0.381     0.345    -0.036
+DAC post-quant           0.419     0.388    -0.031
+Text, context            0.378     0.361    -0.017
+
+MLP permutation null, 30 permutations, to confirm the MLP is not simply overfitting
+======================================================================================
+WavLM                MLP 0.536   null mean 0.332   margin +0.204   p 0.032
+Mimi post-quant      MLP 0.425   null mean 0.322   margin +0.104   p 0.032

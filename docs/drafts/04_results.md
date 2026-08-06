@@ -89,6 +89,19 @@ four-segment pooling and +0.241 with frame-to-frame deltas added. For Mimi it is
 WavLM. This is not a capacity effect, since four-segment pooling gives Mimi four times the
 dimensions without benefit and WavLM's delta condition doubles its dimensions without benefit.
 
+**Probe capacity.** A non-linear probe on identical features and folds recovers no additional
+stance from any representation. Gains over the linear probe are negative throughout, ranging from
+-0.059 for the Whisper encoder to -0.009 for Mimi after quantisation, with WavLM at -0.037 and the
+Mimi histogram at -0.036. The non-linear probe is functioning, clearing its own permutation null by
++0.204 on WavLM and +0.104 on Mimi at p 0.032 in both cases, so the shortfall reflects the cost of
+fitting a more flexible model to 873 examples rather than a failure to train.
+
+Two consequences follow. Linear accessibility is not the limiting factor, so the reported figures
+describe content rather than reach. And the continuous-against-discrete comparison is not distorted
+by representation type. Had quantised vectors been systematically harder for a linear probe, Mimi
+would have gained most from the additional flexibility. It gained least, -0.009 against WavLM's
+-0.037, which is the opposite of that confound.
+
 ## 4.5 Where the contrast lives
 
 **Across layers.** WavLM rises from 0.402 at layer 0 to a peak of 0.573 at layer 20 of 24, then

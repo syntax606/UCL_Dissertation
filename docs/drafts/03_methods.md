@@ -174,6 +174,14 @@ respectively, closely agreeing). The majority figure is reported alongside for c
 Using the permutation null rather than the majority score materially changes interpretation of
 the weaker representations, as Chapter 4 discusses.
 
+**Probe capacity.** A linear probe measures whether information is linearly accessible, which is
+not the same as whether it is present. To test that this constraint is not driving the results, a
+small non-linear probe was run as a companion on identical features and identical folds, a
+single-hidden-layer network of 64 units with strong weight decay and early stopping. It is kept
+deliberately small, because a sufficiently powerful probe can learn a task from almost any
+representation and thereby report on itself rather than on the encoding. The comparison of interest
+is the gain over the linear probe, and the result is given in [Ch.4].
+
 **Uncertainty and significance.** Two procedures accompany every headline score. A 95%
 confidence interval is obtained by an **episode-cluster bootstrap** that resamples whole episodes
 rather than individual clips, respecting the non-independence of clips nested in episodes. A
