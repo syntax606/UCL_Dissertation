@@ -1,0 +1,48 @@
+<style>
+  html,body{margin:0;background:transparent;}
+  .w{width:1360px;padding:22px 26px;font-family:Arial,Helvetica,sans-serif;color:#3C3C3C;}
+  .hd{font-size:23px;font-weight:bold;color:#0F7A84;letter-spacing:1.2px;margin-bottom:8px;}
+  .sub{font-size:20px;color:#6E6E6E;margin-bottom:26px;}
+  .row{display:grid;grid-template-columns:330px 1fr 130px;align-items:center;column-gap:16px;}
+  .lab{font-size:22px;text-align:right;line-height:1.25;}
+  .lab.k{font-weight:bold;color:#1A1A1A;}
+  .track{height:34px;position:relative;}
+  .bar{height:34px;border-radius:2px;}
+  .val{font-size:22px;font-weight:bold;color:#1A1A1A;}
+  .drop{grid-column:1 / -1;font-size:19px;font-style:italic;color:#B4522F;padding:9px 0 9px 346px;}
+  .rule{border-top:1px solid #D8DBDE;margin:20px 0 18px;}
+  .cap{grid-column:1 / -1;font-size:19px;font-style:italic;color:#6E6E6E;padding:7px 0 0 346px;}
+  .read{margin-top:30px;font-size:21px;line-height:1.45;border-top:1px solid #D8DBDE;padding-top:18px;}
+  .read b{color:#1A1A1A;}
+</style>
+<div class="w">
+  <div class="hd">WHERE THE CONTRAST IS LOST</div>
+  <div class="sub">Three-way stance, margin over each model's own permutation null. All p &le; 0.01.</div>
+
+  <div class="row">
+    <div class="lab k">WavLM<br><span style="font-weight:normal;color:#6E6E6E;font-size:19px">continuous</span></div>
+    <div class="track"><div class="bar" style="width:100%;background:#0F7A84"></div></div>
+    <div class="val">+0.244</div>
+    <div class="drop">&darr;&nbsp; codec encoder and distillation, &minus;0.112</div>
+    <div class="lab">Mimi<br><span style="color:#6E6E6E;font-size:19px">before quantisation</span></div>
+    <div class="track"><div class="bar" style="width:54.1%;background:#5E9BA2"></div></div>
+    <div class="val">+0.132</div>
+    <div class="drop">&darr;&nbsp; quantisation, only &minus;0.033</div>
+    <div class="lab k">Mimi<br><span style="font-weight:normal;color:#6E6E6E;font-size:19px">after quantisation</span></div>
+    <div class="track"><div class="bar" style="width:40.6%;background:#5E9BA2"></div></div>
+    <div class="val">+0.099</div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="row">
+    <div class="lab">DAC<br><span style="color:#6E6E6E;font-size:19px">after quantisation</span></div>
+    <div class="track"><div class="bar" style="width:35.7%;background:#B4522F"></div></div>
+    <div class="val">+0.087</div>
+    <div class="cap">purely acoustic, no distillation, 75 Hz</div>
+  </div>
+
+  <div class="read"><b>Read the two drops.</b> The encoder discards three times what quantisation
+  does, so the token bottleneck is not the bottleneck. And the codec with no distillation keeps
+  less, not more.</div>
+</div>
