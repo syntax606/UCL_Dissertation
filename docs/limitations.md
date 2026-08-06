@@ -61,11 +61,26 @@ as well, so that the only difference between conditions is quantisation.
 
 ## The distillation estimate is an upper bound
 
-In the three-point ladder, WavLM contributes 2,048 pooled features against Mimi's 1,024, so
-part of the 0.109 attributed to distillation and the codec encoder could be dimensionality
-rather than information loss. The quantisation estimate does not suffer from this, because
-pre-quantisation and post-quantisation representations have identical dimensionality,
-identical pooling and an identical source. Trust the 0.030 and treat the 0.109 as a ceiling.
+In the ladder, WavLM contributes 2,048 pooled features against Mimi's 1,024, so part of the
+0.112 attributed to distillation and the codec encoder could be dimensionality rather than
+information loss. The quantisation estimate does not suffer from this, because pre-quantisation
+and post-quantisation representations have identical dimensionality, identical pooling and an
+identical source. Trust the 0.034 and treat the 0.112 as a ceiling.
+
+## The distillation attribution is associational
+
+Section 3 of the discussion attributes Mimi's comparative retention of pragmatic stance to its
+WavLM distillation objective. Two comparisons support that, one across codecs and one within Mimi,
+and the internal one holds architecture, frame rate, training data and audio constant. Neither is
+the decisive experiment, which would be training the same codec with and without the distillation
+objective and comparing. That is beyond the compute available here, so the claim is that
+distillation is associated with better retention, twice and once cleanly, rather than that it
+causes it.
+
+The cross-codec half of the evidence carries a further confound worth naming. DAC runs at 75 Hz
+with 1024-entry codebooks against Mimi's 12.5 Hz and 2048, so frame rate and codebook geometry vary
+alongside the training objective. The direction of the effect is large, roughly a factor of two,
+but it is not a clean ablation of distillation alone.
 
 ## Other constraints
 

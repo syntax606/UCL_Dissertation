@@ -37,16 +37,26 @@ normalised against its own ceiling.
 
 ## 2. The bottleneck is upstream of the tokens
 
-Decomposing the WavLM to Mimi gap into three controlled steps.
+Decomposing the gap into controlled steps, with each margin taken over that configuration's own
+permutation null. All figures below come from a single run so they are internally consistent.
 
-| Step | cost in margin | share |
-|---|---|---|
-| Distillation and codec encoder | 0.109 | 64% |
-| Quantisation alone | 0.030 | 18% |
-| Histogram readout | 0.031 | 18% |
+| Representation | margin | encoder costs | quantisation costs |
+|---|---|---|---|
+| WavLM, continuous | +0.244 | | |
+| DAC, purely acoustic | +0.087 | 0.182 | -0.025 |
+| Mimi, WavLM-distilled | +0.099 | 0.112 | +0.034 |
 
-Quantisation, the step this study set out to indict, is the smallest of the three. Most of
-the loss happens inside the codec encoder, before anything is discretised.
+Quantisation, the step this study set out to indict, is the smallest contributor in both codecs
+and in DAC it is slightly negative. Most of the loss happens inside the codec encoder, before
+anything is discretised, and that pattern replicates across two independent architectures.
+
+The quantisation figure is also not a stable quantity. Measured under three readouts it ranges
+from +0.056 to -0.036, enough to change sign, while the encoder cost holds at 0.116 against 0.121
+across the same readouts. So the encoder loss is a property of the representation and the
+quantisation loss is a property of the representation and the measurement together. Sun et al.
+(2026) report the same signature from a different direction, noting that continuous features are
+stable across configurations while discrete ones fluctuate, and treating that instability as
+evidence of information loss in its own right.
 
 This is the point of contact with the literature. ProsodyLM (Qian et al., 2025) proposes
 explicit word-level prosody tokens and Segmentation-Variant Codebooks (Sanders et al., 2025)
@@ -59,7 +69,50 @@ than argument.
 It also changes the engineering implication. More codebooks or finer quantisation would
 address 18 percent of the problem.
 
-## 3. The security argument, stated at the strength the data allows
+## 3. The preservation is incidental, and therefore unprotected
+
+Distillation is the one component that measurably helps, and it was not added for this.
+
+The Moshi report states the purpose plainly. Mimi "uses distillation to transfer non-causal,
+high-level semantic information into the tokens produced by a causal model, allowing for streaming
+encoding and decoding of semantic-acoustic tokens", and the reason for folding it into a single
+tokeniser rather than running two was cost, since "generating acoustic and semantic tokens with
+separate encoders represents a non-negligible computational burden". Prosody, emotion, stance and
+the interpersonal layer appear nowhere in the motivation.
+
+So the mechanism is accidental twice over. The stated target was semantic content, meaning lexical
+meaning, and Shi et al. (2026) show that what distillation from WavLM actually transfers is
+phonetic knowledge rather than semantic. The designers missed their own target. And the data here
+shows the distilled stream is the only part of Mimi carrying appreciable pragmatic stance, a target
+nobody was aiming at. It arrives because a student trained to match a teacher's representations
+inherits whatever that teacher happens to encode, and WavLM encodes stance.
+
+Two lines of evidence support the attribution, and they are not equally strong. Across codecs,
+distilled Mimi retains roughly twice the stance that undistilled DAC does, which is suggestive but
+confounded by frame rate, codebook geometry, architecture and training data. Within Mimi, codebook
+0 is the best single codebook at 0.402 while five of the seven acoustic codebooks are
+indistinguishable from chance, and here architecture, frame rate, training data and audio are all
+held constant, so the only systematic difference is the distillation objective. The internal
+comparison is the one to lean on.
+
+The consequence is what makes this worth reporting rather than a footnote. An accidental benefit is
+an unprotected one. No loss term optimises for it, no ablation in the Moshi report evaluates it,
+and no standard codec metric is sensitive to it. Reconstruction quality, word error rate and
+perceptual scores would all be unaffected if it disappeared. A successor system could swap the
+teacher, drop distillation for something cheaper, or tune it toward transcription accuracy, and the
+pragmatic retention would go with it while every published number improved.
+
+A formulation for the write-up.
+
+> Mimi's distillation objective was introduced to transfer high-level semantic information into a
+> causal tokeniser at acceptable computational cost. It was not motivated by paralinguistic
+> preservation, and the Moshi report does not evaluate it in those terms. Nevertheless it is the
+> only component of the tokeniser that measurably retains pragmatic stance. The preservation is
+> therefore incidental rather than designed, and because no standard codec metric is sensitive to
+> it, it could be removed or degraded in a successor system without appearing as a regression on
+> any reported benchmark.
+
+## 4. The security argument, stated at the strength the data allows
 
 **What was hypothesised.** That systems built on these representations may encode activation
 and treat it as though it were intent, so that loudness stands in for emotional stance. If
@@ -90,7 +143,7 @@ show that any deployed system uses arousal for safety decisions, and it runs no 
 chain from asymmetry to vulnerability is a hypothesis consistent with the jailbreak
 literature, not a demonstration. State it as such.
 
-## 4. The ceiling argument, which is how the motivation stays rigorous
+## 5. The ceiling argument, which is how the motivation stays rigorous
 
 The study cannot speak to conversational competence, since it measures whether information
 is linearly decodable from a frozen representation and not whether a system uses it well,
@@ -111,7 +164,7 @@ VoxParadox is worth positioning against directly. It documents information that 
 and unused. This study documents information that is absent. A better language model can fix
 the former. Nothing downstream can fix the latter.
 
-## 5. Where the contrast lives
+## 6. Where the contrast lives
 
 WavLM peaks at layer 20 of 24 and falls away above it, consistent with upper layers
 abstracting toward linguistic content and shedding paralinguistics. Whisper plateaus across
