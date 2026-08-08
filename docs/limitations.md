@@ -9,19 +9,29 @@ is stable across context windows and fold-grouping schemes. The matched-arousal 
 stronger than originally reported, because it has since been run on every representation
 rather than only the continuous ones, and stance survives at fixed arousal in all of them.
 
-## The contrast-preservation score is a null result
+## The contrast-preservation score does not discriminate
 
 This is stated plainly because an earlier draft described it as weak corroboration, which
 was wrong.
 
 CPS was reported against a stated chance level of 0.50 on the grounds that the within-cell
 contrast is binary. That reference is incorrect. Cell eligibility requires only three
-exemplars of the minority stance, so eligible cells are class-imbalanced, and the
-appropriate baseline is the within-cell majority rate. Measured over the same 15 cells and
-191 leave-one-out decisions, that baseline is **0.670**. Every representation falls below
-it, WavLM and Whisper at 0.618, HuBERT at 0.613, text at 0.592 and Mimi at 0.560. The
-measure therefore does not support the hypothesis, and it should be reported as a null
-rather than as directional agreement.
+exemplars of the minority stance, so eligible cells are class-imbalanced and a constant
+predictor already beats 0.50.
+
+An intermediate draft replaced it with the within-cell majority rate of **0.670** and said every
+representation falls below it. That was also too strong, in the opposite direction. The whole-cell
+majority counts the held-out item's own label when deciding which class is the majority, which is
+exactly the leakage leave-one-out is designed to prevent, so it is optimistic. The leave-one-out
+majority, which sees only what the classifier sees, is **0.545**, but it is anti-correlated with the
+truth on near-balanced cells and so is pessimistic. Neither is clean.
+
+Over the same 15 cells and 191 decisions the defensible interval is therefore **[0.545, 0.670]**, and
+every representation falls inside it, WavLM and Whisper at 0.618, HuBERT at 0.613, text at 0.592 and
+Mimi at 0.560. The correct report is that the measure does not discriminate in either direction. It
+is uninformative rather than a clean null, and it should not be presented as evidence for or against
+the hypothesis. Both baselines and the cell counts are computed exactly from labels alone in
+`src/23_cps_baseline.py`, so this no longer rests on a figure with no provenance.
 
 Two things compound this. The measure is underpowered, since only 15 of the available
 speaker-by-word cells clear the eligibility threshold and 27 more sit exactly one clip
@@ -38,7 +48,8 @@ any stance signal that is really arousal in disguise.
 
 It does not. Stance remains significant within each arousal level in every representation,
 including the discrete ones, at p 0.025 and p 0.017 for the Mimi histogram. Margins fall by
-roughly a quarter to a third, so the two axes are partly entangled, but stance is not
+between 6 and 37 per cent in seven of the eight cells and not at all in the eighth,
+so the two axes are partly entangled, but stance is not
 reducible to arousal anywhere tested. The claim that these systems confuse the two is
 therefore not supported by this data and is not made.
 
@@ -142,9 +153,10 @@ A better-powered training-free measure would require depth-first collection, ass
 smaller set of speaker-by-word cells each populated with many exemplars of both stances, so
 that within-cell centroids are estimated stably. Naturalistic political-podcast audio makes
 this hard, since matched within-speaker minimal pairs are rare, and scripted or elicited
-speech would probably be needed to guarantee coverage. Given that every representation
-currently sits below the correct baseline, more power would most likely sharpen a null
-rather than reverse it.
+speech would probably be needed to guarantee coverage. More power would also narrow the gap between
+the two candidate baselines, since both artefacts that separate them, the leakage in one and the
+near-balanced-cell pathology in the other, shrink as cells grow. That is the main reason to expect a
+better-powered version to be interpretable at all, rather than to expect it to reverse the sign.
 
 Two methodological refinements would help. The distance metric and any dimensionality
 reduction should be fixed in advance rather than chosen after seeing results. And a measure

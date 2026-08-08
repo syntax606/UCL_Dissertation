@@ -140,7 +140,10 @@ contrast to Mimi. It is a purely acoustic codec trained on reconstruction and ad
 with no distillation term, so it sits on the reconstruction-only branch of the lineage described in
 [2.2]. It differs from Mimi in frame rate, at 75 Hz against 12.5, and in codebook size, at 1,024
 entries against 2,048, so it is not a controlled ablation of the distillation objective and is not
-presented as one. Its eight codebooks are used, matching Mimi's deployed depth.
+presented as one. Its frame rate follows from an encoder stride of 320 at 24 kHz. The checkpoint
+provides 32 residual codebooks against Mimi's 8, so the first eight are used, matching Mimi's
+deployed depth and making the two ladders comparable at equal quantiser count rather than at equal
+bitrate.
 
 **Isolating quantisation.** Comparing a continuous encoder against a token stream confounds
 quantisation with feature construction, frame rate, architecture and training objective. To separate

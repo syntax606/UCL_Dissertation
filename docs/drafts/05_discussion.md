@@ -45,8 +45,9 @@ on any single system, and that ordering is testable on a common corpus.
 
 ## 5.3 What is stable and what is not
 
-The encoder loss is a property of the representation. Measured under three readouts it holds at
-0.116 and 0.121, a difference inside run-to-run variation from permutation sampling.
+The encoder loss is a property of the representation. Under the two readouts for which it was
+computed it holds at 0.116 and 0.121, a difference inside run-to-run variation from permutation
+sampling.
 
 The quantisation loss is not. Across the same readouts it ranges from +0.056 to -0.036, a swing
 large enough to change its sign. Its apparent magnitude is therefore a joint property of the
@@ -108,9 +109,10 @@ objectives are chosen, the finding is a design observation rather than a limit.
 
 Three hypotheses were tested and not supported, and reporting them constrains the claims above.
 
-The contrast-preservation score is a null. Against the correct within-cell majority baseline of
-0.670 every representation falls below, so the measure does not corroborate the probing results and
-is reported as a failure rather than as weak agreement [Ch.4].
+The contrast-preservation score does not discriminate. The two defensible no-skill baselines for it
+disagree, at 0.545 and 0.670, and every representation falls inside that interval, so the measure
+neither corroborates the probing results nor contradicts them and is reported as uninformative rather
+than as weak agreement [Ch.4].
 
 The proposal that these representations encode activation and are read downstream as intent was
 tested directly by holding arousal constant. Stance survives at fixed arousal in every

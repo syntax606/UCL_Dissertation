@@ -1,8 +1,8 @@
 # Chapter 2: Literature Review
 
 *(Draft. Target budget ~2,300 words. Compressed from the long-form draft, and citations are the
-verified set in docs/literature_references_verified.md. One claim flagged [verify] remains to be
-checked against the paper body before submission.)*
+verified set in docs/literature_references_verified.md. All quoted material and all figures
+attributed to other papers have been checked against those papers.)*
 
 ## 2.1 Introduction
 

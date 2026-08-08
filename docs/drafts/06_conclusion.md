@@ -26,8 +26,9 @@ and computational economy rather than for anything paralinguistic [Ch.5].
 ## 6.2 Limitations
 
 Three hypotheses were tested and not supported, and reporting them is part of the result. The
-contrast-preservation score falls below its correct within-cell majority baseline of 0.670 in every
-representation, so it is a null and not corroboration. The proposal that these representations
+contrast-preservation score falls inside the interval between its two defensible baselines, 0.545 and
+0.670, in every representation, so it does not discriminate and is not corroboration. The proposal
+that these representations
 encode activation and are read downstream as intent does not hold, because stance survives at fixed
 arousal everywhere tested. And an apparent dissociation between the two axes reversed once the
 readout was varied, so it was a property of the summary rather than of the representation.

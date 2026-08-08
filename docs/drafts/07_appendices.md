@@ -268,7 +268,28 @@ selected rows; this appendix names where each complete table lives so nothing re
 | `order_aware_readouts.txt` | The three readouts on identical forward passes |
 | `stance_vs_arousal_ladder.txt` | Proportional retention of each axis at each rung |
 | `stance_within_arousal_by_model.txt` | Stance decoded within each arousal level, every representation |
-| `linear_vs_nonlinear_probe.txt` | Linear against MLP on identical features and folds |
+| `linear_vs_nonlinear_probe.txt` | Linear against MLP on identical features and folds, plus the capacity sweep |
+| `cps_baseline.txt` | The two candidate no-skill baselines for the contrast-preservation score, computed from labels alone |
+
+## C.0 Figures without a committed artefact
+
+Three quantities used in the chapters are not reproducible from `results/` and are named here rather
+than left implicit.
+
+The **premise-check accuracies** of 0.65 and 0.73 [4.1] come from `src/15_score_premise.py` run
+against the two returned annotator packages. Neither the packages nor the scoring output are in the
+repository, because they contain clip audio and the hidden key. The script is present and the figures
+regenerate from it given those inputs.
+
+The **cosine similarities** of 0.808 for Mimi and 0.773 for the Descript codec [3.5, 4.6], which
+establish that the pre-quantisation and post-quantisation vectors share a space, are printed by
+`src/19_mimi_quantisation_ladder.py` and `src/21_dac_ladder.py` at run time but are not written to
+`results/`. They should be captured on the next run.
+
+The **7,310 hours** figure for the indexed collection [1.3] describes the population sampled from
+rather than material analysed end to end, and derives from the ingest stage rather than from any
+analysis script. The quantities that carry the analyses, 873 clips across 32 shows and 753 episodes,
+are computed from the label store and are given in B.6.
 
 ## C.1 Per-phrase within-word contrast, full detail
 
@@ -284,10 +305,13 @@ contrast attempted and the within-phrase majority baseline, are as follows.
 | `really` | adversarial / affiliative | 103 | 0.806 | 0.335 |
 | `right` | affiliative / neutral | 107 | 0.647 | 0.371 |
 | `sure` | affiliative / adversarial | 103 | 0.666 | 0.394 |
+| `yeah` | affiliative / neutral | 95 | 0.519 | 0.403 |
 
 Per-phrase performance varies considerably, from 0.440 on `fine` to 0.806 on `really`, and the mean
-of 0.659 should be read with that spread in mind. The equivalent tables for the other
-representations are in `probe_results.txt` under view C.
+of 0.659 should be read with that spread in mind. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
+sit close to their own within-phrase majority baselines of 0.370 and 0.403, so the mean is carried by
+the other six. The equivalent tables for the other representations are in `probe_results.txt` under
+view C.
 
 ---
 

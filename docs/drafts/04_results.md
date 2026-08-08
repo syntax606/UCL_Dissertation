@@ -68,8 +68,11 @@ the word cannot help here, this cannot be attributed to Whisper's lexical bias.
 within each analysis. WavLM reaches 0.531 on low-arousal clips and 0.549 on high, against 0.573
 pooled. Whisper reaches 0.526 and 0.514, HuBERT 0.459 and 0.518. The same test on the discrete
 representations, run separately, leaves Mimi significant at both levels, at p 0.025 and p 0.017.
-Margins fall by roughly a quarter to a third relative to the pooled analysis, so the two axes are
-partly entangled, but stance is not reducible to arousal in any representation tested.
+Margins are reduced relative to the pooled analysis in seven of the eight model-by-level cells, by
+between 6 and 37 per cent, with the largest reductions in the discrete representations and the
+smallest in WavLM. The exception is Mimi before quantisation at high arousal, which is essentially
+unchanged. The two axes are therefore partly entangled, but stance is not reducible to arousal in any
+representation tested.
 
 **Speaker.** Regrouping folds by show, so that no show appears in both training and testing, moves
 WavLM from 0.573 to 0.530, Whisper from 0.564 to 0.536 and Mimi from 0.381 to 0.362. HuBERT falls
@@ -134,7 +137,7 @@ paralinguistic content and extends them to pragmatic stance under a lexical cont
 | Codebook 0, WavLM-distilled | 0.402 | 0.330 | +0.072 | 0.005 |
 | Codebook 1 | 0.377 | 0.331 | +0.046 | 0.020 |
 | Codebook 3 | 0.368 | 0.331 | +0.037 | 0.035 |
-| Codebooks 2, 4, 5, 6, 7 | 0.329 to 0.348 | ~0.330 | +0.006 to +0.018 | 0.159 to 0.552 |
+| Codebooks 2, 4, 5, 6, 7 | 0.329 to 0.348 | ~0.330 | −0.001 to +0.018 | 0.159 to 0.552 |
 | All 8, the deployed condition | 0.381 | 0.310 | +0.071 | 0.005 |
 | Codebooks 1 to 7 only | 0.352 | 0.311 | +0.041 | 0.015 |
 
@@ -164,14 +167,21 @@ them is 0.808 for Mimi and 0.773 for DAC, confirming a shared space.
 In both codecs the encoder is the dominant contributor. For Mimi it costs roughly three times what
 quantisation does. For DAC it costs more still, and quantisation is marginally beneficial.
 
-DAC is a purely acoustic codec with no distillation objective, running at 75 Hz against Mimi's 12.5.
-Its encoder retains 47 per cent of what Mimi's does. The two converge at the token stage, where DAC
+DAC is a purely acoustic codec with no distillation objective, running at 75 Hz against Mimi's 12.5
+and compared at the first eight of its 32 codebooks [3.5]. Its encoder retains 47 per cent of what
+Mimi's does. The two converge at the token stage, where DAC
 reaches 88 per cent of Mimi, because quantisation helps DAC and hurts Mimi.
 
-**Stability.** The encoder cost is stable across readouts, at 0.116 under mean and standard
-deviation pooling and 0.121 with deltas. The quantisation cost is not, ranging from +0.056 under
-four-segment pooling to −0.036 with deltas, a swing sufficient to change its sign. Reported
-quantisation costs are therefore contingent on a readout choice that is rarely stated.
+**Stability.** The two costs behave differently under a change of readout. The encoder cost holds at
+0.116 under mean and standard deviation pooling and 0.121 with deltas. The quantisation cost ranges
+from +0.056 under four-segment pooling to −0.036 with deltas, a swing sufficient to change its sign.
+Reported quantisation costs are therefore contingent on a readout choice that is rarely stated.
+
+Two bookkeeping points. The readout comparison is a separate run from the cross-codec comparison
+above, which is why the encoder cost appears as 0.116 here and 0.112 there. The difference is
+run-to-run variation in permutation sampling and no argument turns on it, but the two figures should
+not be read as a discrepancy. And the encoder cost under four-segment pooling was not computed in
+that run, so the stability claim rests on two readouts rather than three.
 
 ## 4.7 The contrast-preservation score
 
@@ -179,15 +189,23 @@ Within each speaker-by-word cell with at least three exemplars of the minority s
 nearest-centroid classification was performed on distances alone. Fifteen cells qualify, giving 191
 decisions.
 
-The appropriate baseline is the within-cell majority rate over those same decisions, which is 0.670,
-because eligibility requires only three minority exemplars and eligible cells are therefore
-imbalanced. WavLM and Whisper reach 0.618, HuBERT 0.613, text 0.592 and Mimi 0.560. **Every
-representation falls below the baseline.** The measure is a null and does not corroborate the
-probing results.
+The originally stated chance level of 0.50 is wrong, because eligibility requires only three minority
+exemplars, so eligible cells are imbalanced and a constant predictor already beats it. Two
+replacements are defensible and they disagree. The whole-cell majority rate is 0.670, but it counts
+the held-out item's own label when determining which class is the majority, which is the leakage
+leave-one-out exists to prevent. The leave-one-out majority, predicting the most frequent class among
+the other n minus one, is 0.545, but it is anti-correlated with the truth on near-balanced cells,
+where removing an item flips the majority against it.
 
-Two factors compound this. Only 15 of the available cells qualify, with 27 more one clip short of
+WavLM and Whisper reach 0.618, HuBERT 0.613, text 0.592 and Mimi 0.560. **Every representation falls
+inside the interval between the two baselines.** The measure therefore does not discriminate in
+either direction. It is uninformative rather than a clean failure, and it neither corroborates the
+probing results nor contradicts them.
+
+Two factors compound this. Only 15 of the available cells qualify, with 27 more one exemplar short of
 eligibility. And the measure is sensitive to implementation, with cosine distance or prior PCA
-moving scores by up to 0.07.
+moving scores by up to 0.07. Baselines and cell counts are computed exactly, from labels alone, in
+`src/23_cps_baseline.py`.
 
 ## 4.8 Summary
 

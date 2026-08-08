@@ -1,0 +1,16 @@
+eligible cells: 15   leave-one-out decisions: 191
+cells exactly one exemplar short of eligibility: 27
+
+leave-one-out majority baseline : 0.5445   (pessimistic)
+whole-cell majority baseline    : 0.6702   (optimistic)
+defensible interval             : [0.545, 0.670]
+
+representation       CPS   verdict
+WavLM              0.618   inside the interval, does not discriminate
+Whisper            0.618   inside the interval, does not discriminate
+HuBERT             0.613   inside the interval, does not discriminate
+Text, context      0.592   inside the interval, does not discriminate
+Mimi               0.560   inside the interval, does not discriminate
+
+All representations fall inside the interval.
+The measure is therefore uninformative rather than a clean null.

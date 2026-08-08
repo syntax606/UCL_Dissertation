@@ -121,7 +121,7 @@ what a speaker actually means.
 
 **What the test showed.** Not supported in that form. Holding arousal constant does not
 remove the stance signal in any representation, Mimi included. The two axes are partly
-entangled, with margins falling by a quarter to a third, but stance is not reducible to
+entangled, with margins falling by 6 to 37 per cent in seven of eight cells, but stance is not reducible to
 arousal. This should be reported, not omitted.
 
 **What remains defensible.** An asymmetry of availability rather than a confusion. Mimi
