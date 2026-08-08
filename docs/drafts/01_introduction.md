@@ -31,12 +31,18 @@ human-robot settings, are the ones where this matters most (Cao et al., 2025).
 Those are behavioural observations. They establish that something is wrong without establishing
 where. A system can fail at this because the information never reached it, or because the
 information reached it and was ignored. The two look identical from outside and they call for
-different remedies. This dissertation addresses the first possibility directly by asking what the
-representations themselves contain.
+different remedies. Nothing downstream can recover what was never encoded, whereas better modelling
+can attend to what was encoded and overlooked.
+
+This dissertation takes the first possibility and pursues it through three nested questions. Whether
+the contrast is present in speech representations at all once the words are held constant. How much
+of it the representation deployed systems consume retains. And at which stage of that pipeline the
+remainder is lost. Each question is worth asking only if the previous one is answered
+affirmatively, and it is the third where this study departs from the current literature.
 
 ## 1.2 The gap
 
-Two literatures approach this question and neither settles it.
+Two literatures approach these questions, and each settles one of them without reaching the third.
 
 Probing work has established that speech representations carry pragmatic and affective information
 that text discards, and the closest precedent probes self-supervised models on prosody-related tasks
@@ -72,6 +78,15 @@ encoder against a token stream, this study probes each codec immediately before 
 quantisation, on identical forward passes with identical pooling, so that the rounding step is the
 only difference between the two conditions. This requires establishing which vectors are commensurate
 inside a residual quantiser [3.5]. The decomposition is run on two codecs of different design.
+
+These first two contributions are not independent, and the dependence is what licenses the result. A
+stage decomposition run on an uncontrolled task would show where sensitivity to something is lost,
+and for a codec the most likely something is phonetic or lexical detail, which such a system is built
+to preserve and which would say nothing about the interpersonal layer. Because the word is fixed
+across every contrast, the margins the decomposition assigns to each stage are margins on delivery.
+The lexical control is therefore what makes the decomposition a measurement of pragmatics rather than
+of audio fidelity in general, and neither contribution would support the conclusion without the
+other.
 
 The third follows from what that decomposition shows. The loss is concentrated in the codec encoder
 rather than at quantisation, and what survives is traceable to a component introduced for unrelated
