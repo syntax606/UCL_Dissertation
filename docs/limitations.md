@@ -91,19 +91,36 @@ bear most heavily on the continuous-against-discrete comparison, since quantised
 finite set of fixed positions and there is no guarantee they are as linearly separable as a
 continuous manifold carrying equivalent information.
 
-The concern was tested rather than argued around. A small non-linear probe on identical features
-and identical folds recovers no additional stance from any representation, with gains between
--0.059 and -0.009. It is functioning, clearing its own permutation null on both WavLM and Mimi at
-p 0.032, so the shortfall is the cost of fitting a more flexible model to 873 examples. Crucially
-the direction runs against the confound. Had discreteness been penalising the linear probe, Mimi
-should have gained most from the extra flexibility, and it gained least.
+The concern was tested rather than argued around, and the first version of that test was reported
+too strongly. An earlier draft said the non-linear probe recovered no additional stance from any
+representation and that Mimi gained least of all, which would have meant the direction ran against
+the confound. That rested on a single probe configuration whose generating script was not preserved,
+and it does not hold. Re-run under six capacity settings, Mimi after quantisation is in fact the
+discrete representation that gains most consistently, positive in five of six. A mild penalty on
+quantised vectors therefore cannot be ruled out and is not ruled out here.
 
-Two residual points remain. The non-linear probe was kept deliberately small and strongly
+What the sweep does establish is a bound, and the bound is what the argument needs. The largest gain
+observed anywhere across the six settings and eight representations is +0.025, against a
+continuous-to-discrete gap of roughly 0.14. Any probe-reach explanation is therefore confined to
+about a sixth of the quantity being interpreted. The probe is functioning rather than failing to
+train, clearing its own permutation null on both WavLM and Mimi at p 0.032.
+
+A second observation weakens the confound further without depending on it being absent. The gains
+track headroom rather than representation type. Every representation scoring above 0.500 under the
+linear probe gains at most +0.003 anywhere in the sweep, every representation scoring below 0.500
+gains between +0.010 and +0.025, and the largest single gain falls on the continuous text embedding
+rather than on any discrete representation. Mimi before quantisation also gains less than Mimi after
+it, which a discreteness account would not predict. The pattern is better explained by how much
+unexplained variance a weak representation leaves available than by discreteness.
+
+Three residual points remain. The non-linear probe was kept deliberately small and strongly
 regularised, because a sufficiently powerful probe can learn a task from almost any representation
 and thereby report on itself, so this rules out modest non-linear encoding rather than any
-conceivable encoding. And accessibility to a probe is not the same as usability by a downstream
-model, which is why the claims in the discussion are framed as a ceiling rather than a prediction
-about system behaviour.
+conceivable encoding. Accessibility to a probe is not the same as usability by a downstream model,
+which is why the claims in the discussion are framed as a ceiling rather than a prediction about
+system behaviour. And the episode from which this section was rewritten is itself a limitation worth
+recording, in that a result reported from an unpreserved script could not be regenerated, which is
+why `src/22_nonlinear_probe.py` now produces `results/linear_vs_nonlinear_probe.txt` deterministically.
 
 ## Other constraints
 

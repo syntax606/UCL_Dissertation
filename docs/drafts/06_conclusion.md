@@ -37,10 +37,11 @@ bound, because WavLM contributes twice Mimi's pooled dimensionality, while the 0
 quantisation is clean, since both sides share dimensionality, pooling and source. The attribution to
 distillation is associational rather than causal, supported once across codecs and once within Mimi,
 and the decisive experiment would train the same codec with and without the objective. Linear
-probing measures accessibility rather than presence, which was tested directly and found not to be
-the limiting factor, though a small regularised probe rules out modest non-linear encoding rather
-than any conceivable encoding. And the corpus carries show labels rather than speaker labels, so the
-identity control is properly described as held-out shows.
+probing measures accessibility rather than presence, and across six probe capacities no
+configuration recovers more than +0.025, against a gap of roughly 0.14, so accessibility bounds
+rather than explains the result, though a small regularised probe rules out modest non-linear
+encoding rather than any conceivable encoding. And the corpus carries show labels rather than
+speaker labels, so the identity control is properly described as held-out shows.
 
 ## 6.3 Why the loss is worth repairing
 

@@ -2,17 +2,34 @@ LINEAR vs NON-LINEAR PROBE, 3-way stance, W2, identical features and folds
 A large non-linear gain would mean the information was present but not linearly
 accessible, and that the linear figures understate that representation.
 ======================================================================================
-representation          linear       MLP      gain
-WavLM                    0.573     0.536    -0.037
-Whisper encoder          0.564     0.505    -0.059
-HuBERT                   0.520     0.467    -0.053
-Mimi pre-quant           0.466     0.446    -0.020
-Mimi post-quant          0.434     0.425    -0.009
-Mimi histogram           0.381     0.345    -0.036
-DAC post-quant           0.419     0.388    -0.031
-Text, context            0.378     0.361    -0.017
+representation            linear       MLP      gain
+WavLM                      0.576     0.552    -0.024
+Whisper encoder            0.565     0.490    -0.075
+HuBERT                     0.522     0.495    -0.027
+Mimi pre-quant             0.464     0.430    -0.034
+Mimi post-quant            0.434     0.453    +0.019
+Mimi histogram             0.381     0.385    +0.004
+DAC post-quant             0.417     0.390    -0.027
+Text, context              0.376     0.371    -0.006
+
+CAPACITY SWEEP. Gain over the linear probe under six settings.
+A single configuration is a weak basis for this conclusion: individual gains move
+by up to 0.06 across these settings and some change sign. What is stable is the
+BOUND, so that is what the write-up claims.
+======================================================================================
+representation      linear      h32/a1.0      h64/a0.1      h64/a1.0     h64/a10.0 h64/a1.0/noES     h128/a1.0
+WavLM                0.576        -0.053        -0.026        -0.024        +0.003        +0.003        -0.037
+Whisper encoder      0.565        -0.030        -0.070        -0.075        -0.084        -0.011        -0.029
+HuBERT               0.522        -0.046        -0.020        -0.027        -0.041        -0.012        -0.013
+Mimi pre-quant       0.464        -0.023        -0.025        -0.034        -0.034        +0.015        -0.043
+Mimi post-quant      0.434        -0.003        +0.023        +0.019        +0.021        +0.023        +0.007
+Mimi histogram       0.381        -0.007        -0.002        +0.004        -0.004        +0.021        +0.022
+DAC post-quant       0.417        -0.018        -0.016        -0.027        -0.017        -0.024        +0.010
+Text, context        0.376        +0.005        -0.012        -0.006        -0.012        +0.013        +0.025
+
+Largest gain observed anywhere in the sweep: +0.025 (Text, context)
 
 MLP permutation null, 30 permutations, to confirm the MLP is not simply overfitting
 ======================================================================================
-WavLM                MLP 0.536   null mean 0.332   margin +0.204   p 0.032
-Mimi post-quant      MLP 0.425   null mean 0.322   margin +0.104   p 0.032
+WavLM                MLP 0.552   null mean 0.324   margin +0.229   p 0.032
+Mimi post-quant      MLP 0.453   null mean 0.324   margin +0.129   p 0.032

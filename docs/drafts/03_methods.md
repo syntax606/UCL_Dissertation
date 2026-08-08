@@ -204,8 +204,14 @@ not the same as whether it is present. To test that this constraint is not drivi
 small non-linear probe was run as a companion on identical features and identical folds, a
 single-hidden-layer network of 64 units with strong weight decay and early stopping. It is kept
 deliberately small, because a sufficiently powerful probe can learn a task from almost any
-representation and thereby report on itself rather than on the encoding. The comparison of interest
-is the gain over the linear probe, and the result is given in [Ch.4].
+representation and thereby report on itself rather than on the encoding.
+
+Because the gain over a linear probe depends on the capacity chosen, and moves by up to 0.06 across
+reasonable settings, the comparison is run under six configurations varying hidden width, weight
+decay and early stopping rather than under one. The quantity carried into [Ch.4] is accordingly the
+largest gain observed anywhere in that sweep, which is a bound and is stable, rather than the
+per-representation ordering at any single setting, which is not. Full settings are in Appendix [B]
+and the procedure is in `src/22_nonlinear_probe.py`.
 
 **Uncertainty and significance.** Two procedures accompany every headline score. A 95%
 confidence interval is obtained by an **episode-cluster bootstrap** that resamples whole episodes

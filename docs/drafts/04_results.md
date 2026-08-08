@@ -89,18 +89,30 @@ four-segment pooling and +0.241 with frame-to-frame deltas added. For Mimi it is
 WavLM. This is not a capacity effect, since four-segment pooling gives Mimi four times the
 dimensions without benefit and WavLM's delta condition doubles its dimensions without benefit.
 
-**Probe capacity.** A non-linear probe on identical features and folds recovers no additional
-stance from any representation. Gains over the linear probe are negative throughout, ranging from
--0.059 for the Whisper encoder to -0.009 for Mimi after quantisation, with WavLM at -0.037 and the
-Mimi histogram at -0.036. The non-linear probe is functioning, clearing its own permutation null by
-+0.204 on WavLM and +0.104 on Mimi at p 0.032 in both cases, so the shortfall reflects the cost of
-fitting a more flexible model to 873 examples rather than a failure to train.
+**Probe capacity.** A non-linear probe was run on identical features and identical folds under six
+capacity settings, because gains under any single setting move by up to 0.06 and some change sign, so
+one configuration is not a sound basis for the conclusion. Under the primary setting the gain over
+the linear probe is negative for six of the eight representations, from -0.075 for the Whisper
+encoder to -0.006 for discourse text, with two small positive values, +0.019 for Mimi after
+quantisation and +0.004 for the Mimi histogram. The probe is functioning rather than failing to
+train, clearing its own permutation null by +0.229 on WavLM and +0.129 on Mimi at p 0.032 in both
+cases.
 
-Two consequences follow. Linear accessibility is not the limiting factor, so the reported figures
-describe content rather than reach. And the continuous-against-discrete comparison is not distorted
-by representation type. Had quantised vectors been systematically harder for a linear probe, Mimi
-would have gained most from the additional flexibility. It gained least, -0.009 against WavLM's
--0.037, which is the opposite of that confound.
+Two consequences follow, and both rest on the sweep rather than on the primary setting alone.
+
+Linear accessibility is not the limiting factor. The largest gain observed anywhere across the six
+settings is +0.025, against a continuous-to-discrete gap of roughly 0.14 that a probe-reach
+explanation would have to account for. The reported figures therefore describe content rather than
+reach, and any non-linear reserve is bounded at approximately a sixth of the quantity being
+interpreted.
+
+The gains that do occur track headroom rather than representation type. Every representation scoring
+above 0.500 under the linear probe gains at most +0.003 anywhere in the sweep, and every
+representation scoring below 0.500 gains between +0.010 and +0.025. The largest single gain falls on
+the continuous text embedding, not on any discrete representation, and Mimi before quantisation gains
+less than Mimi after it. A small non-linear reserve in the weaker representations is therefore a
+property of how much unexplained variance remains rather than a signature of discreteness. This does
+not rule out a mild penalty on quantised vectors, and none is claimed. It bounds one.
 
 ## 4.5 Where the contrast lives
 
