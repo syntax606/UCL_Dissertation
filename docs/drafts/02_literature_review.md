@@ -37,6 +37,20 @@ but they are also not the arbitrary acoustic detail a codec preserves for recons
 live in a middle band of prosody, timing, and emphasis that current tokenisation was not
 designed to retain.
 
+That division has a design history, and it matters here because the present study measures the
+consequence of one step in it. Neural codecs established the residual-quantisation architecture in
+service of reconstruction, first in SoundStream (Zeghidour et al., 2021) and then in EnCodec
+(Défossez et al., 2022) and the Descript Audio Codec (Kumar et al., 2023), all optimised so that a
+waveform can be rebuilt from a small number of codes. SpeechTokenizer (Zhang et al., 2024)
+introduced the modification that concerns this dissertation, guiding the first quantiser with a
+self-supervised teacher so that the leading code stream carries content while later streams carry
+refinement. Mimi (Défossez et al., 2024) inherits that arrangement with WavLM as the teacher, and
+X-Codec (Ye et al., 2024) generalises it by injecting teacher features before quantisation rather
+than only supervising after it. The lineage is therefore one of adding supervision to a
+reconstruction objective, and which supervision is added determines what the tokens retain. This
+study uses the Descript codec as its undistilled comparison precisely because it sits on the
+reconstruction-only branch.
+
 Benchmark evidence confirms that this middle band is where discretisation is weakest. The
 Discrete Audio and Speech Benchmark (Mousavi et al., 2026) finds discrete representations
 systematically less robust than continuous ones, with preserving phonetic content, speaker
@@ -132,6 +146,18 @@ that mainstream token-then-model training is suboptimal for prosody and proposes
 level prosody tokens. Segmentation-Variant Codebooks (Sanders et al., 2025) makes the
 complementary argument that a single flat token rate fails to preserve prosodic and paralinguistic
 information. Both imply that standard tokenisation is not built to retain what this study targets.
+
+On affect the evidence is more direct. EMO-Codec (Ren et al., 2024) resynthesises speech through
+legacy and neural codecs and finds emotion recognition degraded afterwards, with subjective
+listening tests agreeing, and reports the loss as uneven across categories. Two codecs published in
+2026 respond by making affect an explicit training target, one through emotion-guided modulation of
+the latent before quantisation (Shi et al., 2026b) and one by imposing block-diagonal projections
+that separate emotion and acoustic subspaces inside the quantiser (Meng et al., 2026). The
+existence of that response matters for how the present contribution is framed. Emotion preservation
+is an active design objective, so the open question is not whether affect can be built into a codec
+but which affective quantity the objective is supervised on. This study separates stance from
+arousal and measures them independently [3.3], and Chapter 5 returns to what that separation
+implies for objectives supervised on categorical emotion labels.
 
 The most precise recent evidence both supports and tempers the loss hypothesis. Sun et al. (2026)
 discretise a fine-tuned WavLM and evaluate speech emotion recognition on MSP-Podcast, reporting

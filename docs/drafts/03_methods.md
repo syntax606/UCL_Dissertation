@@ -94,8 +94,9 @@ audio, which anticipates the per-phrase results in [Ch.4].
 
 ## 3.5 Representations and feature extraction
 
-Five representations are compared, spanning self-supervised continuous encoders, a supervised
-continuous encoder, a deployed discrete tokenizer, and a text baseline. Feature extraction was
+Six representations are compared, spanning self-supervised continuous encoders, a supervised
+continuous encoder, a deployed discrete tokenizer, a second discrete codec used as a contrast, and
+a text baseline. Feature extraction was
 run once on a single A100 GPU and the resulting features frozen. No representation is fine-tuned,
 which is the defining property of a diagnostic probing study. Each clip is processed
 individually (batch size one), so there is no padding to pool over.
@@ -133,6 +134,30 @@ contrast, phonetic content is constant across it too, so any discriminative sign
 recovers cannot be phonetic in origin. The lexical control neutralises the confound that pervades
 codebook-level analysis, which is a second reason for the design beyond isolating delivery from
 lexical choice.
+
+**Undistilled discrete codec.** The Descript Audio Codec at 24 kHz (Kumar et al., 2023) is run as a
+contrast to Mimi. It is a purely acoustic codec trained on reconstruction and adversarial objectives
+with no distillation term, so it sits on the reconstruction-only branch of the lineage described in
+[2.2]. It differs from Mimi in frame rate, at 75 Hz against 12.5, and in codebook size, at 1,024
+entries against 2,048, so it is not a controlled ablation of the distillation objective and is not
+presented as one. Its eight codebooks are used, matching Mimi's deployed depth.
+
+**Isolating quantisation.** Comparing a continuous encoder against a token stream confounds
+quantisation with feature construction, frame rate, architecture and training objective. To separate
+them, both codecs are additionally probed immediately before and immediately after quantisation, on
+identical forward passes and with identical pooling, so the only difference between the two
+conditions is the rounding step.
+
+This requires care about which vectors are comparable. In both codecs the residual quantiser
+operates in a projected space rather than on the encoder output directly, applying an input
+projection before quantising and an output projection after summing the selected codebook vectors.
+Those two projections do not map to a common space, so comparing the encoder latent against the
+quantiser's reconstructed output would compare vectors that are not commensurate, and the measured
+cosine between them is 0.008. The comparable pair is the projected latent against the summed
+codebook vectors taken before the output projection. Measured cosine between that pair is 0.808 for
+Mimi and 0.773 for the Descript codec, confirming a shared space. Both sides are then pooled by mean
+and standard deviation, so the embedding readout is held constant and the histogram readout used for
+the deployed condition plays no part in this comparison.
 
 **Text baseline.** A sentence-transformer (MPNet) encodes two texts per clip, following the two
 roles the premise check established. The **target-only** embedding encodes the bare target word.
@@ -189,7 +214,7 @@ rather than individual clips, respecting the non-independence of clips nested in
 the fraction of permutations reaching the observed macro-F1, establishing that decodability
 exceeds chance.
 
-**Six analyses.** The results chapter reports six views. (A) **Pooled three-way stance
+**Seven analyses.** The results chapter reports seven views. (A) **Pooled three-way stance
 decodability** per representation, using the best layer for the audio encoders, on the segment
 window. (B) A **context-window sweep** across the local, segment, and discourse windows at each
 model's best layer, distinguishing delivery-borne from discourse-recoverable contrasts. (C) The
@@ -202,7 +227,11 @@ by show so that training and test never share a speaker, alongside the by-episod
 (F) A training-free **contrast-preservation score**, a within-speaker, within-word,
 leave-one-out nearest-centroid measure over the embedding space. Because it is geometric and
 unprotected by grouped cross-validation, it is computed within speaker and reported with the
-caveats developed in [Ch.5], as a corroborating rather than a headline result.
+caveats developed in [Ch.5], as a corroborating rather than a headline result. (G) A
+**quantisation ladder**, comparing the continuous teacher, each codec's projected encoder latent and
+each codec's post-quantisation vectors under the shared readout just described, which attributes the
+gap between continuous and discrete representations to the encoder and to quantisation separately
+and repeats that attribution on two codecs of different design.
 
 Hyperparameters, exact dimensionalities, and the full per-phrase counts are given in Appendix
 [B]. All code and the analysis scripts are released so that, given a corpus and the label store,

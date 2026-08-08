@@ -59,7 +59,46 @@ plausible home; decide whether to fold them in:
 - **Ma et al. (2509.08454, 2026).** *Mechanistic Interpretability of LoRA-Adapted Whisper for SER.* Optional for §2.3.2 (Whisper + emotion + interpretability).
 - **Chapariniya et al. / U Zürich (2603.23650, FG 2026).** *Foundation Model Embeddings Meet Blended Emotions (BLEMORE).* Tangential, but its finding that Wav2Vec2 prosody layers 6–12 beat finetuning echoes your mid-layer point.
 
-## 5. Specific factual claims to double-check before submission
+## 5. Codec design batch — verified from arXiv (web, 2026-08)
+
+Added because the bibliography was weighted toward *evaluating* codecs and carried almost nothing
+on how they are *built*, which is conspicuous the moment Chapter 6 proposes changing a training
+objective. All eight verified against the arXiv abstract page. Cited in 2.2, 2.4, 3.5, 5.2, 5.4, 6.4.
+
+| Short cite | Verified citation | arXiv / venue | Role |
+|---|---|---|---|
+| Zeghidour et al., 2021 | Neil Zeghidour, Alejandro Luebs, Ahmed Omran, Jan Skoglund, Marco Tagliasacchi. *SoundStream: An End-to-End Neural Audio Codec.* | 2107.03312, Jul 2021 | Origin of the RVQ codec architecture. Lineage only. |
+| Défossez et al., 2022 | Alexandre Défossez, Jade Copet, Gabriel Synnaeve, Yossi Adi. *High Fidelity Neural Audio Compression* [EnCodec]. | 2210.13438, 24 Oct 2022 | Lineage. Note Défossez authors both this and Moshi, a continuity worth one clause. |
+| Kumar et al., 2023 | Rithesh Kumar, Prem Seetharaman, Alejandro Luebs, Ishaan Kumar, Kundan Kumar. *High-Fidelity Audio Compression with Improved RVQGAN* [Descript Audio Codec]. | 2306.06546, 11 Jun 2023, **NeurIPS 2023** | **Required.** DAC carries a headline result in 4.6 and was previously uncited anywhere. |
+| Zhang et al., 2024 | Xin Zhang, Dong Zhang, Shimin Li, Yaqian Zhou, Xipeng Qiu. *SpeechTokenizer: Unified Speech Tokenizer for Speech Large Language Models.* | 2308.16692v2, 31 Aug 2023, rev 23 Jan 2024, **ICLR 2024** | **Key cite.** Introduced guiding the first RVQ quantiser with an SSL teacher (HuBERT). Mimi's codebook 0 inherits this design. The distillation-loss detail is in the methods, **not the abstract** — cite the body. |
+| Ye et al., 2024 | Zhen Ye, Peiwen Sun, Jiahe Lei, Hongzhan Lin, Xu Tan, Zheqi Dai, Qiuqiang Kong, Jianyi Chen, Jiahao Pan, Qifeng Liu, Yike Guo, Wei Xue. *Codec Does Matter: Exploring the Semantic Shortcoming of Codec for Audio Language Model* [X-Codec]. | 2408.17175, 30 Aug 2024, **AAAI 2025** | **Key cite.** Injects teacher features *before* RVQ plus a semantic reconstruction loss after. The design family the 4.6 decomposition favours. |
+| Jo et al., 2025 | Daejin Jo, Jeeyoung Yun, Byungseok Roh, Sungwoong Kim. *LM-SPT: LM-Aligned Semantic Distillation for Speech Tokenization.* | 2506.16738, 20 Jun 2025 | Supports the 6.4 teacher-layer point. States the convention is HuBERT layer 9 or an all-layer average. **Verify the layer claim in the body before quoting it.** |
+| Ren et al., 2024 | Wenze Ren, Yi-Cheng Lin, Huang-Cheng Chou, Haibin Wu, Yi-Chiao Wu, Chi-Chun Lee, Hung-yi Lee, Yu Tsao. *EMO-Codec: An In-Depth Look at Emotion Preservation capacity of Legacy and Neural Codec Models With Subjective and Objective Evaluations.* | 2407.15458, 22 Jul 2024 | **Qualifies a claim.** Affect under codecs has been measured, so "no metric is sensitive to it" was too strong and has been narrowed in 5.4, 6.3 and 6.4. Evaluation study rather than a reusable metric, works via resynthesis plus SER, uses IEMOCAP (acted), categorical emotion. |
+| Shi et al., 2026b | Jiacheng Shi, Hongfei Du, Xinyuan Song, Y. Alicia Hong, Yanfu Zhang, Ye Gao. *AffectCodec: Emotion-Preserving Neural Speech Codec for Expressive Speech Modeling.* | 2605.11098, 11 May 2026, **ACL Findings 2026** | Emotion-guided latent modulation before quantisation, relation-preserving distillation. Nearest existing work to the 6.4 proposal, which is why 6.4 differentiates on the supervised quantity rather than the mechanism. |
+| Meng et al., 2026 | Zhaoyang Meng, Zhengyao Ma, Kecan Mao, Yingming Gao, Ya Li. *AffectCodec: Emotion-Preserving Neural Speech Codec with Block-Diagonal Residual FSQ.* | 2605.23373, 22 May 2026 | Block-diagonal input/output projections separating emotion and acoustic subspaces. Operates on the same projection surface the 3.5 quantiser-space analysis identifies. |
+
+### Two citation collisions to handle consistently
+
+1. **Two unrelated papers named AffectCodec**, eleven days apart in May 2026, with entirely
+   different author lists (2605.11098 and 2605.23373). Never refer to "AffectCodec" unqualified.
+   Cite by author and arXiv ID.
+2. **Two different Shi et al. 2026.** Xuan Shi et al. (2603.10371, codec probing) is cited
+   throughout as *Shi et al., 2026*. Jiacheng Shi et al. (2605.11098) is therefore entered as
+   **Shi et al., 2026b**. Confirm the final reference list preserves the a/b suffixes.
+
+### What this batch changed in the drafts
+
+- 2.2 gained a codec-design lineage paragraph, and 2.4 gained an affect-preservation paragraph.
+  Chapter 2 is now further over its 2,300 budget and needs a trim pass.
+- 3.5 gained a DAC paragraph and an *Isolating quantisation* paragraph. 3.6 went from six analyses
+  to seven, adding the quantisation ladder. Both were reported in Chapter 4 with no methods entry.
+- 5.2 gained the prediction that pre-quantisation interventions are better placed than
+  codebook-level ones, which converts a criticism of two papers into a testable ordering.
+- 5.4, 6.3 and 6.4 narrowed the metric-insensitivity claim from "no standard codec metric" to
+  "the metrics routinely reported for codecs", and 5.4 now argues that categorical emotion
+  supervision is arousal-loaded and so favours the axis this study finds surviving.
+
+## 6. Specific factual claims to double-check before submission
 
 1. **The "6 to 14 percent drop in macro F1"** attributed to 2601.17085 — not stated in the abstract; confirm from the paper body.
 2. **Mimi codebook count.** Draft §2.3.3 says "eight residual quantizers at 12.5 Hz"; the Frisson Labs blog says Mimi emits "32 token streams" at 12.5 Hz (one frame / 80 ms). Both can be reconciled (Mimi is trained with up to 32 quantizers; Moshi/deployment uses the first 8), but state it precisely so it is not read as a contradiction. Cite the Moshi paper, not the blog, for the number.

@@ -35,6 +35,14 @@ encoder has already declined to represent, and the ceiling on what it can recove
 of the change. The disagreement is specific and falsifiable, and it follows from measurement
 rather than from argument.
 
+A second design family is better placed by the same reasoning, which is worth saying because it
+converts the point from a criticism into a prediction. X-Codec (Ye et al., 2024) injects teacher
+features before quantisation rather than only supervising after it, and one of the two
+emotion-preserving codecs published in 2026 modulates the latent before quantisation as well (Shi et
+al., 2026b). Those interventions act at the stage the present decomposition identifies as dominant.
+The measurements here therefore predict an ordering between the two families rather than a verdict
+on any single system, and that ordering is testable on a common corpus.
+
 ## 5.3 What is stable and what is not
 
 The encoder loss is a property of the representation. Measured under three readouts it holds at
@@ -73,11 +81,24 @@ instead. A student trained to match a teacher's representations inherits what th
 to encode, and WavLM encodes stance.
 
 The consequence is what makes this worth stating. An unintended benefit is an unprotected one. No
-loss term optimises for it, the Moshi ablations do not evaluate it, and no standard codec metric is
-sensitive to it. Reconstruction quality, word error rate and perceptual scores would be unchanged
-if it disappeared. A successor system could substitute the teacher, tune distillation toward
-transcription accuracy, or remove it for a cheaper alternative, and pragmatic retention would fall
-without registering as a regression on any reported benchmark.
+loss term optimises for it, the Moshi ablations do not evaluate it, and the metrics routinely
+reported for codecs are not sensitive to it. Reconstruction quality, word error rate and perceptual
+scores would be unchanged if it disappeared. A successor system could substitute the teacher, tune
+distillation toward transcription accuracy, or remove it for a cheaper alternative, and pragmatic
+retention would fall without registering as a regression on any reported benchmark.
+
+That claim needs one qualification, and the qualification turns out to sharpen it. Affect under
+codecs has been measured. EMO-Codec (Ren et al., 2024) resynthesises speech through legacy and
+neural codecs and finds emotion recognition degraded afterwards. But it is an evaluation study
+rather than a metric reported during development, it works through resynthesis and downstream
+recognition rather than on the representation, and it measures categorical emotion on acted corpora.
+The results here bear on that last point directly. Stance and arousal are separable in this data, and
+Mimi retains roughly three quarters of the arousal signal against under a third of the stance signal
+[Ch.4]. A measure supervised on categorical emotion labels, which are substantially arousal-loaded,
+would therefore register the axis that survives more readily than the axis that does not. The same
+concern applies to the emotion-preserving objectives now being proposed. Making affect a training
+target is the right move, and which affective quantity supervises it determines whether the
+interpersonal layer is among what improves.
 
 It also reframes the problem usefully. Were the loss caused by discretisation it would be close to
 irreducible, since rounding is rounding. Because it is caused by a training objective, and
