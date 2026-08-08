@@ -153,8 +153,9 @@ architecture and training objective. This section isolates the stages. Because t
 the word constant throughout, the margins below are margins on delivery, so a loss localised to a
 stage is a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser
 operates in a projected space, so the comparable pair is the projected encoder latent against the
-summed codebook vectors before output projection, both pooled identically. Measured cosine between
-them is 0.808 for Mimi and 0.773 for DAC, confirming a shared space.
+summed codebook vectors before output projection, both pooled identically. Measured over all 873
+clips the cosine between them is 0.821 for Mimi and 0.773 for DAC, against 0.004 for the naive
+comparison that pairing would replace, confirming a shared space [3.5].
 
 | Representation | margin | encoder costs | quantisation costs |
 |---|---|---|---|

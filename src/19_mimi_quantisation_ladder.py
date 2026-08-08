@@ -12,8 +12,9 @@ Mimi's residual quantiser works in a PROJECTED space. MimiResidualVectorQuantize
 .encode applies `input_proj` and then quantises the result; .decode sums the
 codebook vectors and only then applies `output_proj`. The two projections map to
 different spaces, so the encoder latent and `quantizer.decode(...)` are NOT
-comparable (empirically cosine ~0.008, norms 1.5 against 62). The comparable pair
-is:
+comparable. Measured over all 873 clips their cosine is 0.004 and their mean norms
+are 1.5 against 39.9 (src/24_projection_cosines.py, results/projection_cosines.txt).
+The comparable pair is:
 
     PRE  = input_proj(encoder latent)          continuous, pre-quantisation
     POST = sum of selected codebook vectors    the same vector, quantised

@@ -155,10 +155,12 @@ This requires care about which vectors are comparable. In both codecs the residu
 operates in a projected space rather than on the encoder output directly, applying an input
 projection before quantising and an output projection after summing the selected codebook vectors.
 Those two projections do not map to a common space, so comparing the encoder latent against the
-quantiser's reconstructed output would compare vectors that are not commensurate, and the measured
-cosine between them is 0.008. The comparable pair is the projected latent against the summed
-codebook vectors taken before the output projection. Measured cosine between that pair is 0.808 for
-Mimi and 0.773 for the Descript codec, confirming a shared space. Both sides are then pooled by mean
+quantiser's reconstructed output would compare vectors that are not commensurate. Measured over all
+873 clips their cosine is 0.004, and their mean norms differ by a factor of roughly 27, at 1.5
+against 39.9. The comparable pair is the projected latent against the summed codebook vectors taken
+before the output projection. Measured cosine between that pair is 0.821 for Mimi and 0.773 for the
+Descript codec, with per-clip minima of 0.766 and 0.717, confirming a shared space. These
+diagnostics are produced by `src/24_projection_cosines.py`. Both sides are then pooled by mean
 and standard deviation, so the embedding readout is held constant and the histogram readout used for
 the deployed condition plays no part in this comparison.
 

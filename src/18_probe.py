@@ -298,7 +298,14 @@ def cps(model_tag, man, best_layers, min_each=3):
     """F. Training-free Contrast-Preservation Score. Within each (show, word) cell -
     same speaker, same word - can leave-one-out nearest-centroid tell the two stances
     apart from distances alone? Pure delivery: lexis and speaker are both held fixed.
-    Chance = 0.50."""
+
+    NOT chance = 0.50. Eligibility requires only `min_each` exemplars of the minority
+    stance, so eligible cells are class-imbalanced and a constant predictor already
+    beats 0.50. The two defensible no-skill baselines are the whole-cell majority
+    (0.670, optimistic, it counts the held-out item's own label) and the leave-one-out
+    majority (0.545, pessimistic, it is anti-correlated on near-balanced cells). Every
+    representation falls inside that interval, so this measure does not discriminate.
+    See src/23_cps_baseline.py, which computes both exactly from labels alone."""
     m, w, lay = _config(model_tag, best_layers)
     a = _arrays(m, w, man, lay)
     if a is None:
@@ -460,7 +467,11 @@ def main():
 
     print("\n" + "=" * 74)
     print("F. CONTRAST-PRESERVATION SCORE  (training-free, within speaker x word)")
-    print("   leave-one-out nearest-centroid on distances alone; chance = 0.50")
+    print("   leave-one-out nearest-centroid on distances alone.")
+    print("   NOT chance = 0.50. Eligible cells are class-imbalanced, so the two")
+    print("   defensible baselines are the whole-cell majority (0.670) and the")
+    print("   leave-one-out majority (0.545). Scores inside that interval do not")
+    print("   discriminate. See src/23_cps_baseline.py.")
     print("=" * 74)
     print(f"{'model':16s}{'CPS':>8}{'cells':>8}{'decisions':>11}")
     for t in tags:

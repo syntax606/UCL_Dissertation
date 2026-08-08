@@ -1,0 +1,13 @@
+PROJECTION-SPACE DIAGNOSTICS for the quantisation ladder
+The residual quantiser works in a projected space. The encoder latent and the
+quantiser's reconstructed output are therefore NOT commensurate. The ladder
+compares input_proj(latent) against the summed codebook vectors, before the
+output projection. These numbers are what licenses that choice.
+clips averaged: 873   codebooks: 8   device: cpu
+==============================================================================
+Mimi  correct pair  cos = 0.821   min 0.766
+Mimi  naive pair    cos = 0.004   norms 1.5 against 39.9
+DAC   correct pair  cos = 0.773   min 0.717
+
+Read: the correct pairs share a space, so PRE and POST differ only by rounding.
+The naive Mimi pair does not, which is why it is never used.

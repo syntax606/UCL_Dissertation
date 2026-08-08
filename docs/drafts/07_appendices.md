@@ -261,7 +261,7 @@ selected rows; this appendix names where each complete table lives so nothing re
 
 | File | Contents |
 |---|---|
-| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks |
+| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks. Its view F header prints a superseded chance level of 0.50; the correction is in C.0 and in `cps_baseline.txt`, and the source has been fixed so the next run prints it correctly |
 | `quantisation_ladder.txt` | Mimi, projected encoder latent against summed codebook vectors |
 | `dac_vs_mimi.txt` | The same ladder on the Descript codec, and the cross-codec comparison |
 | `ladder_by_readout.txt` | Both ladders under mean-and-standard-deviation, four-segment and delta readouts |
@@ -270,26 +270,31 @@ selected rows; this appendix names where each complete table lives so nothing re
 | `stance_within_arousal_by_model.txt` | Stance decoded within each arousal level, every representation |
 | `linear_vs_nonlinear_probe.txt` | Linear against MLP on identical features and folds, plus the capacity sweep |
 | `cps_baseline.txt` | The two candidate no-skill baselines for the contrast-preservation score, computed from labels alone |
+| `projection_cosines.txt` | Evidence that the two sides of each ladder rung share a space |
 
-## C.0 Figures without a committed artefact
+## C.0 Provenance of figures outside the probe outputs
 
-Three quantities used in the chapters are not reproducible from `results/` and are named here rather
-than left implicit.
+**Projection cosines.** The ladder compares the projected encoder latent against the summed codebook
+vectors, and that pairing has to be justified rather than assumed. Over all 873 clips the correct
+pair reaches a cosine of 0.821 for Mimi and 0.773 for the Descript codec, with per-clip minima of
+0.766 and 0.717. The naive alternative, the raw encoder latent against the quantiser's reconstructed
+output, reaches 0.004 with mean norms of 1.5 against 39.9, so it compares vectors that are neither
+aligned nor of comparable scale. `src/24_projection_cosines.py` writes these to `results/`.
 
-The **premise-check accuracies** of 0.65 and 0.73 [4.1] come from `src/15_score_premise.py` run
+An earlier draft of [3.5] and [4.6] gave 0.808 and 0.008 for two of these, from a run whose output
+was printed rather than saved. The figures above supersede them and are measured over the full
+corpus. Nothing in the argument turns on the difference.
+
+**Premise-check accuracies.** The 0.65 and 0.73 in [4.1] come from `src/15_score_premise.py` run
 against the two returned annotator packages. Neither the packages nor the scoring output are in the
-repository, because they contain clip audio and the hidden key. The script is present and the figures
-regenerate from it given those inputs.
+repository, because they contain clip audio and the hidden reference key. The script is present and
+the figures regenerate from it given those inputs. This is the one quantity in the dissertation that
+a reader cannot recompute from the repository alone.
 
-The **cosine similarities** of 0.808 for Mimi and 0.773 for the Descript codec [3.5, 4.6], which
-establish that the pre-quantisation and post-quantisation vectors share a space, are printed by
-`src/19_mimi_quantisation_ladder.py` and `src/21_dac_ladder.py` at run time but are not written to
-`results/`. They should be captured on the next run.
-
-The **7,310 hours** figure for the indexed collection [1.3] describes the population sampled from
-rather than material analysed end to end, and derives from the ingest stage rather than from any
-analysis script. The quantities that carry the analyses, 873 clips across 32 shows and 753 episodes,
-are computed from the label store and are given in B.6.
+**Corpus scale.** The 7,310 hours in [1.3] describes the indexed collection sampled from rather than
+material analysed end to end, and derives from the ingest stage rather than from any analysis script.
+The quantities that carry the analyses, 873 clips across 32 shows and 753 episodes, are computed from
+the label store and given in B.6.
 
 ## C.1 Per-phrase within-word contrast, full detail
 
