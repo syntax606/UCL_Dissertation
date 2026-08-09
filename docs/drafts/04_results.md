@@ -108,21 +108,15 @@ quantisation and +0.004 for the Mimi histogram. The probe is functioning rather 
 train, clearing its own permutation null by +0.229 on WavLM and +0.129 on Mimi at p 0.032 in both
 cases.
 
-Two consequences follow, and both rest on the sweep rather than on the primary setting alone.
-
-Linear accessibility is not the limiting factor. The largest gain observed anywhere across the six
-settings is +0.025, against a continuous-to-discrete gap of roughly 0.14 that a probe-reach
-explanation would have to account for. The reported figures therefore describe content rather than
-reach, and any non-linear reserve is bounded at approximately a sixth of the quantity being
-interpreted.
-
-The gains that do occur track headroom rather than representation type. Every representation scoring
-above 0.500 under the linear probe gains at most +0.003 anywhere in the sweep, and every
-representation scoring below 0.500 gains between +0.010 and +0.025. The largest single gain falls on
-the continuous text embedding, not on any discrete representation, and Mimi before quantisation gains
-less than Mimi after it. A small non-linear reserve in the weaker representations is therefore a
-property of how much unexplained variance remains rather than a signature of discreteness. This does
-not rule out a mild penalty on quantised vectors, and none is claimed. It bounds one.
+Two consequences follow from the sweep rather than from the primary setting. Linear accessibility is
+not the limiting factor, since the largest gain anywhere across the six settings is +0.025 against a
+continuous-to-discrete gap of roughly 0.14, so any non-linear reserve is bounded at about a sixth of
+the quantity being interpreted. And the gains that occur track headroom rather than representation
+type. Every representation scoring above 0.500 gains at most +0.003 anywhere in the sweep, every
+representation below it gains between +0.010 and +0.025, the largest single gain falls on the
+continuous text embedding rather than on any discrete representation, and Mimi before quantisation
+gains less than Mimi after it. This does not rule out a mild penalty on quantised vectors. It bounds
+one.
 
 ## 4.5 Where the contrast lives
 
@@ -185,13 +179,12 @@ reaches 88 per cent of Mimi, because quantisation helps DAC and hurts Mimi.
 **Stability.** The two costs behave differently under a change of readout. The encoder cost holds at
 0.116 under mean and standard deviation pooling and 0.121 with deltas. The quantisation cost ranges
 from +0.056 under four-segment pooling to −0.036 with deltas, a swing sufficient to change its sign.
-Reported quantisation costs are therefore contingent on a readout choice that is rarely stated.
+Reported quantisation costs are therefore contingent on a readout choice that is rarely stated.[^runs]
 
-Two bookkeeping points. The readout comparison is a separate run from the cross-codec comparison
-above, which is why the encoder cost appears as 0.116 here and 0.112 there. The difference is
-run-to-run variation in permutation sampling and no argument turns on it, but the two figures should
-not be read as a discrepancy. And the encoder cost under four-segment pooling was not computed in
-that run, so the stability claim rests on two readouts rather than three.
+[^runs]: The readout comparison is a separate run from the cross-codec comparison above, which is why
+the encoder cost appears as 0.116 here and 0.112 there. The difference is run-to-run variation in
+permutation sampling and no argument turns on it. The encoder cost under four-segment pooling was not
+computed in that run, so the stability claim rests on two readouts rather than three.
 
 ## 4.7 The contrast-preservation score
 
@@ -224,10 +217,3 @@ eligibility. And the measure is sensitive to implementation, with cosine distanc
 moving scores by up to 0.07. Baselines and cell counts are computed exactly, from labels alone, in
 `src/23_cps_baseline.py`.
 
-## 4.8 Summary
-
-Pragmatic stance is decodable from continuous representations under lexical control, at matched
-arousal, on held-out shows, and under every readout tested. The representation deployed systems
-consume retains a fraction of it. That loss is concentrated in the codec encoder rather than at
-quantisation, in two codecs of different design. What reaches Mimi's token stream is carried mainly
-by the codebook distilled from WavLM, and the seven acoustic codebooks add nothing to it.

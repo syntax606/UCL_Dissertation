@@ -96,13 +96,11 @@ Before any modelling, the premise that the contrast is speech-borne was validate
 level, because if annotators can recover the pragmatic label from the transcript alone, the
 probing exercise has no target. A 60-clip subset, balanced across stance, was judged by two
 auxiliary annotators in two conditions, counterbalanced so that each annotator saw one half of
-the clips as transcript only and the other half with audio, against a hidden reference. Accuracy
-was 0.65 for transcript-with-discourse-context and 0.73 for audio-plus-transcript, against a
-three-way chance level of 0.33. The gap confirms that audio carries pragmatic information beyond
-the words while also showing that discourse context alone is a strong, honest baseline. This
-directly motivates splitting the text baseline into two roles (3.5) and treating audio's
-contribution as the increment over context. The agreement particles were hardest even from
-audio, which anticipates the per-phrase results in [Ch.4].
+the clips as transcript only and the other half with audio, against a hidden reference. The decision rule was
+fixed before scoring and is given in Appendix [D]. The outcome, reported in [4.1], is that audio
+carries pragmatic information beyond the words while discourse context alone is a strong baseline,
+which motivates splitting the text baseline into two roles (3.5) and treating audio's contribution
+as the increment over context.
 
 ## 3.5 Representations and feature extraction
 
@@ -135,22 +133,18 @@ Keeping the full stack matters for two reasons. It represents Mimi at the granul
 model built on it would actually consume, and it allows the codebook-level analysis in [Ch.4] to
 probe each stream separately rather than assuming in advance where pragmatic information sits.
 
-Codebook-level analysis is ordinarily confounded, and it is worth stating why this design escapes
-that. Shi et al. (2026) show that the phonetic content of a Mimi code stream is not confined to
-the distilled first codebook, finding that "even without the first layer, as the acoustic codebook
+Codebook-level analysis is ordinarily confounded, and the lexical control is what removes the
+confound. Shi et al. (2026) show that phonetic content in a Mimi code stream is not confined to the
+distilled first codebook, finding that "even without the first layer, as the acoustic codebook
 layers go deeper, the speech features from these layers also accumulate a substantial" amount of
-phonetic information. For an uncontrolled study that is a serious problem, because a probe
-separating classes at codebook level cannot be shown to be reading paralinguistic rather than
-phonetic structure. Here it is not a problem. Because the target word is held constant across the
-contrast, phonetic content is constant across it too, so any discriminative signal a probe
-recovers cannot be phonetic in origin. The lexical control neutralises the confound that pervades
-codebook-level analysis, which is a second reason for the design beyond isolating delivery from
-lexical choice.
+phonetic information. Because the target word is held constant, phonetic content is constant across
+every contrast, so no discriminative signal a probe recovers at codebook level can be phonetic in
+origin.
 
 **Undistilled discrete codec.** The Descript Audio Codec at 24 kHz (Kumar et al., 2023) is run as a
 contrast to Mimi. It is a purely acoustic codec trained on reconstruction and adversarial objectives
 with no distillation term, so it sits on the reconstruction-only branch of the lineage described in
-[2.2]. It differs from Mimi in frame rate, at 75 Hz against 12.5, and in codebook size, at 1,024
+[2.1]. It differs from Mimi in frame rate, at 75 Hz against 12.5, and in codebook size, at 1,024
 entries against 2,048, so it is not a controlled ablation of the distillation objective and is not
 presented as one. Its frame rate follows from an encoder stride of 320 at 24 kHz. The checkpoint
 provides 32 residual codebooks against Mimi's 8, so the first eight are used, matching Mimi's
@@ -242,24 +236,16 @@ rather than individual clips, respecting the non-independence of clips nested in
 the fraction of permutations reaching the observed macro-F1, establishing that decodability
 exceeds chance.
 
-**Seven analyses.** The results chapter reports seven views. (A) **Pooled three-way stance
-decodability** per representation, using the best layer for the audio encoders, on the segment
-window. (B) A **context-window sweep** across the local, segment, and discourse windows at each
-model's best layer, distinguishing delivery-borne from discourse-recoverable contrasts. (C) The
-**per-phrase within-word contrast**, the lexical control at the heart of the design. Within each
-phrase, the probe attempts the dominant binary stance contrast, averaged across the eight
-phrases, so that any separation cannot be attributed to word identity. (D) The **matched-arousal
-test**, decoding stance within each arousal level separately, so a positive result cannot be
-dismissed as encoding loudness. (E) A **speaker-identity control**, re-scoring with folds grouped
-by show so that training and test never share a speaker, alongside the by-episode setting.
-(F) A training-free **contrast-preservation score**, a within-speaker, within-word,
-leave-one-out nearest-centroid measure over the embedding space. Because it is geometric and
-unprotected by grouped cross-validation, it is computed within speaker and reported with the
-caveats developed in [Ch.5], as a corroborating rather than a headline result. (G) A
-**quantisation ladder**, comparing the continuous teacher, each codec's projected encoder latent and
-each codec's post-quantisation vectors under the shared readout just described, which attributes the
-gap between continuous and discrete representations to the encoder and to quantisation separately
-and repeats that attribution on two codecs of different design.
+**Seven analyses.** The results chapter reports seven views, each named by the section that
+reports it. Pooled three-way decodability at each model's best layer [4.2]. The per-phrase
+within-word contrast, which is the lexical control at the heart of the design and under which word
+identity carries no information [4.3]. Four controls, namely matched arousal, fold grouping by show,
+a context-window sweep and a readout comparison [4.4]. A layer sweep and a codebook-level probe
+[4.5]. The quantisation ladder, comparing the continuous teacher against each codec's projected
+encoder latent and post-quantisation vectors under the shared embedding readout, on two codecs of
+different design [4.6]. And a training-free contrast-preservation score, a within-speaker,
+within-word, leave-one-out nearest-centroid measure reported with the caveats developed in [Ch.5]
+[4.7].
 
 Hyperparameters, exact dimensionalities, and the full per-phrase counts are given in Appendix
 [B]. All code and the analysis scripts are released so that, given a corpus and the label store,

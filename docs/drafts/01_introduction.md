@@ -91,11 +91,9 @@ vocal energy.
 **A stage decomposition.** Rather than comparing a continuous encoder against a token stream, each
 codec is probed immediately before and immediately after quantisation, on identical forward passes
 with identical pooling, so the rounding step is the only difference between conditions. This requires
-establishing which vectors are commensurate inside a residual quantiser, since the input and output
-projections do not map to a common space. Measured over all 873 clips, the naive pairing of encoder
-latent against reconstructed output reaches a cosine of 0.004 with a 27-fold norm mismatch, while the
-correct pairing of projected latent against summed codebook vectors reaches 0.821 for Mimi and 0.773
-for the Descript codec [3.5]. The decomposition is then run on both codecs, one distilled from a
+establishing which vectors are commensurate inside a residual quantiser, since its input and output
+projections do not map to a common space and the obvious pairing compares vectors that are neither
+aligned nor of comparable scale [3.5]. The decomposition is run on both codecs, one distilled from a
 self-supervised teacher and one purely acoustic (Kumar et al., 2023).
 
 The dependence between the two is what licenses the result. A stage decomposition on an uncontrolled
@@ -110,68 +108,20 @@ Bounding the arousal route.** Stance is decoded within each arousal level, so an
 survives is not attributable to loudness alone. **(iii) Localising rather than attributing.** Each stage is measured against
 its own empirical permutation null, so the pipeline is decomposed rather than compared end to end.
 
-## 1.4 Results
+## 1.4 Findings
 
-Under a setting of 873 lexically controlled clips, six frozen representations and a linear diagnostic
-probe with fold grouping by episode, the following obtains.
+Three results follow, and Chapters 4 and 5 report them in full. Pragmatic stance is linearly
+decodable from continuous representations under the lexical control, and survives every control
+applied to it, including matched arousal, held-out shows, three context windows, three readouts and
+six non-linear probe capacities. The representation deployed systems consume retains a fraction of
+it, and falls below a discourse-text baseline once word identity is removed. And the loss is not
+where this study expected. The codec encoder costs roughly three times what quantisation does, the
+same ordering holds on a second codec of independent design where quantisation is marginally
+beneficial, and what reaches Mimi's token stream is carried mainly by the codebook distilled from
+WavLM, a component introduced for semantic transfer and computational economy rather than for
+anything paralinguistic.
 
-Pragmatic stance is linearly decodable from continuous representations. WavLM clears its own
-permutation null by 0.241 and the Whisper encoder by 0.232, against 0.070 for the deployed Mimi token
-stream and 0.045 for a discourse-context text embedding. Under the lexical control the ordering
-changes, with Whisper at 0.672 ahead of WavLM at 0.659 mean within-word macro-F1 against 0.534 for
-discourse text and 0.466 for Mimi, which falls below the text baseline once word identity is removed
-[4.3].
-
-The loss is not where it has been attributed. Between WavLM at +0.244 and Mimi's quantised output at
-+0.099, the codec encoder accounts for 0.112 and quantisation for 0.034, so the encoder costs
-roughly three times what quantisation does. The pattern replicates on the Descript codec, which loses 0.182 at its encoder and *gains*
-0.025 at quantisation, so in that system discretisation is marginally beneficial [4.6]. Two codecs of
-different objective, frame rate and codebook geometry agree that the encoder is where the information
-goes.
-
-What survives is traceable to a component introduced for unrelated reasons. Probing each of Mimi's
-eight codebooks separately, the WavLM-distilled codebook 0 is the strongest at 0.402, two acoustic
-codebooks are weakly significant and the remaining five are indistinguishable from chance. The
-acoustic stack adds nothing to the distilled one, since all eight together reach 0.381 against 0.402
-for codebook 0 alone, and codebooks 1 to 7 without it reach only 0.352 [4.5]. The Moshi report motivates distillation by semantic transfer and computational cost and
-does not evaluate it in paralinguistic terms, so the preservation is incidental and consequently
-unprotected by any routinely reported codec metric [5.4].
-
-## 1.5 Interventions
-
-Six interventions test whether the decodable signal is what it is claimed to be.
-
-**Holding energy constant.** Stance is decoded within each arousal level separately. It survives in
-every representation including the discrete ones, with margins reduced by 6 to 37 per cent in seven of
-eight model-by-level cells, so stance is entangled with arousal but not reducible to it.
-
-**Holding the show constant.** Regrouping folds by show moves WavLM from 0.573 to 0.530 and Mimi from
-0.381 to 0.362, so the probe is not principally recovering speaker identity.
-
-**Varying the context window.** For the continuous encoders performance is flat across local,
-segment and discourse windows and does not rise with more surrounding speech, indicating they read
-delivery rather than discourse. Mimi is the exception and does rise slightly with context, to 0.411
-at the discourse window.
-
-**Varying the readout.** Three summarisations on identical forward passes leave WavLM's margin within
-0.009 while moving Mimi's by 0.056, which identifies readout sensitivity as a signature of thin
-signal rather than a nuisance (Sun et al., 2026).
-
-**Varying probe capacity.** A non-linear probe under six capacity settings recovers at most +0.025
-anywhere, against a continuous-to-discrete gap of roughly 0.14, and the gains that occur track
-remaining headroom rather than representation type, with the largest falling on the continuous text
-embedding. Linear accessibility therefore bounds rather than explains the result [4.4].
-
-**Replacing the codec.** Repeating the decomposition on an architecturally independent acoustic codec
-reproduces the encoder-dominant ordering, which distinguishes a property of codec design from a
-property of one system.
-
-Together these characterise the decodable signal as delivery-borne rather than lexical, robust to
-held-out shows, and not dependent on surrounding discourse. The interventions also locate where it is
-lost, since the codec encoder rather than quantisation accounts for most of the reduction, and what
-reaches the token stream arrives largely through the distilled codebook.
-
-## 1.6 Research questions and hypotheses
+## 1.5 Research questions and hypotheses
 
 **RQ1.** Is interpersonal pragmatic force recoverable from speech representations when lexical
 content is held constant?
@@ -198,16 +148,14 @@ H1, H2, H3 and H5 are supported. **H4 is not**, and its falsification is the mos
 reported here, because the interventions currently proposed in the literature are addressed to the
 stage it names.
 
-## 1.7 Contributions
+## 1.6 Contributions
 
-**A lexically controlled diagnostic corpus.** 873 clips of naturalistic spontaneous speech across
-eight target phrases, annotated on two independently judged axes, in which delivery varies while
-wording does not.
+**A lexically controlled diagnostic corpus**, 873 clips of naturalistic spontaneous speech across
+eight target phrases, annotated on two independently judged axes.
 
-**A stage-resolved measurement of codec loss.** A decomposition that separates the codec encoder from
-quantisation on commensurate vectors, replicated on two codecs of independent design, showing the
-encoder to be the dominant contributor by roughly threefold and quantisation to be marginally
-beneficial in one of the two.
+**A stage-resolved measurement of codec loss**, replicated on two codecs of independent design,
+showing the encoder to be the dominant contributor by roughly threefold and quantisation to be
+marginally beneficial in one of the two.
 
 **A mechanistic account of what survives.** Identification of the WavLM-distilled codebook as the
 strongest single carrier of stance inside Mimi, ahead of two weakly significant acoustic codebooks
@@ -225,7 +173,7 @@ the interval between its two defensible baselines and therefore does not discrim
 arousal-confusion mechanism that does not hold, and an apparent asymmetry between the annotated axes
 that proved to be a property of the readout rather than of the representation [Ch.6].
 
-## 1.8 Structure
+## 1.7 Structure
 
 Chapter 2 situates the study in the literatures on discrete speech tokens, probing of speech
 representations, and the pragmatics of same-word contrasts, and traces the codec design lineage the

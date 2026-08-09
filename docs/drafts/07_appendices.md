@@ -257,11 +257,11 @@ text condition [4.2].
 # Appendix C. Full results tables
 
 Source: `results/probe_results.txt` and the six companion files in `results/`. The chapter reports
-selected rows; this appendix names where each complete table lives so nothing reported is unsourced.
+selected rows. This appendix names where each complete table lives so nothing reported is unsourced.
 
 | File | Contents |
 |---|---|
-| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks. Its view F header prints a superseded chance level of 0.50; the correction is in C.0 and in `cps_baseline.txt`, and the source has been fixed so the next run prints it correctly |
+| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks. Its view F header prints a superseded chance level of 0.50. The correction is in C.0 and in `cps_baseline.txt`, and the source has been fixed so the next run prints it correctly |
 | `quantisation_ladder.txt` | Mimi, projected encoder latent against summed codebook vectors |
 | `dac_vs_mimi.txt` | The same ladder on the Descript codec, and the cross-codec comparison |
 | `ladder_by_readout.txt` | Both ladders under mean-and-standard-deviation, four-segment and delta readouts |
@@ -372,3 +372,92 @@ also motivates the distinction between the target-only and discourse-context tex
 [3.5].
 
 Scoring reports accuracy against the reference, Cohen's kappa and the unsure rate per condition.
+
+---
+
+# Appendix E. The acoustic correlates of ironic and sarcastic delivery
+
+Source material for [2.4]. The chapter states the conclusion. This appendix gives the inventory and
+the disagreement, because both bear on how the results are read.
+
+## E.1 What the literature reports
+
+| Study | Language | Cues reported |
+|---|---|---|
+| Rockwell (2000) | English | Slower tempo, greater intensity, lowered pitch level. Perceptual coding of filtered utterances |
+| Lan et al. (2019) | Cantonese | Six measured features, namely speech rate, mean F0, F0 range, mean amplitude, amplitude range and harmonics-to-noise ratio, with reductions across several |
+| Bryant and Fox Tree (2002, 2005) | English | Examine whether such cues constitute a dedicated ironic tone of voice, and conclude against a single dedicated marker in favour of a family of cues recognised in context |
+
+## E.2 Two consequences for this study
+
+**The premise check is a replication, not a shortfall.** Rockwell (2000) reports that listeners
+discriminated posed sarcasm from non-sarcasm but did not discriminate spontaneous sarcasm from
+non-sarcasm at all. This corpus is spontaneous. An audio condition reaching 0.73 against a three-way
+chance of 0.33, with discourse context alone reaching 0.65, is what a family-of-cues account with
+contextual support predicts [4.1]. Read against acted-corpus results it would look modest. Read
+against Rockwell it does not.
+
+**The cue inventory is not uniform with respect to reconstruction.** Amplitude and mean F0 are
+directly reconstructive, in the sense that a codec cannot degrade them without a reconstruction
+penalty, and they are also most of what an arousal judgement rests on. Speech rate, F0 range and
+harmonics-to-noise ratio are contour-shaped or timing-dependent, and degrading them costs little on
+any reconstruction criterion. A pipeline optimised for reconstruction would therefore be expected to
+retain the first group and shed the second.
+
+That is the asymmetry measured in [Ch.4], where Mimi retains roughly three quarters of the arousal
+signal against under a third of the stance signal. The inference is an interpretation rather than a
+measurement, since no cue-level analysis was run on this corpus, and [Ch.6] names that analysis as
+the second step of the repair programme precisely because it would settle the question cheaply.
+
+## E.3 Why cue-level attribution was not attempted here
+
+Measuring which cues survive requires extracting each cue from each clip and probing them
+individually, which is a different study from the one reported. It also requires a position on the
+Bryant and Fox Tree dispute, since if there is no dedicated marker then cue-level attribution must be
+conditioned on context and the design becomes considerably larger. The present study measures whether
+the pragmatic category is recoverable, which is the prior question and the one that bears on
+tokenisation directly.
+
+---
+
+# Appendix F. The reasoning behind the five constraints
+
+Source: `docs/limitations.md`, which holds the full treatment. Section [6.2] states the constraints and
+this appendix gives the reasoning each rests on.
+
+**Why the encoder figure is an upper bound and the quantisation figure is not.** In the ladder,
+WavLM contributes 2,048 pooled features against Mimi's 1,024, so part of the 0.112 attributed to
+distillation and the codec encoder could be dimensionality rather than information loss. The
+quantisation estimate does not carry that risk, because the pre-quantisation and post-quantisation
+representations have identical dimensionality, identical pooling and an identical source [B.4]. Trust
+the 0.034 and treat the 0.112 as a ceiling.
+
+**Why the distillation attribution is associational.** Two comparisons support it, one across codecs
+and one within Mimi, and the internal one holds architecture, frame rate, training data and audio
+constant, so the only systematic difference is the distillation objective. Neither is the decisive
+experiment, which would train the same codec with and without the term. The cross-codec half carries
+a further confound worth naming, since DAC runs at 75 Hz with 1,024-entry codebooks against Mimi's
+12.5 Hz and 2,048, so frame rate and codebook geometry vary alongside the objective.
+
+**Why linear probing bounds rather than explains.** A linear probe reports whether information is
+linearly accessible rather than whether it is present, and that ambiguity would bear most heavily on
+the continuous-against-discrete comparison. It was tested rather than argued around. Across six probe
+capacities the largest gain anywhere is +0.025 against a gap of roughly 0.14, and the gains that
+occur track headroom rather than representation type, with the largest falling on the continuous text
+embedding [4.4]. Two residual points remain. The probe was kept deliberately small and strongly
+regularised, since a sufficiently powerful probe learns the task from almost any representation and
+reports on itself, so this rules out modest non-linear encoding rather than any conceivable encoding.
+And accessibility to a probe is not usability by a downstream model, which is why the claims in
+[Ch.5] are framed as a ceiling rather than as a prediction about system behaviour.
+
+**Why the identity control is held-out shows.** The corpus carries show names rather than speaker
+labels, and guests recur across shows, so grouping folds by show does not guarantee that training and
+test share no speaker.
+
+**Why cue-level attribution was not attempted.** See Appendix [E].
+
+**Other constraints.** Target-only text is at chance only within a phrase, not pooled across phrases,
+because the eight phrases differ in their stance base rates and a probe can score above chance from
+word identity alone, so the pooled figure of 0.487 must be read with that artefact in mind. Neutral
+stance is concentrated in the agreement particles, and high-arousal neutral is represented by only 26
+clips, so any analysis crossing both axes at that cell is thin [B.5].

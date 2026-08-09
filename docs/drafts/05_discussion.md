@@ -16,16 +16,11 @@ which changes what would count as a remedy.
 The study was designed on the assumption that discretisation was the culprit. Decomposing the
 pipeline into controlled steps does not support that assumption.
 
-Between WavLM at +0.244 and Mimi's quantised output at +0.099, two things happen. The codec
-encoder and its distillation account for 0.112 of the loss. Quantisation itself accounts for
-0.034. The step that converts continuous values into a finite set of symbols, and which is the
-only step in the pipeline capable of making two distinct inputs literally identical, turns out to
-be the smaller contributor by a factor of roughly three.
-
-That pattern replicates on an independent architecture. DAC, a purely acoustic codec, loses 0.182
-at its encoder and gains 0.025 at quantisation, so in that system the discretisation step is
-marginally beneficial. Two codecs with different objectives, frame rates and codebook geometries
-agree that the encoder is where the information goes.
+The step that converts continuous values into a finite set of symbols, and the only step capable of
+making two distinct inputs literally identical, is the smaller contributor by a factor of roughly
+three, and on a second codec of independent design it is marginally beneficial [4.6]. Two codecs
+with different objectives, frame rates and codebook geometries agree that the encoder is where the
+information goes.
 
 This bears directly on two recent proposals. ProsodyLM (Qian et al., 2025) introduces explicit
 word-level prosody tokens and Segmentation-Variant Codebooks (Sanders et al., 2025) quantises at
@@ -64,10 +59,8 @@ that observation is available without committing to any particular readout being
 
 ## 5.4 The preservation that does exist is incidental
 
-Distillation is the one component that measurably improves retention, and it was introduced for
-something else.
-
-The Moshi report states that Mimi "uses distillation to transfer non-causal, high-level semantic
+Distillation is the one component that measurably improves
+retention, and it was introduced for something else. The Moshi report states that Mimi "uses distillation to transfer non-causal, high-level semantic
 information into the tokens produced by a causal model", and explains the decision to fold this
 into a single tokeniser on the grounds that "generating acoustic and semantic tokens with separate
 encoders represents a non-negligible computational burden". The motivation is semantic content and

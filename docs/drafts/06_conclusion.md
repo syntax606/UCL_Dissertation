@@ -9,18 +9,12 @@ This study asked whether pragmatic contrast survives the representations that sp
 systems actually consume, and if not, where it is lost. Three answers follow from the measurements.
 
 Pragmatic stance is linearly decodable from continuous speech representations when the lexical item
-is held constant, and it survives every control applied to it. It holds at matched arousal, on
-held-out shows, across three context windows, under three readouts and against a probe with more
-capacity than the one used to report it [Ch.4].
-
-The representation deployed systems consume retains a fraction of that. Mimi clears its own
-permutation null by 0.070 against WavLM's 0.241, and falls below discourse text once the word is
-held constant.
-
-The loss is not where this study expected to find it. Quantisation costs 0.034 and the codec encoder
-costs 0.112, a ratio of roughly one to three, and the same ordering appears in DAC, an independently
-designed acoustic codec where quantisation is marginally beneficial. What survives inside Mimi is
-carried mainly by the codebook distilled from WavLM, a component introduced for semantic transfer and
+is held constant, and it survives every control applied to it [Ch.4]. The representation deployed
+systems consume retains a fraction of that, and falls below a discourse-text baseline once the word
+is held constant. And the loss is not where this study expected to find it. The codec encoder costs
+roughly three times what quantisation does, the same ordering appears on an independently designed
+acoustic codec where quantisation is marginally beneficial, and what survives inside Mimi is carried
+mainly by the codebook distilled from WavLM, a component introduced for semantic transfer and
 computational economy rather than for anything paralinguistic [Ch.5].
 
 ## 6.2 Limitations
@@ -33,37 +27,27 @@ stance survives at fixed arousal everywhere tested. And an apparent dissociation
 reversed once the readout was varied, so it was a property of the summary rather than of the
 representation.
 
-Five constraints bound the positive findings. The 0.112 attributed to the codec encoder is an upper
-bound, because WavLM contributes twice Mimi's pooled dimensionality, while the 0.034 for quantisation
-is clean, since both sides share dimensionality, pooling and source. The attribution to distillation
-is associational rather than causal, supported once across codecs and once within Mimi, and the
-decisive experiment would train the same codec with and without the objective. Linear probing
-measures accessibility rather than presence, and across six probe capacities no configuration
-recovers more than +0.025, against a gap of roughly 0.14, so accessibility bounds rather than
-explains the result, though a small regularised probe rules out modest non-linear encoding rather
-than any conceivable encoding. The corpus carries show labels rather than speaker labels, so the
-identity control is properly described as held-out shows.
+Five constraints bound the positive findings, and the reasoning behind each is in Appendix [F]. The
+0.112 attributed to the codec encoder is an upper bound, because WavLM contributes twice Mimi's
+pooled dimensionality, while the 0.034 for quantisation is clean. The attribution to distillation is
+associational rather than causal, and the decisive experiment would train one codec with and without
+the objective. Linear probing measures accessibility rather than presence, though across six probe
+capacities no configuration recovers more than +0.025 against a gap of roughly 0.14, so accessibility
+bounds rather than explains the result. The identity control is held-out shows rather than unseen
+speakers, since the corpus carries show labels only.
 
-The fifth is new and constrains the interpretation offered in [Ch.5]. This study measures whether a
-pragmatic category is recoverable, not which acoustic property carries it. The account of why arousal
-survives and stance does not, resting on the difference between directly reconstructive cues such as
-amplitude and mean F0 and contour-shaped cues such as speech rate, F0 range and voice quality, is
-consistent with the cue inventories reported by Rockwell (2000) and Lan et al. (2019) but is not
-tested here. It is a hypothesis this design can generate and cannot evaluate.
+The fifth constrains the interpretation offered in [Ch.5]. This study measures whether a pragmatic
+category is recoverable, not which acoustic property carries it. The account of why arousal survives
+and stance does not is consistent with the cue inventories of Rockwell (2000) and Lan et al. (2019)
+but is not tested here. It is a hypothesis this design can generate and cannot evaluate [E].
 
 ## 6.3 Why the loss is worth repairing
 
-Three lines of evidence make this an applied problem rather than a representational curiosity.
+That deployed systems handle this information poorly is established in [1.1], across behavioural
+benchmarking, conflict resolution between words and voice, delivery-driven safety failures and
+human-robot interaction. This section states what the present findings add to it.
 
-Deployed systems already handle this information poorly. ParaS2S reports spoken language models
-scoring 3.37 against 3.18 for a baseline that discards delivery entirely (Yang et al., 2026), and
-VoxParadox finds audio language models following language-implied answers over acoustic evidence
-(Pang et al., 2026). Safety behaviour is exposed to the same channel, with delivery-only jailbreaks
-succeeding roughly nine times more often than neutral delivery on identical transcript content on
-Qwen2-Audio (Qian and Li, 2026). Failures of this kind are documented in settings with little
-tolerance for them, including the human-robot interaction failures catalogued by Cao et al. (2025).
-
-The findings here add a specific constraint on how any of that can be addressed. A downstream model
+The findings add a specific constraint on how any of that can be addressed. A downstream model
 cannot act on what its input representation does not carry, so better modelling addresses information
 that is present and ignored and cannot address information that was never encoded. The distinction
 matters because the two failure modes look identical from the outside.
