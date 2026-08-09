@@ -75,10 +75,9 @@ computational cost. Prosody, affect and interpersonal meaning are absent from it
 
 The outcome diverges from the intention in both directions. Shi et al. (2026) show that what
 distillation from WavLM transfers is phonetic rather than semantic knowledge, so the stated target
-was not reached. And the results here show that the distilled codebook is the only part of Mimi
-carrying appreciable pragmatic stance, at 0.402 against five of the seven acoustic codebooks that
-are statistically indistinguishable from chance, so a target nobody was aiming at was reached
-instead. A student trained to match a teacher's representations inherits what that teacher happens
+was not reached. And the results here show the distilled codebook to be the strongest carrier of
+pragmatic stance inside Mimi, at 0.402, with the seven acoustic codebooks adding nothing to it and
+reaching only 0.352 on their own, so a target nobody was aiming at was reached instead. A student trained to match a teacher's representations inherits what that teacher happens
 to encode, and WavLM encodes stance.
 
 The consequence is what makes this worth stating. An unintended benefit is an unprotected one. No

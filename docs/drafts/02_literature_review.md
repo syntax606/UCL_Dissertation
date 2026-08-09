@@ -144,8 +144,8 @@ An earlier version of this chapter drew a prediction from that finding. It reaso
 codebook 0 is phonetic rather than semantic, pragmatic force would not concentrate there, and
 that if pragmatic prosody survived anywhere it would more plausibly sit in the acoustic-refinement
 codebooks, which carry timbre and prosodic texture. Chapter 4 shows the reverse. Codebook 0 is
-the only codebook carrying appreciable pragmatic signal, and five of the seven acoustic codebooks
-are statistically indistinguishable from chance.
+the strongest, five of the seven acoustic codebooks are statistically indistinguishable from chance,
+and the acoustic stack adds nothing to the distilled one.
 
 The prediction failed because it rested on a category error, and the correction is worth stating
 explicitly. The semantic-versus-phonetic axis that Shi et al. characterise concerns what a token

@@ -19,8 +19,8 @@ held constant.
 
 The loss is not where this study expected to find it. Quantisation costs 0.034 and the codec encoder
 costs 0.112, a ratio of roughly one to three, and the same ordering appears in DAC, an independently
-designed acoustic codec where quantisation is marginally beneficial. What survives inside Mimi sits
-almost entirely in the codebook distilled from WavLM, a component introduced for semantic transfer
+designed acoustic codec where quantisation is marginally beneficial. What survives inside Mimi is carried mainly
+by the codebook distilled from WavLM, a component introduced for semantic transfer
 and computational economy rather than for anything paralinguistic [Ch.5].
 
 ## 6.2 Limitations
@@ -53,8 +53,8 @@ scoring 3.37 against 3.18 for a baseline that discards delivery entirely (Yang e
 VoxParadox finds audio language models following language-implied answers over acoustic evidence
 (Pang et al., 2026). Safety behaviour is exposed to the same channel, with delivery-only jailbreaks
 succeeding roughly nine times more often than neutral delivery on identical transcript content (Qian
-and Li, 2026). And the applications that most need interpersonal reading are the ones with the least
-tolerance for error, including the human-robot interaction failures catalogued by Cao et al. (2025).
+and Li, 2026). Failures of this kind are documented in settings with little tolerance for them, including
+the human-robot interaction failures catalogued by Cao et al. (2025).
 
 The findings here add a specific constraint on how any of that can be addressed. A downstream model
 cannot act on what its input representation does not carry, so better modelling addresses
@@ -99,7 +99,7 @@ term is what reaches the other one.
 
 **Build the diagnostic that would notice.** Affect under codecs has been evaluated (Ren et al.,
 2024), though through resynthesis and downstream recognition rather than on the representation, and
-not as a figure reported during development. The null in [Ch.4] is a specification for what a
+not as a figure reported during development. The uninformative result in [Ch.4] is a specification for what a
 representation-level version needs. A preservation measure defined on continuous within-cell
 distances rather than hard classification, estimated over a depth-first sample of densely populated
 speaker-by-word cells with the distance metric fixed in advance, would degrade gracefully at small

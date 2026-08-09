@@ -141,9 +141,11 @@ paralinguistic content and extends them to pragmatic stance under a lexical cont
 | All 8, the deployed condition | 0.381 | 0.310 | +0.071 | 0.005 |
 | Codebooks 1 to 7 only | 0.352 | 0.311 | +0.041 | 0.015 |
 
-The distilled codebook is the only one carrying appreciable signal, and five of the seven acoustic
-refinement codebooks are statistically indistinguishable from chance. Adding all seven to codebook 0
-does not improve on codebook 0 alone. Chapter 2 predicted the opposite distribution, and 2.3.3
+The distilled codebook is the strongest single block. Two acoustic refinement codebooks clear their
+nulls weakly, at p 0.020 and p 0.035, and the remaining five are statistically indistinguishable from
+chance. What the acoustic stack does not do is add to the distilled one, since all eight together
+reach 0.381 against 0.402 for codebook 0 alone, and the seven acoustic codebooks without it reach
+0.352. Chapter 2 predicted the opposite distribution, and 2.3.3
 reports that as a corrected expectation.
 
 ## 4.6 Locating the loss
@@ -213,5 +215,5 @@ moving scores by up to 0.07. Baselines and cell counts are computed exactly, fro
 Pragmatic stance is decodable from continuous representations under lexical control, at matched
 arousal, on held-out shows, and under every readout tested. The representation deployed systems
 consume retains a fraction of it. That loss is concentrated in the codec encoder rather than at
-quantisation, in two codecs of different design, and what survives inside Mimi sits almost entirely
-in the codebook distilled from WavLM.
+quantisation, in two codecs of different design. What reaches Mimi's token stream is carried mainly
+by the codebook distilled from WavLM, and the seven acoustic codebooks add nothing to it.

@@ -83,7 +83,7 @@ the interpersonal layer appear nowhere in the motivation.
 So the mechanism is accidental twice over. The stated target was semantic content, meaning lexical
 meaning, and Shi et al. (2026) show that what distillation from WavLM actually transfers is
 phonetic knowledge rather than semantic. The designers missed their own target. And the data here
-shows the distilled stream is the only part of Mimi carrying appreciable pragmatic stance, a target
+shows the distilled stream is the strongest carrier of pragmatic stance in Mimi, a target
 nobody was aiming at. It arrives because a student trained to match a teacher's representations
 inherits whatever that teacher happens to encode, and WavLM encodes stance.
 
