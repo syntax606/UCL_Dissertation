@@ -77,7 +77,14 @@ objective. All eight verified against the arXiv abstract page. Cited in 2.2, 2.4
 | Shi et al., 2026b | Jiacheng Shi, Hongfei Du, Xinyuan Song, Y. Alicia Hong, Yanfu Zhang, Ye Gao. *AffectCodec: Emotion-Preserving Neural Speech Codec for Expressive Speech Modeling.* | 2605.11098, 11 May 2026, **ACL Findings 2026** | Emotion-guided latent modulation before quantisation, relation-preserving distillation. Nearest existing work to the 6.4 proposal, which is why 6.4 differentiates on the supervised quantity rather than the mechanism. |
 | Meng et al., 2026 | Zhaoyang Meng, Zhengyao Ma, Kecan Mao, Yingming Gao, Ya Li. *AffectCodec: Emotion-Preserving Neural Speech Codec with Block-Diagonal Residual FSQ.* | 2605.23373, 22 May 2026 | Block-diagonal input/output projections separating emotion and acoustic subspaces. Operates on the same projection surface the 3.5 quantiser-space analysis identifies. |
 
-### Two citation collisions to handle consistently
+### Terminology batch (added 2026-08, cited in the 2.2 footnote)
+
+| Short cite | Verified citation | arXiv / venue | Role |
+|---|---|---|---|
+| Sicherman and Adi, 2023 | Amitay Sicherman, Yossi Adi. *Analysing Discrete Self Supervised Speech Representation for Spoken Language Modeling.* | 2301.00591, **ICASSP 2023** | The canonical cite for "semantic" units being phonetic. Finds units correlate strongly with phonemes and phoneme families and weakly with speaker or gender. |
+| Arora et al., 2025 | *On The Landscape of Spoken Language Models: A Comprehensive Survey.* | 2504.08528 | Major survey that deliberately adopts "phonetic tokens" over "semantic tokens" for this reason. Worth citing as a survey independent of the footnote. **Verify the full author list from the title page before submission.** |
+
+### Three citation collisions to handle consistently
 
 1. **Two unrelated papers named AffectCodec**, eleven days apart in May 2026, with entirely
    different author lists (2605.11098 and 2605.23373). Never refer to "AffectCodec" unqualified.
@@ -85,6 +92,11 @@ objective. All eight verified against the arXiv abstract page. Cited in 2.2, 2.4
 2. **Two different Shi et al. 2026.** Xuan Shi et al. (2603.10371, codec probing) is cited
    throughout as *Shi et al., 2026*. Jiacheng Shi et al. (2605.11098) is therefore entered as
    **Shi et al., 2026b**. Confirm the final reference list preserves the a/b suffixes.
+3. **Two different Zhang et al. 2024, and two different Wang et al. 2025.** Xin Zhang et al.
+   (SpeechTokenizer, 2308.16692) is **2024a**; Zixing Zhang et al. (ParaLBench, 2411.09349) is
+   **2024b**. Wang et al. on contextual paralinguistics (2508.07273) is **2025a**; Lu Wang et al.
+   (AudioCodecBench, 2509.02349) is **2025b**. Both pairs were briefly ambiguous in the drafts and
+   are now suffixed throughout.
 
 ### What this batch changed in the drafts
 

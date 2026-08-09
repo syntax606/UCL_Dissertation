@@ -20,28 +20,42 @@ that tokenisation, as deployed, drops the meaning-bearing part of speech.
 
 ## 2.2 The speech-language-model turn and discrete speech tokens
 
-Speech-language modelling increasingly converts continuous waveforms into sequences of discrete
-tokens before passing them to language-model architectures (Guo et al., 2025). This makes
-speech tractable for autoregressive models trained on text and underpins deployed
-speech-to-speech systems, but it raises the question this dissertation pursues, which is whether the
+Discrete audio tokens have become a general-purpose interface for speech and audio modelling.
+They underpin residual-quantisation codecs built for compression (Zeghidour et al., 2021; Défossez
+et al., 2022; Kumar et al., 2023), tokenisers built to feed language models (Zhang et al., 2024a;
+Ye et al., 2024; Défossez et al., 2024), full-duplex speech-to-speech dialogue systems (Défossez et
+al., 2024), and a growing body of work on emotion recognition and paralinguistic modelling from
+codes rather than waveforms (Sun et al., 2026; Zhang et al., 2024b; Ren et al., 2024). The design
+space is active enough to have generated its own evaluation literature, including benchmarks for
+downstream utility (Mousavi et al., 2026), reconstruction and semantic fidelity (Deng et al., 2025;
+Wang et al., 2025b), behavioural evaluation of deployed systems (Jiang et al., 2025; Yang et al.,
+2026), and two recent reviews (Guo et al., 2025; Arora et al., 2025).
+
+What unites these is that the tokens, not the audio, are what the downstream model receives. That
+makes the informational content of the tokenisation step a first-order design question rather than
+an implementation detail, and it is the question this dissertation pursues, specifically whether the
 tokens preserve the parts of speech that are invisible in the transcript.
 
 The literature divides speech tokens into two families. *Acoustic* tokens derive from neural
 codecs optimised for reconstruction and preserve signal-level detail. *Semantic* tokens derive
-from self-supervised or supervised speech models and encode phonetic or linguistic content. The
-distinction is real but imperfect, and the review literature is explicit that "semantic" tokens
-often behave phonetically, capturing the sounds that distinguish words rather than the meanings
-those words carry (Guo et al., 2025). This matters directly here, because pragmatic meaning sits
-in neither category cleanly, since sarcasm, reluctance, and ironic agreement are not lexical content,
-but they are also not the arbitrary acoustic detail a codec preserves for reconstruction. They
-live in a middle band of prosody, timing, and emphasis that current tokenisation was not
-designed to retain.
+from self-supervised or supervised speech models and encode phonetic or linguistic content.[^sem]
+This matters directly here, because pragmatic meaning sits in neither category cleanly, since
+sarcasm, reluctance, and ironic agreement are not lexical content, but they are also not the
+arbitrary acoustic detail a codec preserves for reconstruction. They live in a middle band of
+prosody, timing, and emphasis that current tokenisation was not designed to retain.
+
+[^sem]: The term is a misnomer. So-called semantic tokens are better described as phonetic units
+(Sicherman and Adi, 2023), and generally lack semantic content in the linguistic sense (Arora et
+al., 2025), a point the review literature states explicitly (Guo et al., 2025) and which codec
+probing confirms directly (Shi et al., 2026). This dissertation retains the conventional term for
+consistency with the systems it describes, and section 2.3 sets out why the distinction, however
+resolved, does not settle anything about pragmatic force.
 
 That division has a design history, and it matters here because the present study measures the
 consequence of one step in it. Neural codecs established the residual-quantisation architecture in
 service of reconstruction, first in SoundStream (Zeghidour et al., 2021) and then in EnCodec
 (Défossez et al., 2022) and the Descript Audio Codec (Kumar et al., 2023), all optimised so that a
-waveform can be rebuilt from a small number of codes. SpeechTokenizer (Zhang et al., 2024)
+waveform can be rebuilt from a small number of codes. SpeechTokenizer (Zhang et al., 2024a)
 introduced the modification that concerns this dissertation, guiding the first quantiser with a
 self-supervised teacher so that the leading code stream carries content while later streams carry
 refinement. Mimi (Défossez et al., 2024) inherits that arrangement with WavLM as the teacher, and
@@ -62,12 +76,31 @@ study probes directly.
 
 ## 2.3 The representations under test
 
-This dissertation compares five representations on a single task, recovering the pragmatic force
-of a phrase whose lexical content is held constant. They fall into three types. Self-supervised
-continuous encoders (WavLM, HuBERT) are trained by masked prediction without transcription
-targets. A supervised continuous encoder (the Whisper encoder) is trained to transcribe. A
-discrete neural codec (Mimi) quantises audio for speech-language models, and a transcript-only
-text embedding serves as the control.
+This dissertation compares six representations on a single task, recovering the pragmatic force of a
+phrase whose lexical content is held constant. Table 2.1 gives their characteristics. They span four
+types. Self-supervised continuous encoders (WavLM, HuBERT) are trained by masked prediction without
+transcription targets. A supervised continuous encoder (the Whisper encoder) is trained to
+transcribe. Two discrete neural codecs differ in exactly the property under investigation, since
+Mimi distils from a self-supervised teacher and the Descript codec does not. A transcript embedding
+serves as the control.
+
+**Table 2.1.** Representations under test. Frame rate in Hz. Layers times hidden width for the
+continuous encoders, codebook vocabulary for the codecs. Specifications are read from the
+checkpoints and from the primary papers.
+
+| Representation | SR | FR | Layers × hidden | Vocab | Type | Quantisation |
+|---|---|---:|---|---:|---|---|
+| WavLM-large (Chen et al., 2022) | 16 kHz | 50 | 25 × 1024 | | continuous, self-supervised | none |
+| HuBERT-large (Hsu et al., 2021) | 16 kHz | 50 | 25 × 1024 | | continuous, self-supervised | none |
+| Whisper-small encoder (Radford et al., 2023) | 16 kHz | 50 | 13 × 768 | | continuous, supervised | none |
+| Mimi (Défossez et al., 2024) | 24 kHz | 12.5 | | 2048 | hybrid, 8 codebooks, WavLM-distilled | RVQ |
+| DAC (Kumar et al., 2023) | 24 kHz | 75 | | 1024 | acoustic, 32 codebooks, first 8 used | RVQ |
+| MPNet text embedding | | | 768 | | continuous, text | none |
+
+The two codecs are matched at eight codebooks rather than at equal bitrate, so the comparison holds
+quantiser count constant while frame rate and codebook geometry vary. That is a limitation of the
+cross-codec contrast and is stated as such [Ch.6], but it is the closest available approximation to
+an ablation of the distillation objective without training a codec.
 
 **Self-supervised encoders.** HuBERT (Hsu et al., 2021) and WavLM (Chen et al., 2022) share a
 masked-prediction architecture and exhibit a well-documented layer-wise division of labour, in which
@@ -75,7 +108,7 @@ lower layers encode local acoustic detail, middle layers integrate prosodic and 
 information, and upper layers abstract toward linguistic content while suppressing speaker-
 specific cues (Pasad et al., 2021; Chiu et al., 2025). For affective and prosodic tasks this
 places the useful signal in the middle band rather than the final layer. Two qualifications bear
-on the design. First, the mid-layer optimum is not absolute, since ParaLBench (Zhang et al., 2024)
+on the design. First, the mid-layer optimum is not absolute, since ParaLBench (Zhang et al., 2024b)
 finds the strongest WavLM performance across paralinguistic tasks did not always come from the
 final layers, which is why this study probes the full layer stack rather than assuming a fixed
 optimum [Ch.4]. Second, WavLM augments the HuBERT objective with simulated noise and overlapped-
@@ -137,7 +170,30 @@ and at chance by construction, so it is a manipulation check rather than a compe
 surrounding discourse context is the substantive text baseline, because pragmatic cues leak into
 neighbouring words. Distinguishing the two is essential to interpreting the results.
 
-## 2.4 What tokenisation loses: prosody and paralinguistics under quantisation
+## 2.4 What tokenisation loses, and why the standard comparisons overstate it
+
+Before reviewing that evidence, it is worth stating precisely what the standard designs measure,
+because two of them systematically mislead and this study is constructed around avoiding both.
+
+**This distinction is critical.** A probe evaluated on utterances whose words differ overstates the
+delivery-borne signal, because word identity is itself predictive of stance and the probe is free to
+read it. The measured quantity is then a mixture of delivery and vocabulary in unknown proportion,
+and no amount of additional data separates them, since the confound is in the comparison rather than
+in the representation. Holding the lexical item constant removes the route entirely, which is why
+the within-word analysis rather than the pooled one carries the argument here [4.3].
+
+The second design misleads differently. Placing a continuous encoder against a token stream and
+assigning the difference to quantisation compares conditions that differ simultaneously in
+architecture, training objective, frame rate and feature construction. The resulting figure is real
+but it is not a measurement of discretisation, and attributing it to discretisation licenses remedies
+aimed at the wrong stage. The parallel is with reconstruction-based codec evaluation, where a strong
+decoder can mask deficiencies in the tokens themselves and so inflate apparent token quality
+(Mousavi et al., 2026). In both cases the fix is the same in kind, which is to remove the
+intermediary and measure the step in isolation. Probing before and after quantisation on
+commensurate vectors is the analogue adopted here [3.5].
+
+Neither point is a criticism of the findings below, which this study largely reproduces. It is a
+claim about what those findings can be used to conclude.
 
 A growing body of work supports the concern that discretisation specifically damages prosodic
 and paralinguistic information, and it is this work that both motivates the central hypothesis

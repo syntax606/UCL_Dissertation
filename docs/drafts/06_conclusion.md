@@ -81,7 +81,7 @@ controlled one.
 **Choose the teacher layer by measurement.** WavLM carries 0.573 at layer 20 and 0.490 at layer 24,
 so the choice of distillation target is consequential for this contrast. Semantic distillation
 conventionally takes a mid-stack layer or an average across layers, selected for alignment with
-linguistic content (Zhang et al., 2024; Jo et al., 2025). Selecting it against a paralinguistic probe
+linguistic content (Zhang et al., 2024a; Jo et al., 2025). Selecting it against a paralinguistic probe
 curve instead is an intervention that requires no architectural change, and the decomposition here
 supplies the curve.
 

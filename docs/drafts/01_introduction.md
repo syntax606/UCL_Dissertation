@@ -1,13 +1,13 @@
 # Chapter 1: Introduction
 
-*(Draft, rewritten in the dense method-paper register. Citation style is bracketed to match. The
+*(Draft, rewritten in the dense method-paper register. The
 previous spare version is preserved at commit 826bd0b. Hypotheses are stated as formed before the
 analyses, and H4 is reported as falsified, which is deliberate. Cross-references marked [Ch.x].)*
 
 ## 1.1 Motivation
 
 Routing speech through a discrete token interface is increasingly the default design for
-conversational speech systems. Speech-to-speech models such as Moshi [Défossez et al., 2024] convert
+conversational speech systems. Speech-to-speech models such as Moshi (Défossez et al., 2024) convert
 the waveform into a stream of codes before any modelling occurs, so a neural codec stands between the
 speaker and every component downstream. The codes, not the audio, are what the system reasons over.
 Whatever the tokeniser declines to represent is unavailable thereafter, irrespective of how capable
@@ -25,12 +25,12 @@ happens to use it.
 There is converging evidence that deployed systems handle this layer poorly. Benchmarks of
 paralinguistic-aware interaction find leading end-to-end models scoring 3.37 against 3.18 for a
 cascaded pipeline that transcribes the query and discards delivery entirely, with two systems falling
-below the pipeline [Yang et al., 2026]. Audio language models follow lexical content over acoustic
-evidence when the two conflict [Pang et al., 2026, Wang et al., 2025]. Safety behaviour is exposed
+below the pipeline (Yang et al., 2026). Audio language models follow lexical content over acoustic
+evidence when the two conflict (Pang et al., 2026; Wang et al., 2025a). Safety behaviour is exposed
 through the same channel, with attacks that hold transcript content fixed and vary only delivery
-succeeding roughly nine times more often than neutral delivery [Qian and Li, 2026]. The applications
+succeeding roughly nine times more often than neutral delivery (Qian and Li, 2026). The applications
 least tolerant of misreading interpersonal signal, including assistive and human-robot settings, are
-where the cost is highest [Cao et al., 2025].
+where the cost is highest (Cao et al., 2025).
 
 These are behavioural observations, and behavioural observations underdetermine the diagnosis. A
 system can fail because the information never reached it, or because the information reached it and
@@ -45,23 +45,23 @@ leaving the other open.
 
 **Probing without lexical control.** One line establishes that speech representations carry
 pragmatic and affective content that text discards, probing self-supervised encoders on
-prosody-related tasks including sarcasm [Lin et al., 2022] and characterising where in a layer stack
-such content lives [Pasad et al., 2021, Zhang et al., 2024, Chiu et al., 2025]. These studies compare
-utterances whose words differ, typically on acted corpora such as MUStARD [Castro et al., 2019]. A
+prosody-related tasks including sarcasm (Lin et al., 2022) and characterising where in a layer stack
+such content lives (Pasad et al., 2021; Zhang et al., 2024b; Chiu et al., 2025). These studies compare
+utterances whose words differ, typically on acted corpora such as MUStARD (Castro et al., 2019). A
 probe succeeding under those conditions may be reading word choice rather than delivery, so the
 result supports the general claim that speech beats text without isolating the delivery-borne
 component that motivates it.
 
 **Attribution without stage isolation.** A second line establishes that discretisation is lossy and
-that prosodic and paralinguistic content suffers disproportionately [Mousavi et al., 2026, Guo et al.,
-2025, Zhang et al., 2024], with affect specifically degrading when speech is passed through neural
-codecs [Ren et al., 2024, Sun et al., 2026]. The standard comparison places a continuous encoder
+that prosodic and paralinguistic content suffers disproportionately (Mousavi et al., 2026; Guo et al.,
+2025; Zhang et al., 2024b), with affect specifically degrading when speech is passed through neural
+codecs (Ren et al., 2024; Sun et al., 2026). The standard comparison places a continuous encoder
 against a token stream and assigns the difference to quantisation. Those two conditions differ
 simultaneously in architecture, training objective, frame rate and feature construction, so the
 attribution is an inference from an uncontrolled contrast rather than a measurement of the
 discretisation step. Several proposals nonetheless intervene at the codebook on the strength of it,
-introducing word-level prosody tokens [Qian et al., 2025] or quantising at multiple segmental units
-[Sanders et al., 2025].
+introducing word-level prosody tokens (Qian et al., 2025) or quantising at multiple segmental units
+(Sanders et al., 2025).
 
 Despite their differences, the two lines share a limitation. Neither isolates the variable it needs.
 The first varies delivery and lexical content together and cannot separate their contributions. The
@@ -89,7 +89,7 @@ projections do not map to a common space. Measured over all 873 clips, the naive
 latent against reconstructed output reaches a cosine of 0.004 with a 27-fold norm mismatch, while the
 correct pairing of projected latent against summed codebook vectors reaches 0.821 for Mimi and 0.773
 for the Descript codec [3.5]. The decomposition is then run on both codecs, one distilled from a
-self-supervised teacher and one purely acoustic [Kumar et al., 2023].
+self-supervised teacher and one purely acoustic (Kumar et al., 2023).
 
 The dependence between the two is what licenses the result. A stage decomposition on an uncontrolled
 task localises the loss of *something*, and for a codec the likely something is phonetic or lexical
@@ -147,7 +147,7 @@ than discourse.
 
 **Varying the readout.** Three summarisations on identical forward passes leave WavLM's margin within
 0.009 while moving Mimi's by 0.056, which identifies readout sensitivity as a signature of thin
-signal rather than a nuisance [Sun et al., 2026].
+signal rather than a nuisance (Sun et al., 2026).
 
 **Varying probe capacity.** A non-linear probe under six capacity settings recovers at most +0.025
 anywhere, against a continuous-to-discrete gap of roughly 0.14, and the gains that occur track
