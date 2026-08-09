@@ -77,6 +77,82 @@ objective. All eight verified against the arXiv abstract page. Cited in 2.2, 2.4
 | Shi et al., 2026b | Jiacheng Shi, Hongfei Du, Xinyuan Song, Y. Alicia Hong, Yanfu Zhang, Ye Gao. *AffectCodec: Emotion-Preserving Neural Speech Codec for Expressive Speech Modeling.* | 2605.11098, 11 May 2026, **ACL Findings 2026** | Emotion-guided latent modulation before quantisation, relation-preserving distillation. Nearest existing work to the 6.4 proposal, which is why 6.4 differentiates on the supervised quantity rather than the mechanism. |
 | Meng et al., 2026 | Zhaoyang Meng, Zhengyao Ma, Kecan Mao, Yingming Gao, Ya Li. *AffectCodec: Emotion-Preserving Neural Speech Codec with Block-Diagonal Residual FSQ.* | 2605.23373, 22 May 2026 | Block-diagonal input/output projections separating emotion and acoustic subspaces. Operates on the same projection surface the 3.5 quantiser-space analysis identifies. |
 
+## Linguistics batch (verified 2026-08-09 from title pages of PDFs in
+## iCloud/UCL COMPLING/DISSERTATION/Aug 6, except where noted)
+
+Closes the structural gap that every citation in the drafts was a speech-engineering paper and none
+was linguistics. Read directly from each PDF's first page, not from memory.
+
+### Prosody of irony and sarcasm
+
+| Short cite | Verified citation | Venue | What it gives you |
+|---|---|---|---|
+| Rockwell, 2000 | Patricia Rockwell. *Lower, Slower, Louder: Vocal Cues of Sarcasm.* | Journal of Psycholinguistic Research 29(5) | Cue inventory: slower tempo, greater intensity, lower pitch. **And the key caveat.** Listeners discriminated *posed* sarcasm from nonsarcasm but **not spontaneous sarcasm**. |
+| Bryant and Fox Tree, 2002 | Gregory A. Bryant, Jean E. Fox Tree. *Recognizing Verbal Irony in Spontaneous Speech.* | Metaphor and Symbol 17(2), 99-119 | Spontaneous irony recognition. |
+| Bryant and Fox Tree, 2005 | Gregory A. Bryant, Jean E. Fox Tree. *Is there an Ironic Tone of Voice?* | Language and Speech 48(3), 257-277 | The dedicated-marker versus contextual-recognition controversy. |
+| Lan et al., 2019 | Chen Lan, Pak Long Hui, Wenwei Xu, Peggy Mok. *Revisiting Acoustic Markers of Sarcasm in Cantonese.* | ICPhS 2019, CUHK | Six measured features: speech rate, mean F0, F0 range, mean amplitude, amplitude range, HNR. Cross-linguistic. |
+
+### Stance as a construct
+
+| Short cite | Verified citation | Venue |
+|---|---|---|
+| Du Bois, 2007 | John W. Du Bois. *The stance triangle.* In *Stancetaking in Discourse: Subjectivity, evaluation, interaction* | Benjamins. **Verify the editor attribution**, the PDF header runs Du Bois and Englebretson together. |
+| Biber and Finegan, 1988 | Douglas Biber, Edward Finegan. *Adverbial stance types in English.* | Discourse Processes 11(1), 1-34 |
+| Stivers, 2008 | Tanya Stivers. *Stance, Alignment, and Affiliation During Storytelling: When Nodding Is a Token of Affiliation.* | Research on Language and Social Interaction 41(1), 31-57 |
+| Steensig, 2019 | Jakob Steensig. *Conversation Analysis and Affiliation and Alignment.* | The Encyclopedia of Applied Linguistics |
+
+### Response tokens
+
+| Short cite | Verified citation | Venue |
+|---|---|---|
+| Gravano et al., 2012 | Agustín Gravano, Julia Hirschberg, Štefan Beňuš. *Affirmative Cue Words in Task-Oriented Dialogue.* | Computational Linguistics 38(1) |
+
+Better aimed than the CA classics for this study. It is specifically about *okay* and *alright*, their
+functional ambiguity between agreement, continued attention and topic shift, their differing
+acoustic and prosodic realisation in spontaneous dialogue, and it frames that ambiguity as a problem
+for spoken dialogue systems. It is the citation for the claim in the README that neutral stance
+concentrates in the agreement particles as a linguistic property rather than a sampling artefact.
+
+### Acted against spontaneous speech
+
+| Short cite | Verified citation | Venue |
+|---|---|---|
+| Lotfian and Busso, 2019 | Reza Lotfian, Carlos Busso. *Building Naturalistic Emotionally Balanced Speech Corpus by Retrieving Emotional Speech from Existing Podcast Recordings.* | IEEE Trans. Affective Computing |
+| Busso et al., 2025 | Carlos Busso, Reza Lotfian, Kusha Sridhar, Ali N. Salman, Wei-Cheng Lin, Lucas Goncalves, Srinivas Parthasarathy, Abinay Reddy Naini, Seong-Gyun Leem, Luz Martinez-Lucas, Huang-Cheng Chou, Pravin Mote. *The MSP-Podcast Corpus.* | 2509.09791 |
+| Scherer, 2003 | Klaus R. Scherer. *Vocal communication of emotion: A review of research paradigms.* | Speech Communication 40, 227-256 |
+
+Lotfian and Busso is the corpus-design justification: podcast-derived, built expressly because acted
+emotion is unrepresentative. Sun et al. (2026), already cited, evaluates on MSP-Podcast.
+
+### Probing methodology
+
+| Short cite | Verified citation | Venue |
+|---|---|---|
+| Hewitt and Liang, 2019 | John Hewitt, Percy Liang. *Designing and Interpreting Probes with Control Tasks.* | 1909.03368 |
+| Belinkov, 2022 | Yonatan Belinkov. *Probing Classifiers: Promises, Shortcomings, and Advances.* | 2102.12452, Computational Linguistics |
+| de la Fuente and Jurafsky, 2024 | Antón de la Fuente, Dan Jurafsky. *A layer-wise analysis of Mandarin and English suprasegmentals in SSL speech models.* | 2408.13678 |
+| Schatz et al., 2013 | Thomas Schatz, Vijayaditya Peddinti, Francis Bach, Aren Jansen, Hynek Hermansky, Emmanuel Dupoux. *Evaluating speech features with the Minimal-Pair ABX task: Analysis of the classical MFC/PLP pipeline.* | Interspeech 2013. **Not on disk, web-verified only. Acquire before citing.** |
+
+### Expressive speech systems and benchmarks
+
+| Short cite | Verified citation | Venue |
+|---|---|---|
+| de Seyssel et al., 2023 | Maureen de Seyssel, Antony D'Avirro, Adina Williams, Emmanuel Dupoux. *EmphAssess: a Prosodic Benchmark on Assessing Emphasis Transfer in Speech-to-Speech Models.* | 2312.14069, Meta AI |
+| Nguyen et al., 2023 | Tu Anh Nguyen, Wei-Ning Hsu, Antony D'Avirro, Bowen Shi, Itai Gat and others. *EXPRESSO: A Benchmark and Analysis of Discrete Expressive Speech Resynthesis.* | Meta AI |
+| Nguyen et al., 2024 | Tu Anh Nguyen, Benjamin Muller, Bokai Yu, Marta R. Costa-jussà and others. *SPIRIT-LM: Interleaved Spoken and Written Language Model.* | Meta AI |
+| Choi et al., 2024 | Kwanghee Choi, Ankita Pasad, Tomohiko Nakamura, Satoru Fukayama, Karen Livescu, Shinji Watanabe. *Self-Supervised Speech Representations are More Phonetic than Semantic.* | 2406.08619 |
+
+Choi et al. shares Pasad and Livescu with the 2021 layer-wise paper already cited, and is the primary
+source for the phonetic-not-semantic point currently attributed to Sicherman and Adi and to Arora et
+al. in the 2.2 footnote. EmphAssess, Expresso and Spirit-LM are one Meta group under Dupoux, who is
+also an author on the ABX paper, so the four can be introduced together.
+
+### Do not cite
+
+Awasthi and Chavan (2025), *Advancing Sarcasm Detection: The Case for Naturalistic Conversational
+Datasets*, IJLTEMAS. Present in the Sarcasm detection folder. The venue is not one to cite in a UCL
+dissertation.
+
 ### Terminology batch (added 2026-08, cited in the 2.2 footnote)
 
 | Short cite | Verified citation | arXiv / venue | Role |
