@@ -13,8 +13,15 @@ against a three-way chance level of 0.33. Audio therefore adds a real increment 
 while discourse context alone recovers a substantial part of the contrast. The agreement particles
 were hardest even from audio, at 0.58 for *okay* and 0.64 for *yeah*.
 
-This outcome shapes how the text conditions are read below. Stance is partly recoverable from
-surrounding words, so the interesting quantity is what audio adds rather than whether text fails.
+Two features of this outcome shape how the conditions below are read. Stance is partly recoverable
+from surrounding words, so the interesting quantity is what audio adds rather than whether text
+fails. And the absolute level is what the prior literature predicts rather than a shortfall.
+Rockwell (2000) found listeners unable to discriminate spontaneous sarcasm from non-sarcasm at all,
+and Bryant and Fox Tree (2005) argue against a single dedicated ironic marker in favour of a family
+of cues recognised in context. An audio condition reaching 0.73 on spontaneous delivery, with
+context contributing substantially, is consistent with both. The agreement particles being hardest
+is consistent in the same way, since those are the phrases whose functional ambiguity is widest
+(Gravano et al., 2012).
 
 ## 4.2 Pooled stance decodability
 
@@ -204,6 +211,13 @@ WavLM and Whisper reach 0.618, HuBERT 0.613, text 0.592 and Mimi 0.560. **Every 
 inside the interval between the two baselines.** The measure therefore does not discriminate in
 either direction. It is uninformative rather than a clean failure, and it neither corroborates the
 probing results nor contradicts them.
+
+The measure's closest established relative is the minimal-pair ABX discriminability task (Schatz et
+al., 2013), which is likewise training-free and defined on distances between representations, and
+which is reported as the acoustic-level metric inside multi-level evaluation suites for exactly that
+reason (Dunbar et al., 2021). ABX avoids the difficulty encountered here by fixing the comparison as
+a triplet rather than estimating a class centroid, so it does not depend on cell size in the way a
+nearest-centroid measure does. That is the design lesson, and [Ch.6] takes it up.
 
 Two factors compound this. Only 15 of the available cells qualify, with 27 more one exemplar short of
 eligibility. And the measure is sensitive to implementation, with cosine distance or prior PCA

@@ -15,15 +15,27 @@ labelling arousal independently of stance. Each of these is realised concretely 
 ## 3.2 Corpus and target phrases
 
 The material is naturalistic speech drawn from political podcasts and broadcast programmes,
-chosen over acted emotion corpora because the central claim concerns how representations behave
-on the spontaneous, in-the-wild delivery that deployed systems actually encounter. Audio was
+chosen over acted emotion corpora for two reasons. The central claim concerns how representations
+behave on the spontaneous delivery deployed systems actually encounter. And acted and spontaneous
+renditions of the same category are not interchangeable stimuli, a methodological problem set out
+for vocal emotion research generally by Scherer (2003) and demonstrated for sarcasm specifically by
+Rockwell (2000), who found listeners able to discriminate posed sarcasm from non-sarcasm but not
+spontaneous sarcasm. Naturalistic podcast-derived corpora were constructed in response to exactly
+this problem (Lotfian and Busso, 2019; Busso et al., 2025), and this corpus follows that precedent
+at a finer grain, since the unit of analysis is a single phrase rather than a speaking turn. Audio was
 transcribed with word-level timestamps and indexed so that individual token occurrences could
 be located and cut precisely.
 
 The study targets eight short, high-frequency phrases whose pragmatic force varies by delivery
 while their lexical content is fixed, namely *yeah, okay, right, sure, great, fine, really,* and
 *come on*. These fall into three functional families, agreement particles (*yeah, okay, right,
-sure*), evaluative terms (*great, fine*), and challenge markers (*really, come on*). Each can
+sure*), evaluative terms (*great, fine*), and challenge markers (*really, come on*). The first
+family is not an arbitrary selection. Its members are response tokens whose defining property is
+systematic ambiguity between agreeing, signalling continued attention, and marking a topic shift,
+functions distinguished in spontaneous dialogue by prosodic realisation rather than by wording
+(Gravano et al., 2012). That is the property this design requires, and it also predicts the
+distribution reported in [B.5], where neutral stance concentrates almost entirely in these four
+words because backchannelling is a function of this class specifically. Each phrase can
 perform several speech acts. "Right" can signal agreement, correction, sarcasm, or challenge.
 "Sure" can signal consent, reluctance, or disbelief. "Great" can signal approval, sarcasm, or
 resignation. In every case the word is constant and the meaning is carried by prosody, timing,
@@ -57,7 +69,7 @@ dismissive, genuine approval, resigned, genuine surprise, confrontational, or en
 tags are the natural categories an annotator can hear, and they keep the judgement close to the
 data rather than forcing an abstract choice at label time.
 
-At **Tier 2**, each Tier-1 tag maps to two orthogonal analysis axes. **Stance** takes three
+At **Tier 2**, each Tier-1 tag maps to two independently judged analysis axes. **Stance** takes three
 values, affiliative, neutral, and adversarial, and is derived from the function tag but
 overridable. **Arousal** takes two values, low and high, and is judged independently of stance.
 Keeping arousal separate is a deliberate defence against a known confound. The binary
@@ -205,7 +217,12 @@ Using the permutation null rather than the majority score materially changes int
 the weaker representations, as Chapter 4 discusses.
 
 **Probe capacity.** A linear probe measures whether information is linearly accessible, which is
-not the same as whether it is present. To test that this constraint is not driving the results, a
+not the same as whether it is present, a distinction developed at length by Belinkov (2022) and the
+central caveat on probing as a method. The companion concern, that a probe may succeed by memorising
+rather than by reading structure, is addressed by Hewitt and Liang (2019) through control tasks with
+randomised labels. The empirical permutation null used throughout this study is an instance of that
+idea, since it refits the entire pipeline on shuffled labels and reports the observed score against
+that distribution rather than against an analytic chance level. To test that this constraint is not driving the results, a
 small non-linear probe was run as a companion on identical features and identical folds, a
 single-hidden-layer network of 64 units with strong weight decay and early stopping. It is kept
 deliberately small, because a sufficiently powerful probe can learn a task from almost any

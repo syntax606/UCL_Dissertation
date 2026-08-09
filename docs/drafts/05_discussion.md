@@ -94,7 +94,14 @@ rather than a metric reported during development, it works through resynthesis a
 recognition rather than on the representation, and it measures categorical emotion on acted corpora.
 The results here bear on that last point directly. Stance and arousal are separable in this data, and
 Mimi retains roughly three quarters of the arousal signal against under a third of the stance signal
-[Ch.4]. A measure supervised on categorical emotion labels, which are substantially arousal-loaded,
+[Ch.4]. The prosody literature suggests why the split falls where it does. The cues reported for
+sarcastic delivery are not uniform in how much a reconstruction objective needs them. Amplitude and
+mean F0, which Rockwell (2000) and Lan et al. (2019) both identify, are directly reconstructive and
+are also most of what an arousal judgement rests on. Speech rate, F0 range and voice quality, which
+the same studies identify, are contour-shaped and timing-dependent, and degrading them costs a codec
+little on any reconstruction criterion. A pipeline optimised for reconstruction would therefore be
+expected to retain the first group and shed the second, which is the asymmetry observed. This is an
+interpretation rather than a measurement, since no cue-level analysis was run [Ch.6]. A measure supervised on categorical emotion labels, which are substantially arousal-loaded,
 would therefore register the axis that survives more readily than the axis that does not. The same
 concern applies to the emotion-preserving objectives now being proposed. Making affect a training
 target is the right move, and which affective quantity supervises it determines whether the

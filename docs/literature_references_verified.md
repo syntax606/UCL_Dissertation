@@ -131,7 +131,9 @@ emotion is unrepresentative. Sun et al. (2026), already cited, evaluates on MSP-
 | Hewitt and Liang, 2019 | John Hewitt, Percy Liang. *Designing and Interpreting Probes with Control Tasks.* | 1909.03368 |
 | Belinkov, 2022 | Yonatan Belinkov. *Probing Classifiers: Promises, Shortcomings, and Advances.* | 2102.12452, Computational Linguistics |
 | de la Fuente and Jurafsky, 2024 | Antón de la Fuente, Dan Jurafsky. *A layer-wise analysis of Mandarin and English suprasegmentals in SSL speech models.* | 2408.13678 |
-| Schatz et al., 2013 | Thomas Schatz, Vijayaditya Peddinti, Francis Bach, Aren Jansen, Hynek Hermansky, Emmanuel Dupoux. *Evaluating speech features with the Minimal-Pair ABX task: Analysis of the classical MFC/PLP pipeline.* | Interspeech 2013. **Not on disk, web-verified only. Acquire before citing.** |
+| Schatz et al., 2013 | Thomas Schatz, Vijayaditya Peddinti, Francis Bach, Aren Jansen, Hynek Hermansky, Emmanuel Dupoux. *Evaluating speech features with the Minimal-Pair ABX task: Analysis of the classical MFC/PLP pipeline.* | Interspeech 2013. **Not on disk, web-verified. Cite this as the method.** |
+| Schatz, 2016 | Thomas Schatz. *ABX-Discriminability Measures and Applications.* | PhD dissertation, Université Paris 6. HAL tel-01407461. The fuller treatment, and the reference Dunbar et al. use. Optional second cite. |
+| Dunbar et al., 2021 | Ewan Dunbar, Mathieu Bernard, Nicolas Hamilakis, Tu Anh Nguyen, Maureen de Seyssel, Patricia Rozé, Morgane Rivière, Eugene Kharitonov, Emmanuel Dupoux. *The Zero Resource Speech Challenge 2021: Spoken language modelling.* | 2104.14700, Interspeech 2021. On disk. **Uses** ABX rather than introducing it. Cite for the pattern of a training-free distance measure reported inside a multi-level evaluation suite, which is the precedent for the Chapter 6 metric proposal. |
 
 ### Expressive speech systems and benchmarks
 

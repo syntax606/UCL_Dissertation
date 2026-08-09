@@ -233,24 +233,71 @@ disruptive factor in speech-language modelling, reinforcing that this informatio
 important rather than decorative. Poorly represented, it does not merely go missing, it can
 destabilise modelling.
 
-## 2.5 Pragmatics and same-word meaning contrasts
+## 2.5 The linguistic construct
 
-The linguistic grounding of the project is a basic but powerful observation, which is that identical lexical
-material can perform different speech acts depending on delivery and discourse context. "Yeah"
-can signal agreement, backchannelling, disbelief, or impatience. "Right" can signal agreement,
-correction, sarcasm, or challenge. "Sure" can signal consent, reluctance, or disbelief. "Great"
-can signal approval, sarcasm, or resignation. In each, the words are fixed and the meaning is
-carried by something else.
+The preceding sections concern what representations retain. This section establishes that the thing
+they might retain is a describable linguistic object rather than a label of convenience, since the
+probing results are only interpretable if it is.
 
-Operationalising pragmatic meaning through controlled same-phrase contrasts is what distinguishes
-a substantive claim from a weak one. The weak version, "prosody matters," is uncontroversial and
-untestable as a contribution. The strong version tests a concrete failure mode, namely whether a
-representation collapses different meanings when the transcript is held constant. This framing
-also disciplines interpretation. Because the lexical item is fixed, a representation that
-separates the pragmatic classes cannot be doing so on lexical grounds, which removes the most
-common confound in pragmatic and affective classification. It introduces a different risk, that
-the separation tracks arousal rather than pragmatic force, which the design controls for directly
-by labelling arousal independently and testing separability at matched arousal [3.3, Ch.4].
+**Stance.** The analytic axis used here, affiliative against neutral against adversarial, is a
+narrowing of a construct with an established literature. Du Bois (2007) formalises stancetaking as a
+single act that simultaneously evaluates an object, positions the speaker, and calibrates alignment
+with an interlocutor, and it is the third of those, alignment, that this study operationalises.
+Biber and Finegan (1988) provide the complementary account of how stance is marked lexically and
+grammatically, which matters here because the design deliberately removes those markers by holding
+the word constant. What remains is the conversation-analytic notion of affiliation and
+disaffiliation, the degree to which a response cooperates with the stance of the prior turn
+(Stivers, 2008; Steensig, 2019). That distinction maps onto the three-way axis used here closely
+enough that the annotation scheme is best understood as an operationalisation of it rather than as
+an independent invention [3.3].
+
+**Response tokens.** The eight target phrases are not arbitrary short words. *Yeah*, *okay*, *right*
+and *sure* belong to a class variously called response tokens, continuers or affirmative cue words,
+and their defining property is exactly the one this study exploits. Gravano, Hirschberg and Beňuš
+(2012) show that such words are systematically ambiguous between agreeing with the interlocutor,
+signalling continued attention, and marking the start of a new topic, and that these functions are
+distinguished in spontaneous dialogue by acoustic and prosodic realisation rather than by wording.
+They frame that ambiguity as a problem for spoken dialogue systems, which is the same problem this
+dissertation measures one stage earlier. Their account also explains a property of the corpus that
+would otherwise look like a sampling failure, namely that neutral stance concentrates almost
+entirely in the agreement particles [B.5]. Backchannelling is a function of that class specifically,
+so its distribution follows from what these words do.
+
+**The acoustic signature.** There is an experimental literature on whether ironic and sarcastic
+delivery has identifiable acoustic correlates, and it converges on a small set. Rockwell (2000)
+reports slower tempo, greater intensity and lowered pitch. Lan et al. (2019) measure speech rate,
+mean F0, F0 range, mean amplitude, amplitude range and harmonics-to-noise ratio, finding reductions
+across several in Cantonese sarcasm. Bryant and Fox Tree (2002, 2005) examine whether these
+constitute a dedicated ironic tone of voice or a family of cues recognised in context, and conclude
+against a single dedicated marker.
+
+Two consequences follow for this study. That controversy bears directly on the premise check
+reported in [4.1], where discourse context alone recovers a substantial part of the contrast at 0.65
+against 0.73 with audio, which is what a family-of-cues account with contextual support predicts
+rather than an anomaly. And the cue inventory is not uniform with respect to what a codec must
+preserve. Amplitude and mean F0 are directly reconstructive. Tempo, F0 range and voice quality are
+contour-shaped and carry little reconstruction penalty if degraded. Chapter 5 returns to this in
+interpreting why the two annotated axes are retained so unevenly.
+
+**Spontaneous against acted delivery.** Rockwell (2000) reports a result that constrains what this
+corpus can be compared against. Listeners discriminated *posed* sarcasm from non-sarcasm reliably
+and **spontaneous sarcasm from non-sarcasm not at all**. Acted and naturalistic renditions of the
+same category are therefore not interchangeable stimuli, a methodological problem Scherer (2003)
+sets out at length for vocal emotion research generally, and which motivated the construction of
+naturalistic podcast-derived corpora in the first place (Lotfian and Busso, 2019; Busso et al.,
+2025). This is the strongest reason to prefer spontaneous political-podcast audio over MUStARD,
+IEMOCAP or RAVDESS, and it also calibrates expectations for the premise check, since spontaneous
+delivery is the harder condition for human listeners and not only for models.
+
+**What the design does with all this.** Operationalising pragmatic force through same-phrase
+contrasts is what separates a substantive claim from a weak one. The weak version, that prosody
+matters, is uncontroversial. The strong version tests whether a representation collapses distinct
+interpersonal meanings when the transcript is held constant. Because the lexical item is fixed, a
+representation that separates the classes cannot be doing so on lexical grounds. That introduces a
+different risk, that separation tracks arousal rather than stance, which the design addresses by
+annotating arousal independently and testing separability at matched arousal [3.3, Ch.4]. This study
+measures whether the category is recoverable, not which acoustic cue carries it, and cue-level
+attribution is named as future work in [Ch.6] rather than attempted here.
 
 ## 2.6 The closest precedent and the gap
 
