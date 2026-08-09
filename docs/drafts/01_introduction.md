@@ -1,141 +1,225 @@
 # Chapter 1: Introduction
 
-*(Draft. Target budget ~1,200 words. Hypotheses are stated as they were formed before the analyses,
-and Chapter 4 reports that not all of them were supported, which is deliberate. Cross-references
-marked [Ch.x] and [n.n].)*
+*(Draft, rewritten in the dense method-paper register. Citation style is bracketed to match. The
+previous spare version is preserved at commit 826bd0b. Hypotheses are stated as formed before the
+analyses, and H4 is reported as falsified, which is deliberate. Cross-references marked [Ch.x].)*
 
 ## 1.1 Motivation
 
-A speaker says "yeah". Depending on how it is delivered, that single syllable can accept a proposal,
-concede a point grudgingly, or reject the proposal outright by mocking it. The transcript is
-identical in all three cases. Everything that distinguishes them sits in timing, pitch movement,
-voice quality and emphasis, and human listeners resolve the distinction without apparent effort.
+Routing speech through a discrete token interface is increasingly the default design for
+conversational speech systems. Speech-to-speech models such as Moshi [Défossez et al., 2024] convert
+the waveform into a stream of codes before any modelling occurs, so a neural codec stands between the
+speaker and every component downstream. The codes, not the audio, are what the system reasons over.
+Whatever the tokeniser declines to represent is unavailable thereafter, irrespective of how capable
+the downstream model becomes. Under this paradigm the central question is not what a model can learn
+but what its input representation carries, and that question is answerable by measurement rather than
+by benchmark performance.
 
-This is ordinary in conversation and it is a live engineering problem, because a growing class of
-systems no longer receives speech as speech. Contemporary speech-to-speech models convert audio into
-sequences of discrete tokens before any modelling occurs, so a tokeniser stands between the speaker
-and everything downstream. Whatever that tokeniser discards is unavailable to every component that
-follows, however capable those components become. If the interpersonal layer of an utterance is
-absent from the tokens, no amount of downstream modelling can restore it.
+The interpersonal layer of speech is the case where this matters most and is least well characterised.
+The same lexical item performs opposite speech acts depending on delivery. A single *yeah* can accept
+a proposal, concede it grudgingly, or reject it by mocking it, and the transcript is identical across
+all three. Human listeners resolve the distinction without effort. Whether a codec preserves it is a
+question about representational content, and it is separable from whether any particular system
+happens to use it.
 
-There is evidence that these systems handle this layer poorly. Benchmarking of spoken language
-models finds leading end-to-end systems scoring 3.37 on paralinguistic-aware interaction against
-3.18 for a cascaded pipeline that transcribes the query and discards delivery entirely, with two
-systems scoring below the pipeline (Yang et al., 2026). Audio language models have been shown to
-follow the words over the voice when the two conflict (Pang et al., 2026). And safety behaviour is
-exposed through the same channel, with attacks that hold transcript content fixed and vary only
-delivery succeeding roughly nine times more often than neutral delivery (Qian and Li, 2026). The
-applications with the least tolerance for misreading interpersonal signals, including assistive and
-human-robot settings, are the ones where this matters most (Cao et al., 2025).
+There is converging evidence that deployed systems handle this layer poorly. Benchmarks of
+paralinguistic-aware interaction find leading end-to-end models scoring 3.37 against 3.18 for a
+cascaded pipeline that transcribes the query and discards delivery entirely, with two systems falling
+below the pipeline [Yang et al., 2026]. Audio language models follow lexical content over acoustic
+evidence when the two conflict [Pang et al., 2026, Wang et al., 2025]. Safety behaviour is exposed
+through the same channel, with attacks that hold transcript content fixed and vary only delivery
+succeeding roughly nine times more often than neutral delivery [Qian and Li, 2026]. The applications
+least tolerant of misreading interpersonal signal, including assistive and human-robot settings, are
+where the cost is highest [Cao et al., 2025].
 
-Those are behavioural observations. They establish that something is wrong without establishing
-where. A system can fail at this because the information never reached it, or because the
-information reached it and was ignored. The two look identical from outside and they call for
-different remedies. Nothing downstream can recover what was never encoded, whereas better modelling
-can attend to what was encoded and overlooked.
+These are behavioural observations, and behavioural observations underdetermine the diagnosis. A
+system can fail because the information never reached it, or because the information reached it and
+was ignored. The two are indistinguishable from the outside and they admit different remedies. Better
+modelling can recover information that is present and unused. Nothing downstream recovers information
+that was never encoded.
 
-This dissertation takes the first possibility and pursues it through three nested questions. Whether
-the contrast is present in speech representations at all once the words are held constant. How much
-of it the representation deployed systems consume retains. And at which stage of that pipeline the
-remainder is lost. Each question is worth asking only if the previous one is answered
-affirmatively, and it is the third where this study departs from the current literature.
+## 1.2 Two extremes and a shared limitation
 
-## 1.2 The gap
+Existing work approaches this question from two directions, and each resolves one half of it while
+leaving the other open.
 
-Two literatures approach these questions, and each settles one of them without reaching the third.
+**Probing without lexical control.** One line establishes that speech representations carry
+pragmatic and affective content that text discards, probing self-supervised encoders on
+prosody-related tasks including sarcasm [Lin et al., 2022] and characterising where in a layer stack
+such content lives [Pasad et al., 2021, Zhang et al., 2024, Chiu et al., 2025]. These studies compare
+utterances whose words differ, typically on acted corpora such as MUStARD [Castro et al., 2019]. A
+probe succeeding under those conditions may be reading word choice rather than delivery, so the
+result supports the general claim that speech beats text without isolating the delivery-borne
+component that motivates it.
 
-Probing work has established that speech representations carry pragmatic and affective information
-that text discards, and the closest precedent probes self-supervised models on prosody-related tasks
-including sarcasm (Lin et al., 2022). That work compares utterances whose words differ, so a probe
-succeeding on it may be exploiting word choice rather than delivery. The general claim that speech
-beats text is well supported. The specific claim that speech carries meaning the words cannot convey
-requires holding the words constant, which is a stricter test.
+**Attribution without stage isolation.** A second line establishes that discretisation is lossy and
+that prosodic and paralinguistic content suffers disproportionately [Mousavi et al., 2026, Guo et al.,
+2025, Zhang et al., 2024], with affect specifically degrading when speech is passed through neural
+codecs [Ren et al., 2024, Sun et al., 2026]. The standard comparison places a continuous encoder
+against a token stream and assigns the difference to quantisation. Those two conditions differ
+simultaneously in architecture, training objective, frame rate and feature construction, so the
+attribution is an inference from an uncontrolled contrast rather than a measurement of the
+discretisation step. Several proposals nonetheless intervene at the codebook on the strength of it,
+introducing word-level prosody tokens [Qian et al., 2025] or quantising at multiple segmental units
+[Sanders et al., 2025].
 
-Work on discrete tokenisation has established that quantisation is lossy and that prosodic and
-paralinguistic content suffers most (Mousavi et al., 2026; Guo et al., 2025), and affect
-specifically has been shown to degrade when speech is passed through neural codecs (Ren et al.,
-2024). That literature generally compares a continuous representation against a token stream and
-attributes the difference to discretisation. But those two conditions differ in several respects at
-once, including architecture, training objective, frame rate and how features are summarised. The
-attribution to quantisation is therefore an inference from an uncontrolled comparison rather than a
-measurement of the quantisation step itself. Several recent proposals aim to preserve prosody by
-redesigning codebooks (Qian et al., 2025; Sanders et al., 2025), which presumes the attribution is
-correct.
+Despite their differences, the two lines share a limitation. Neither isolates the variable it needs.
+The first varies delivery and lexical content together and cannot separate their contributions. The
+second varies quantisation and four other things together and cannot localise the loss. In both cases
+the confound is a property of the comparison rather than of the representations, which means it is
+removable by design.
 
-## 1.3 Contribution
+## 1.3 Approach
 
-This dissertation makes four contributions.
+This dissertation removes both confounds jointly, and the two moves are not independent.
 
-The first is a lexically controlled probing design. A corpus of 873 clips was assembled from
-approximately 7,310 hours of political podcast audio, each clip containing one of eight short phrases
-whose pragmatic force varies while their wording does not. Each clip was annotated for interpersonal
-stance and, independently, for arousal. Because the word is fixed within each contrast, a probe that
-separates the classes cannot be reading lexical content, and because arousal is labelled separately
-the design can test whether stance reduces to vocal energy.
+**A lexical control.** A corpus of 873 clips was assembled from approximately 7,310 hours of
+political podcast audio, spanning 32 shows and 753 episodes, each clip containing one of eight short
+phrases whose pragmatic force varies while their wording does not. Each clip carries an annotation
+for interpersonal stance and, separately and without conditioning, for arousal. Because the word is
+fixed within every contrast, a probe that separates the classes cannot be reading lexical content,
+and because arousal is labelled independently the design tests directly whether stance reduces to
+vocal energy.
 
-The second is a decomposition of the pipeline into stages. Rather than comparing a continuous
-encoder against a token stream, this study probes each codec immediately before and immediately after
-quantisation, on identical forward passes with identical pooling, so that the rounding step is the
-only difference between the two conditions. This requires establishing which vectors are commensurate
-inside a residual quantiser [3.5]. The decomposition is run on two codecs of different design.
+**A stage decomposition.** Rather than comparing a continuous encoder against a token stream, each
+codec is probed immediately before and immediately after quantisation, on identical forward passes
+with identical pooling, so the rounding step is the only difference between conditions. This requires
+establishing which vectors are commensurate inside a residual quantiser, since the input and output
+projections do not map to a common space. Measured over all 873 clips, the naive pairing of encoder
+latent against reconstructed output reaches a cosine of 0.004 with a 27-fold norm mismatch, while the
+correct pairing of projected latent against summed codebook vectors reaches 0.821 for Mimi and 0.773
+for the Descript codec [3.5]. The decomposition is then run on both codecs, one distilled from a
+self-supervised teacher and one purely acoustic [Kumar et al., 2023].
 
-These first two contributions are not independent, and the dependence is what licenses the result. A
-stage decomposition run on an uncontrolled task would show where sensitivity to something is lost,
-and for a codec the most likely something is phonetic or lexical detail, which such a system is built
-to preserve and which would say nothing about the interpersonal layer. Because the word is fixed
-across every contrast, the margins the decomposition assigns to each stage are margins on delivery.
-The lexical control is therefore what makes the decomposition a measurement of pragmatics rather than
-of audio fidelity in general, and neither contribution would support the conclusion without the
-other.
+The dependence between the two is what licenses the result. A stage decomposition on an uncontrolled
+task localises the loss of *something*, and for a codec the likely something is phonetic or lexical
+detail, which such a system is built to preserve and which says nothing about the interpersonal
+layer. Holding the word fixed makes the margins the decomposition assigns to each stage margins on
+delivery specifically.
 
-The third follows from what that decomposition shows. The loss is concentrated in the codec encoder
-rather than at quantisation, and what survives is traceable to a component introduced for unrelated
-reasons, which reframes the problem from a limit imposed by rounding to a consequence of a chosen
-training objective.
+The joint design resolves the trade-off along three axes. **(i) Removing the lexical route.** Within
+a phrase, word identity is constant, so no separation can be attributed to vocabulary. **(ii)
+Removing the arousal route.** Stance is decoded within each arousal level, so no separation can be
+attributed to loudness. **(iii) Localising rather than attributing.** Each stage is measured against
+its own empirical permutation null, so the pipeline is decomposed rather than compared end to end.
 
-The fourth is the reporting of three hypotheses that were tested and not supported, alongside the
-findings that were. A training-free corroborating measure returned a null against its correct
-baseline, a proposed mechanism linking these representations to safety failures did not hold, and an
-apparent asymmetry between the two annotated axes proved to be a property of the summary rather than
-of the representation [Ch.4, Ch.6].
+## 1.4 Results
 
-## 1.4 Research questions and hypotheses
+Under a setting of 873 lexically controlled clips, six frozen representations and a linear diagnostic
+probe with fold grouping by episode, the following obtains.
 
-Three questions organise the study.
+Pragmatic stance is linearly decodable from continuous representations. WavLM clears its own
+permutation null by 0.241 and the Whisper encoder by 0.232, against 0.070 for the deployed Mimi token
+stream and 0.045 for a discourse-context text embedding. Under the lexical control the ordering
+sharpens, with Whisper at 0.672 and WavLM at 0.659 mean within-word macro-F1 against 0.534 for
+discourse text and 0.466 for Mimi, which falls below the text baseline once word identity is removed
+[4.3].
+
+The loss is not where it has been attributed. Between WavLM at +0.244 and Mimi's quantised output at
++0.099, the codec encoder accounts for 0.112 and quantisation for 0.034, a ratio of roughly one to
+three. The pattern replicates on the Descript codec, which loses 0.182 at its encoder and *gains*
+0.025 at quantisation, so in that system discretisation is marginally beneficial [4.6]. Two codecs of
+different objective, frame rate and codebook geometry agree that the encoder is where the information
+goes.
+
+What survives is traceable to a component introduced for unrelated reasons. Probing each of Mimi's
+eight codebooks separately, the WavLM-distilled codebook 0 is the only one carrying appreciable
+stance at 0.402, while five of the seven acoustic refinement codebooks are statistically
+indistinguishable from chance, and adding all seven to codebook 0 does not improve on codebook 0
+alone [4.5]. The Moshi report motivates distillation by semantic transfer and computational cost and
+does not evaluate it in paralinguistic terms, so the preservation is incidental and consequently
+unprotected by any routinely reported codec metric [5.4].
+
+## 1.5 Interventions
+
+Six interventions test whether the decodable signal is what it is claimed to be.
+
+**Holding energy constant.** Stance is decoded within each arousal level separately. It survives in
+every representation including the discrete ones, with margins reduced by 6 to 37 per cent in seven of
+eight model-by-level cells, so stance is entangled with arousal but not reducible to it.
+
+**Holding the show constant.** Regrouping folds by show moves WavLM from 0.573 to 0.530 and Mimi from
+0.381 to 0.362, so the probe is not principally recovering speaker identity.
+
+**Varying the context window.** Performance is flat across local, segment and discourse windows and
+does not rise with more surrounding speech, indicating the continuous encoders read delivery rather
+than discourse.
+
+**Varying the readout.** Three summarisations on identical forward passes leave WavLM's margin within
+0.009 while moving Mimi's by 0.056, which identifies readout sensitivity as a signature of thin
+signal rather than a nuisance [Sun et al., 2026].
+
+**Varying probe capacity.** A non-linear probe under six capacity settings recovers at most +0.025
+anywhere, against a continuous-to-discrete gap of roughly 0.14, and the gains that occur track
+remaining headroom rather than representation type, with the largest falling on the continuous text
+embedding. Linear accessibility therefore bounds rather than explains the result [4.4].
+
+**Replacing the codec.** Repeating the decomposition on an architecturally independent acoustic codec
+reproduces the encoder-dominant ordering, which distinguishes a property of codec design from a
+property of one system.
+
+Together these identify the working channel as delivery-borne, speaker-independent, context-free
+information concentrated in the codec encoder and inherited by a single distilled codebook.
+
+## 1.6 Research questions and hypotheses
 
 **RQ1.** Is interpersonal pragmatic force recoverable from speech representations when lexical
 content is held constant?
 
-**RQ2.** How much of it is retained by the representation that deployed speech-to-speech systems
-consume?
+**RQ2.** How much of it is retained by the representation deployed speech-to-speech systems consume?
 
-**RQ3.** Which stage of the pipeline is responsible for whatever is lost?
+**RQ3.** Which stage of the pipeline is responsible for what is lost?
 
 Five hypotheses were formed in advance.
 
-**H1.** Human listeners recover more stance from audio than from the transcript, which is a premise
-check rather than a finding, and a negative result here would end the study.
+**H1.** Human listeners recover more stance from audio than from the transcript. A premise check
+rather than a finding, and a negative result ends the study.
 
-**H2.** Stance is linearly decodable from continuous speech representations under lexical control.
+**H2.** Stance is linearly decodable from continuous representations under lexical control.
 
-**H3.** The deployed discrete representation retains substantially less of it than the continuous
-representations do.
+**H3.** The deployed discrete representation retains substantially less of it.
 
 **H4.** The loss is principally attributable to quantisation, on the grounds that discretisation is
-the only step in the pipeline capable of rendering two distinct inputs identical.
+the only step capable of rendering two distinct inputs identical.
 
-**H5.** Stance decodability is not reducible to arousal, and survives when energy is held constant.
+**H5.** Stance decodability is not reducible to arousal and survives when energy is held constant.
 
-H1, H2, H3 and H5 are supported. **H4 is not**, and its failure is the most consequential result
-reported here, because the remedies currently proposed in the literature are addressed to the stage
-it names.
+H1, H2, H3 and H5 are supported. **H4 is not**, and its falsification is the most consequential result
+reported here, because the interventions currently proposed in the literature are addressed to the
+stage it names.
 
-## 1.5 Structure
+## 1.7 Contributions
+
+**A lexically controlled diagnostic corpus.** 873 clips of naturalistic spontaneous speech across
+eight target phrases, annotated on two orthogonal axes, in which delivery varies while wording does
+not.
+
+**A stage-resolved measurement of codec loss.** A decomposition that separates the codec encoder from
+quantisation on commensurate vectors, replicated on two codecs of independent design, showing the
+encoder to be the dominant contributor by roughly threefold and quantisation to be marginally
+beneficial in one of the two.
+
+**A mechanistic account of what survives.** Identification of the WavLM-distilled codebook as the
+sole appreciable carrier of stance inside Mimi, together with the argument that this preservation is
+incidental to its stated objective and invisible to every routinely reported codec metric, and is
+therefore removable in a successor system without registering as a regression.
+
+**A falsifiable disagreement with current remedies.** Because most of the loss precedes quantisation,
+codebook-level interventions operate on information the encoder has already declined to represent.
+The prediction is an ordering between design families rather than a verdict on any system, and it is
+testable on a common corpus.
+
+**Reporting of three unsupported hypotheses.** A training-free preservation measure that falls inside
+the interval between its two defensible baselines and therefore does not discriminate, a proposed
+arousal-confusion mechanism that does not hold, and an apparent asymmetry between the annotated axes
+that proved to be a property of the readout rather than of the representation [Ch.6].
+
+## 1.8 Structure
 
 Chapter 2 situates the study in the literatures on discrete speech tokens, probing of speech
-representations, and the pragmatics of same-word contrasts, and traces the codec design lineage that
-the stage decomposition later measures. Chapter 3 describes the corpus, the two-tier annotation
-scheme, the premise check, the six representations and the probing protocol, including the
-pre-committed choices of readout and chance level. Chapter 4 reports seven analyses. Chapter 5
-interprets them, with attention to what the results cannot support. Chapter 6 states the limitations
-and sets out a programme of repair that follows from where the loss was found.
+representations, and the pragmatics of same-word contrasts, and traces the codec design lineage the
+decomposition later measures. Chapter 3 describes the corpus, the two-tier annotation scheme, the
+premise check, the six representations and the probing protocol, including the pre-committed choices
+of readout and chance level. Chapter 4 reports seven analyses. Chapter 5 interprets them with
+attention to what they cannot support. Chapter 6 states the limitations and sets out a programme of
+repair that follows from where the loss was found.
