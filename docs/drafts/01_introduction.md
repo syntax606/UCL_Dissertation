@@ -98,7 +98,9 @@ This dissertation removes both confounds jointly, and the two moves are not inde
 
 **A lexical control.** A corpus of 873 clips was assembled from approximately 7,310 hours of
 political podcast audio, spanning 32 shows and 753 episodes, each clip containing one of eight short
-phrases whose pragmatic force varies while their wording does not. Each clip carries a fine-grained
+phrases whose pragmatic force varies while their wording does not. Four of the eight are the response
+tokens of [1.1], so the corpus is built from the class whose meaning the full-duplex setting depends
+on and whose meaning delivery alone supplies. Each clip carries a fine-grained
 pragmatic function tag, from which interpersonal stance is derived, and separately and without
 conditioning on that tag, a judgement of arousal. Because the word is
 fixed within every contrast, a probe that separates the classes cannot be reading lexical content,

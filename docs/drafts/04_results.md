@@ -192,6 +192,14 @@ and compared at the first eight of its 32 codebooks [3.5]. Its encoder retains 4
 Mimi's does. The two converge at the token stage, where DAC
 reaches 88 per cent of Mimi, because quantisation helps DAC and hurts Mimi.
 
+**The deployed condition.** The rungs above stop at post-quantisation embeddings, one step short of
+what Table 4.1 reports. A single run covering all four rungs on Mimi gives WavLM at +0.239, Mimi
+before quantisation at +0.130, Mimi after quantisation at +0.100 and the deployed histogram at
++0.069, so on that run the encoder costs 0.109, quantisation 0.030 and the histogram readout a
+further 0.031. Summarising the token stream therefore costs about as much as quantising it, and
+four times as much again within a single phrase, where the cells are small enough for the
+dimensionality of a sparse histogram to bite [4.3].
+
 **Stability.** The two costs behave differently under a change of readout. The encoder cost holds at
 0.116 under mean and standard deviation pooling and 0.121 with deltas. The quantisation cost ranges
 from +0.056 under four-segment pooling to −0.036 with deltas, a swing sufficient to change its sign.
