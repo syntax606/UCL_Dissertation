@@ -6,43 +6,60 @@ analyses, and H4 is reported as falsified, which is deliberate. Cross-references
 
 ## 1.1 Motivation
 
-Full-duplex speech-to-speech systems route speech through a discrete token interface. Moshi
-(Défossez et al., 2024) passes the waveform through a neural codec, which encodes it and then
-quantises the result, before anything reaches the language model. The codec therefore stands between
-the speaker and every component downstream, and it does so in two distinct stages, which matters
-because they turn out not to cost the same. The choice is architecturally determined rather than
-universal, since systems that generate speech need a discrete target to predict while systems built
-only to understand it more often keep continuous features (Arora et al., 2025). The codes, not the audio, are what the system reasons over.
-Whatever the tokeniser declines to represent is unavailable thereafter, irrespective of how capable
-the downstream model becomes. Under this paradigm the central question is not what a model can learn
-but what its input representation carries, and that question is answerable by measurement rather than
-by benchmark performance.
+Spoken interaction with machines is moving from turn-taking exchange to full-duplex conversation.
+The Moshi report states the limitation it was built to remove directly, that prior systems "rely on
+a segmentation into speaker turns, which does not take into account overlapping speech,
+interruptions and interjections", and notes that overlapping speech accounts for ten to twenty per
+cent of spoken time (Défossez et al., 2024). The target is not a better question-answering system.
+It is a system that can be interrupted, that can listen while speaking, and that can produce the
+small acknowledgements by which people signal they are still there.
 
-The interpersonal layer of speech is a demanding case for any such interface. The same lexical item
-performs opposite speech acts depending on delivery. A single *yeah* can accept
-a proposal, concede it grudgingly, or reject it by mocking it, and the transcript is identical across
-all three. Human listeners recover the distinction from audio well above chance though not
-reliably, at 0.73 against a three-way chance of 0.33 in the premise check reported here [4.1].
-Whether a codec preserves it is a
-question about representational content, and it is separable from whether any particular system
-happens to use it.
+That capability rests on a specific class of linguistic object. Response tokens such as *yeah*,
+*okay*, *right* and *mm-hm* are the machinery of spontaneous conversation, marking continued
+attention, alignment and the passing of a turn (Schegloff, 1982; Gardner, 2001). Their defining
+property is that they carry no dictionary meaning. What they convey is the speaker's stance toward
+what they are hearing, and it is conveyed through phonetic form, prosodic shape and placement in the
+flow of talk (Gardner, 2001), functions distinguished in spontaneous dialogue by delivery rather
+than by wording (Gravano et al., 2012). A warm *yeah*, a grudging *yeah* and a mocking *yeah* are
+the same transcript and three different conversational moves. Human listeners recover the
+distinction from audio well above chance though not reliably, at 0.73 against a three-way chance of
+0.33 in the premise check reported here [4.1].
 
-There is converging evidence that deployed systems handle this layer poorly. A benchmark of
-paralinguistic-aware interaction finds leading end-to-end models scoring 3.37 against 3.18 for a
-cascaded pipeline that transcribes the query and discards delivery entirely, with two systems falling
-below the pipeline (Yang et al., 2026). Audio language models follow lexical content over acoustic
-evidence when the two conflict (Pang et al., 2026), and the training data that would teach otherwise
-rarely pairs discourse context with paralinguistic cues (Wang et al., 2025a). Safety behaviour is
-exposed through the same channel, with attacks that hold transcript content fixed and vary only
-delivery succeeding roughly nine times more often than neutral delivery on Qwen2-Audio (Qian and Li,
-2026). Failures of this kind are documented in settings with little tolerance for them, including
-human-robot interaction (Cao et al., 2025).
+These systems are deliberately trained on that machinery. Moshi's instruction dialogues are
+generated with prompts requiring the transcript to "use some backchanneling", without assigning it
+to either speaker, and its multi-stream training samples one conversational side at random as the
+system's own, so backchannels appear in both streams as things to hear and things to say. Both
+streams are encoded by the same neural codec, which passes the waveform through an encoder and then
+quantises the result before anything reaches the language model. The codec therefore stands between
+the speaker and every component downstream, in both directions and in two distinct stages, which
+matters because the stages turn out not to cost the same. The choice is architecturally determined
+rather than universal, since systems that generate speech need a discrete target to predict while
+systems built only to understand it more often keep continuous features (Arora et al., 2025). What
+the codec declines to represent is unavailable thereafter, however capable the model behind it.
+
+So the move toward spontaneous conversation depends on a channel that the architecture enabling it
+was never designed to preserve. There is converging evidence that the resulting systems handle that
+channel poorly. A benchmark of paralinguistic-aware interaction finds leading end-to-end models
+scoring 3.37 against 3.18 for a cascaded pipeline that transcribes the query and discards delivery
+entirely, with two systems falling below the pipeline (Yang et al., 2026). Audio language models
+follow lexical content over acoustic evidence when the two conflict (Pang et al., 2026), and the
+training data that would teach otherwise rarely pairs discourse context with paralinguistic cues
+(Wang et al., 2025a). Safety behaviour is exposed through the same channel, with attacks that hold
+transcript content fixed and vary only delivery succeeding roughly nine times more often than
+neutral delivery on Qwen2-Audio (Qian and Li, 2026). Failures of this kind are documented in
+settings with little tolerance for them, including human-robot interaction (Cao et al., 2025).
 
 These are behavioural observations, and behavioural observations underdetermine the diagnosis. A
 system can fail because the information never reached it, or because the information reached it and
-was ignored. The two are indistinguishable from the outside and they admit different remedies. Better
-modelling can recover information that is present and unused. Nothing downstream recovers information
-that was never encoded.
+was ignored. The two are indistinguishable from the outside and they admit different remedies.
+Better modelling can recover information that is present and unused. Nothing downstream recovers
+information that was never encoded.
+
+This dissertation pursues the first possibility through three nested questions. Whether the contrast
+is present in speech representations at all once the words are held constant. How much of it the
+representation deployed systems consume retains. And at which stage of the pipeline the remainder is
+lost. Each is worth asking only if the previous one is answered affirmatively, and it is the third
+where this study departs from the existing literature.
 
 ## 1.2 Two extremes and a shared limitation
 
