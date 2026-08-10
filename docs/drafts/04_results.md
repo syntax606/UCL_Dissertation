@@ -53,28 +53,37 @@ phrase. The within-word analysis in 4.3 removes that route entirely.
 Within each phrase the probe attempts that phrase's dominant binary stance contrast, so word
 identity carries no information. Means over the eight phrases are given in Table 4.2.
 
-| Representation | mean within-word macro-F1 |
-|---|---|
-| Whisper encoder | 0.672 |
-| WavLM | 0.659 |
-| HuBERT | 0.616 |
-| Text, with discourse | 0.534 |
-| Mimi | 0.466 |
-
-The ordering changes from Table 4.1 in one instructive way. Mimi sits fractionally above discourse
-text when pooled and clearly below it once the word is held constant, which is consistent with part
-of Mimi's pooled figure resting on phrase identity in the same manner as the target-only text
-condition.
+| Representation | Readout | mean within-word macro-F1 | degenerate cells |
+|---|---|---|---|
+| Whisper encoder | embedding, 1,536 | 0.672 | 0 of 8 |
+| WavLM | embedding, 2,048 | 0.659 | 0 of 8 |
+| HuBERT | embedding, 2,048 | 0.616 | 0 of 8 |
+| Mimi, pre-quantisation | embedding, 1,024 | 0.606 | 0 of 8 |
+| Mimi, post-quantisation | embedding, 1,024 | 0.594 | 0 of 8 |
+| Text, with discourse | embedding, 768 | 0.534 | 0 of 8 |
+| Mimi, deployed histogram | histogram, 16,384 | 0.466 | 3 of 8 |
 
 Whisper is the strongest representation under the lexical control, marginally ahead of WavLM. Since
 the word cannot help here, this cannot be attributed to Whisper's lexical bias.
 
-Mimi's mean understates how it fails. On three of the eight phrases, *yeah*, *sure* and *come on*,
-its probe emits a single class for every clip and therefore scores exactly the within-phrase majority
-baseline. That is not a small margin but an absence of one, and it occurs for no other representation
-on any phrase. The mean of 0.466 is accordingly composed of three cells where no separation was
-achieved at all, two where the margin is under 0.05, and three where it is genuine. Degenerate cells
-are marked in [C.1].
+**Mimi appears twice, and the gap between the two entries is the readout rather than the
+representation.** Under an embedding readout matched to what every other representation receives,
+Mimi reaches 0.594 and separates all eight phrases. Under the deployed histogram it reaches 0.466 and
+fails to separate three of them at all, emitting a single class for every clip on *yeah*, *sure* and
+*come on* and therefore scoring exactly the within-phrase majority. Those are the only degenerate
+cells in the study.
+
+The cause is dimensionality against cell size. The histogram is 16,384 sparse dimensions and each
+phrase cell holds between 58 and 129 clips, where the continuous encoders receive at most 2,048. The
+same asymmetry costs 0.031 of margin when pooled over all 873 clips [4.6], and 0.128 here, because
+the penalty scales with how few examples each probe sees.
+
+Two consequences follow. Mimi under the lexical control sits above the discourse-text baseline of
+0.534 rather than below it, and any statement to the contrary is a statement about the histogram.
+And the readout dependence observed pooled in [4.4], where Mimi's margin moves by 0.056 across
+summarisation choices while WavLM's moves by 0.009, is not a minor sensitivity but the largest single
+determinant of Mimi's measured performance under this analysis. Per-phrase figures for all three
+Mimi readouts are in [C.1], and `src/26_within_word_readout.py` reproduces the table.
 
 ## 4.4 Controls
 

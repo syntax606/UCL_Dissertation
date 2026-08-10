@@ -10,8 +10,8 @@ systems actually consume, and if not, where it is lost. Three answers follow fro
 
 Pragmatic stance is linearly decodable from continuous speech representations when the lexical item
 is held constant, and it survives every control applied to it [Ch.4]. The representation deployed
-systems consume retains a fraction of that, and falls below a discourse-text baseline once the word
-is held constant. And the loss is not where this study expected to find it. The codec encoder costs
+systems consume retains a fraction of that, and under its deployed summarisation falls below a
+discourse-text baseline once the word is held constant. And the loss is not where this study expected to find it. The codec encoder costs
 roughly three times what quantisation does, the same ordering appears on an independently designed
 acoustic codec where quantisation is marginally beneficial, and what survives inside Mimi is carried
 mainly by the codebook distilled from WavLM, a component introduced for semantic transfer and

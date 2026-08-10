@@ -1,0 +1,31 @@
+WITHIN-WORD DECODABILITY BY READOUT
+Per-phrase dominant binary contrast, W2, mean over the eight phrases.
+A degenerate cell is one where the probe emitted a single class, scoring
+exactly the within-phrase majority. Those are counted, not excluded, so the
+mean is directly comparable to Table 4.2 as currently reported.
+====================================================================================
+representation            readout                  mean F1  degenerate
+------------------------------------------------------------------------------------
+Whisper encoder           embedding, 1,536           0.672         0/8
+WavLM                     embedding, 2,048           0.659         0/8
+HuBERT                    embedding, 2,048           0.616         0/8
+Mimi, pre-quantisation    embedding, 1,024           0.606         0/8
+Mimi, post-quantisation   embedding, 1,024           0.594         0/8
+Text, with discourse      embedding, 768             0.534         0/8
+Mimi, histogram           histogram, 16,384          0.466         3/8
+
+PER-PHRASE, MIMI ONLY, BY READOUT
+====================================================================================
+phrase            pre-quantisation     post-quantisation             histogram
+come_on                      0.618                 0.645            degenerate
+fine                         0.440                 0.440                 0.387
+great                        0.746                 0.688                 0.570
+okay                         0.660                 0.619                 0.455
+really                       0.747                 0.708                 0.689
+right                        0.592                 0.580                 0.415
+sure                         0.546                 0.547            degenerate
+yeah                         0.497                 0.523            degenerate
+
+Cost of the histogram readout within a phrase: 0.128
+For comparison, pooled over all 873 clips it costs 0.031 (results/quantisation_ladder.txt).
+Mimi against the discourse-text baseline of 0.534: 0.466 under the histogram, 0.594 under the embedding.

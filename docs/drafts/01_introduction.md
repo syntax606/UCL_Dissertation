@@ -114,7 +114,8 @@ Three results follow, and Chapters 4 and 5 report them in full. Pragmatic stance
 decodable from continuous representations under the lexical control, and survives every control
 applied to it, including matched arousal, held-out shows, three context windows, three readouts and
 six non-linear probe capacities. The representation deployed systems consume retains a fraction of
-it, and falls below a discourse-text baseline once word identity is removed. And the loss is not
+it, and under the summarisation deployed systems imply it falls below a discourse-text baseline once
+word identity is removed. And the loss is not
 where this study expected. The codec encoder costs roughly three times what quantisation does, the
 same ordering holds on a second codec of independent design where quantisation is marginally
 beneficial, and what reaches Mimi's token stream is carried mainly by the codebook distilled from

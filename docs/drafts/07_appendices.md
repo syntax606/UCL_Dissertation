@@ -315,8 +315,11 @@ contrast attempted and the within-phrase majority baseline, are as follows.
 Per-phrase performance varies considerably, from 0.440 on `fine` to 0.806 on `really`, and the mean
 of 0.659 should be read with that spread in mind. Across all five representations, three cells are
 degenerate, meaning the probe emitted a single class and scored exactly the within-phrase majority.
-All three are Mimi, on `yeah`, `sure` and `come on`, and they are the only such cells in the study
-[4.3]. `src/25_family_analysis.py` detects and reports them. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
+All three are Mimi under the deployed histogram readout, on `yeah`, `sure` and `come on`, and they
+are the only such cells in the study [4.3]. Under an embedding readout of the same token stream no
+cell degenerates, so the failure is the 16,384-dimensional sparse summary against cells of 58 to 129
+clips rather than an absence of content. Per-phrase figures for all three Mimi readouts are in
+`results/within_word_readout.txt`, produced by `src/26_within_word_readout.py`. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
 sit close to their own within-phrase majority baselines of 0.370 and 0.403, so the mean is carried by
 the other six. The equivalent tables for the other representations are in `probe_results.txt` under
 view C.
