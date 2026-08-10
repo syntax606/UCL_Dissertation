@@ -69,6 +69,13 @@ condition.
 Whisper is the strongest representation under the lexical control, marginally ahead of WavLM. Since
 the word cannot help here, this cannot be attributed to Whisper's lexical bias.
 
+Mimi's mean understates how it fails. On three of the eight phrases, *yeah*, *sure* and *come on*,
+its probe emits a single class for every clip and therefore scores exactly the within-phrase majority
+baseline. That is not a small margin but an absence of one, and it occurs for no other representation
+on any phrase. The mean of 0.466 is accordingly composed of three cells where no separation was
+achieved at all, two where the margin is under 0.05, and three where it is genuine. Degenerate cells
+are marked in [C.1].
+
 ## 4.4 Controls
 
 **Arousal.** Stance was decoded within each arousal level separately, so that energy is constant

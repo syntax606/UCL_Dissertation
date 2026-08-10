@@ -313,7 +313,10 @@ contrast attempted and the within-phrase majority baseline, are as follows.
 | `yeah` | affiliative / neutral | 95 | 0.519 | 0.403 |
 
 Per-phrase performance varies considerably, from 0.440 on `fine` to 0.806 on `really`, and the mean
-of 0.659 should be read with that spread in mind. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
+of 0.659 should be read with that spread in mind. Across all five representations, three cells are
+degenerate, meaning the probe emitted a single class and scored exactly the within-phrase majority.
+All three are Mimi, on `yeah`, `sure` and `come on`, and they are the only such cells in the study
+[4.3]. `src/25_family_analysis.py` detects and reports them. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
 sit close to their own within-phrase majority baselines of 0.370 and 0.403, so the mean is carried by
 the other six. The equivalent tables for the other representations are in `probe_results.txt` under
 view C.
