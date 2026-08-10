@@ -80,14 +80,10 @@ matched arousal*, since an enthusiastic "great!" and a contemptuous "great" carr
 opposite stance, and only a representation reading pragmatic force, not arousal, will separate
 them [3.6, Ch.4].
 
-Each clip also carries a **confidence** flag (clear or borderline), so that ambiguous items are
-recorded as data rather than silently dropped, and a slot for an optional secondary function.
-Clips that were mistranscribed or inaudible, dominated by music, advertising, or overlapping
-speech, not the target use of the word, or too ambiguous to judge were discarded rather than
-force-labelled. The 873 keepers are the confidently stance-labelled remainder. Annotation was
-carried out on a purpose-built, fully self-contained offline tool that embeds the audio and
-autosaves, and all labels are held in a persistent store that is the single source of truth for
-the analysis.
+Clips that could not be judged were discarded against a fixed reason list rather than
+force-labelled, and a confidence flag records the rest, of which only nine of the 873 keepers are
+marked borderline. Discard reasons, the optional secondary-function field and the annotation
+instrument are described in Appendix [A].
 
 ## 3.4 Premise check
 
