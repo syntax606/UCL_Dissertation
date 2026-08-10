@@ -1,0 +1,48 @@
+IS THE PHRASE-FAMILY EFFECT REAL, OR THE NEUTRAL CLASS IN DISGUISE?
+Every phrase probed twice: on its dominant contrast, and on adversarial
+against affiliative for all phrases, which holds contrast type constant.
+Margins are macro-F1 minus that phrase's own majority baseline. Minimum 10 per class.
+Cells where the probe emitted a single class are marked degen and excluded
+from family means, since their margin is exactly zero by construction.
+============================================================================================
+
+PHRASE COVERAGE
+phrase    family            dominant   adv/aff n   imbalance
+come_on   challenge          adv/aff         127       2.5:1
+fine      evaluative         adv/aff          68       1.4:1
+great     evaluative         adv/aff          96       1.2:1
+okay      agreement          adv/neu          58       3.8:1
+really    challenge          adv/aff         103       1.0:1
+right     agreement          aff/neu          85       2.9:1
+sure      agreement          adv/aff         103       1.9:1
+yeah      agreement          aff/neu          86       2.9:1
+
+DOMINANT CONTRAST (reproduces view C)
+============================================================================================
+model                    agreement        evaluative         challenge
+WavLM                  +0.244(4/4)       +0.250(2/2)       +0.388(2/2)
+Whisper                +0.254(4/4)       +0.262(2/2)       +0.407(2/2)
+HuBERT                 +0.183(4/4)       +0.229(2/2)       +0.357(2/2)
+Mimi                   +0.062(2/4)       +0.115(2/2)       +0.354(1/2)
+Text, context          +0.142(4/4)       +0.152(2/2)       +0.188(2/2)
+
+ADVERSARIAL vs AFFILIATIVE, contrast held constant
+============================================================================================
+model                    agreement        evaluative         challenge
+WavLM                  +0.240(3/4)       +0.250(2/2)       +0.388(2/2)
+Whisper                +0.163(4/4)       +0.262(2/2)       +0.407(2/2)
+HuBERT                 +0.154(4/4)       +0.229(2/2)       +0.357(2/2)
+Mimi                     all degen       +0.115(2/2)       +0.354(1/2)
+Text, context          +0.133(4/4)       +0.152(2/2)       +0.188(2/2)
+
+PER-PHRASE UNDER THE HELD-CONSTANT CONTRAST
+============================================================================================
+phrase    family                 WavLM         Whisper          HuBERT            Mimi   Text, context
+yeah      agreement             +0.197          +0.233          +0.257           degen          +0.143
+okay      agreement              degen          +0.060          +0.050           degen          +0.229
+right     agreement             +0.251          +0.125          +0.151           degen          +0.060
+sure      agreement             +0.271          +0.235          +0.159           degen          +0.100
+really    challenge             +0.470          +0.490          +0.451          +0.354          +0.189
+come_on   challenge             +0.305          +0.324          +0.262           degen          +0.187
+great     evaluative            +0.430          +0.399          +0.356          +0.214          +0.297
+fine      evaluative            +0.069          +0.126          +0.101          +0.017          +0.007
