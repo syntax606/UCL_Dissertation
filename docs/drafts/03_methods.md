@@ -28,18 +28,19 @@ be located and cut precisely.
 
 The study targets eight short, high-frequency phrases whose pragmatic force varies by delivery
 while their lexical content is fixed, namely *yeah, okay, right, sure, great, fine, really,* and
-*come on*. These fall into three functional families, agreement particles (*yeah, okay, right,
-sure*), evaluative terms (*great, fine*), and challenge markers (*really, come on*). The first
-family is not an arbitrary selection. Its members are response tokens whose defining property is
-systematic ambiguity between agreeing, signalling continued attention, and marking a topic shift,
-functions distinguished in spontaneous dialogue by prosodic realisation rather than by wording
-(Gravano et al., 2012). That is the property this design requires, and it also predicts the
-distribution reported in [B.5], where neutral stance concentrates almost entirely in these four
-words because backchannelling is a function of this class specifically. Each phrase can
-perform several speech acts. "Right" can signal agreement, correction, sarcasm, or challenge.
-"Sure" can signal consent, reluctance, or disbelief. "Great" can signal approval, sarcasm, or
-resignation. In every case the word is constant and the meaning is carried by prosody, timing,
-and discourse position.
+*come on*. These fall into three functional families. The agreement particles (*yeah, okay, right,
+sure*) are response tokens in the conversation-analytic sense, a class Gardner (2001) characterises
+as carrying no dictionary meaning but conveying the listener's stance through phonetic form,
+prosodic shape and placement, which is precisely the property this design requires. Individual
+members are well described. Schegloff (1982) establishes their continuer function, Beach (1993)
+shows *okay* pivoting between receipting prior talk and shifting to next matters, and Gardner (2007)
+distinguishes three uses of *right*. Gravano et al. (2012) add that these functions are separated in
+spontaneous dialogue by prosodic realisation rather than by wording, and frame that ambiguity as a
+problem for spoken dialogue systems. Their account predicts the distribution reported in [B.5],
+where neutral stance concentrates almost entirely in these four words, since backchannelling is a
+function of this class specifically. The evaluative terms (*great, fine*) and challenge markers
+(*really, come on*) are grouped here on functional grounds for this study rather than following an
+established classification.
 
 Candidates were first drawn by a stratified pull balanced across shows, then supplemented with
 targeted, construction- and sense-specific pulls to fill thin stance cells (for example, the
@@ -47,9 +48,7 @@ targeted, construction- and sense-specific pulls to fill thin stance cells (for 
 pull over-samples the dominant sense of each word. After annotation (below), the usable set is
 **873 clips across 32 shows and 753 distinct episodes**. Stance is close to balanced overall
 (364 affiliative, 147 neutral, 362 adversarial), and arousal is represented on both sides (345
-high, 528 low). Every phrase carries a well-powered binary stance contrast. Neutral labels
-concentrate in the agreement particles, which is a linguistic property of those words rather
-than a sampling gap, and is reported as such.
+high, 528 low). Every phrase carries a well-powered binary stance contrast.
 
 For each retained occurrence, three context windows were cut, all centred on the midpoint of
 the target word as located from the word-level timestamps. These are a **local** window of 6 s

@@ -113,6 +113,28 @@ acoustic and prosodic realisation in spontaneous dialogue, and it frames that am
 for spoken dialogue systems. It is the citation for the claim in the README that neutral stance
 concentrates in the agreement particles as a linguistic property rather than a sampling artefact.
 
+### Response tokens, expanded (verified 2026-08-09 from publisher and archive records, not on disk)
+
+Added because [3.2] previously rested the entire phrase-set justification on one citation. The
+agreement particles now have four sources; the evaluative and challenge families have none, and
+[3.2] says so explicitly rather than implying an established classification.
+
+| Short cite | Verified citation | Venue | Role |
+|---|---|---|---|
+| Gardner, 2001 | Rod Gardner. *When Listeners Talk: Response Tokens and Listener Stance.* | John Benjamins, Pragmatics and Beyond New Series 92 | **The key addition.** Book-length treatment of the class (*uh-huh*, *oh*, *mm*, *yeah*, *right*, *mm-hm*), arguing these carry no dictionary meaning but convey listener stance through phonetic form, prosodic shape, placement and timing. The subtitle carries the analytic term used throughout this study. |
+| Schegloff, 1982 | Emanuel A. Schegloff. *Discourse as an interactional achievement: some uses of "uh huh" and other things that come between sentences.* In Deborah Tannen (ed.), *Analyzing Discourse: Text and Talk* | Georgetown University Press, 71-93 | The canonical source for continuers, supporting the claim that backchannelling is a function of this class rather than a sampling artefact. |
+| Beach, 1993 | Wayne A. Beach. *Transitional regularities for "casual" Okay usages.* | Journal of Pragmatics 19(4), 325-352 | *Okay* pivoting at transition spaces, receipting prior talk while shifting to next matters. Describes the `topic_closure` tag and explains why *okay* carries 51 of the 121 low-arousal neutral clips [B.5]. |
+| Gardner, 2007 | Rod Gardner. *The Right connections: Acknowledging epistemic progression in talk.* | Language in Society 36(3), 319-341 | Three distinct uses of *right*, namely epistemic progression, confirmation, and change of activity. |
+
+**Acquire before submission.** None of these four is in the iCloud library. Author, year, title and
+venue were verified against publisher and archive records rather than title pages, which is a weaker
+standard than the rest of this document. Page ranges in particular should be confirmed from the
+sources themselves.
+
+**Nothing found for the other two families.** No source was located for *sure*, *great*, *fine*,
+*really* or *come on*. [3.2] therefore states that the evaluative and challenge groupings are made on
+functional grounds for this study.
+
 ### Acted against spontaneous speech
 
 | Short cite | Verified citation | Venue |
