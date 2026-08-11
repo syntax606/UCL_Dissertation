@@ -72,6 +72,16 @@ and is not the reference used, for the reasons set out in [3.6].
 Every representation exceeds its own null. The three continuous encoders clear it by 0.19 to 0.24,
 while Mimi clears it by 0.070 and discourse text by 0.045.
 
+**A hand-crafted baseline.** Table 4.2 has no classical comparison, so it does not say whether
++0.241 is large. Probing 88 eGeMAPS functionals under the same folds and probe gives 0.431 against a
+permutation chance of 0.327, a margin of +0.104 at p 0.010. WavLM's margin is therefore roughly 2.3
+times what a standard acoustic feature set recovers, which is the answer to whether the deep
+representation is doing work beyond pitch and energy. The same comparison places the deployed Mimi
+histogram, at +0.070, **below** the hand-crafted set, and the ordering holds under the lexical
+control, where eGeMAPS reaches 0.550 against Mimi's 0.466 and separates all eight phrases [4.3].
+These figures come from a separate run at 100 permutations without bootstrap intervals, so they are
+reported here rather than added to the table.
+
 Two entries need comment. The Whisper encoder performs within 0.01 of WavLM despite being a
 supervised transcription model and a considerably smaller one, 13 layers of 1,536 units against 25
 of 2,048. Section 4.5 returns to this. And the target-only text condition reaches 0.487, which
@@ -205,6 +215,31 @@ chance. What the acoustic stack does not do is add to the distilled one, since a
 reach 0.381 against 0.402 for codebook 0 alone, and the seven acoustic codebooks without it reach
 0.352. Chapter 2 predicted the opposite distribution, and 2.3.3
 reports that as a corrected expectation.
+
+**Across acoustic cues.** The same 88 features can be split into groups and probed separately, which
+locates the contrast in measured acoustics rather than in a learned representation. Groups differ in
+size, so only comparably sized ones should be set against each other, and the spectral and formant
+block is excluded from the comparison below because it holds 51 of the 88.
+
+| Cue group | features | stance margin | arousal margin |
+|---|---:|---:|---:|
+| Contour, F0 and loudness dynamics | 12 | **+0.082** | +0.085 |
+| Level, loudness and F0 means | 9 | +0.052 | +0.084 |
+| Voice quality, jitter, shimmer, HNR | 10 | +0.044 | **+0.110** |
+| Temporal, rate and segment lengths | 6 | +0.025 | +0.017 |
+| Spectral and formant, not comparable | 51 | +0.088 | +0.098 |
+
+Stance is carried most by dynamics and arousal most by voice quality. Level cues are joint-lowest for
+arousal and middling for stance, and removing them from the full set leaves stance decoding unchanged
+at +0.107 against +0.104. The temporal group is the weakest for both and its arousal margin does not
+clear its null, at p 0.248.
+
+Two things follow. The annotated arousal axis is grounded in measured acoustics rather than resting
+on annotator judgement alone, since it is predictable from eGeMAPS at +0.108 on a binary task.
+And the cue account offered in [5.4] is half supported, since stance does live in dynamics rather
+than levels, but voice quality is the arousal carrier rather than a stance carrier as that section
+originally had it. Margins on the two tasks are not comparable to each other, since stance is
+three-way and arousal binary, so only the ordering within each column is read.
 
 ## 4.6 Locating the loss
 

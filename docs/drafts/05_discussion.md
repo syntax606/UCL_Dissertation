@@ -87,14 +87,29 @@ rather than a metric reported during development, it works through resynthesis a
 recognition rather than on the representation, and it measures categorical emotion on acted corpora.
 The results here bear on that last point directly. Stance and arousal are separable in this data, and
 Mimi retains roughly three quarters of the arousal signal against under a third of the stance signal
-[Ch.4]. The prosody literature suggests why the split falls where it does. The cues reported for
-sarcastic delivery are not uniform in how much a reconstruction objective needs them. Amplitude and
-mean F0, which Rockwell (2000) and Lan et al. (2019) both identify, are directly reconstructive and
-are also most of what an arousal judgement rests on. Speech rate, F0 range and voice quality, which
-the same studies identify, are contour-shaped and timing-dependent, and degrading them costs a codec
-little on any reconstruction criterion. A pipeline optimised for reconstruction would therefore be
-expected to retain the first group and shed the second, which is the asymmetry observed. This is an
-interpretation rather than a measurement, since no cue-level analysis was run [Ch.6]. A measure supervised on categorical emotion labels, which are substantially arousal-loaded,
+[Ch.4]. An earlier version of this section offered a mechanism for that split, that amplitude and mean F0
+are directly reconstructive and carry arousal, while speech rate, F0 range and voice quality are
+contour-shaped, cost a codec little to shed, and carry stance. Probing the eGeMAPS cue groups
+directly does not support it [4.5].
+
+Comparing groups of similar size, and setting aside the spectral and formant block since it holds 51
+of the 88 features and is not comparable to the others, the ordering is a dissociation but not that
+one. For stance, dynamics lead at +0.082, ahead of level at +0.052 and voice quality at +0.044. For
+arousal, voice quality leads at +0.110, ahead of dynamics and level at +0.085 and +0.084. Removing
+the level cues from the full feature set leaves stance decoding unchanged, at +0.107 against +0.104.
+
+So one half of the proposed account survives and the other does not. Stance is carried by F0 and
+loudness dynamics rather than by their levels, which is what the account predicted. But level cues
+are not the arousal carrier, being joint-lowest of the three, and voice quality is, despite being
+grouped with the stance-bearing cues in the account as originally stated.
+
+What this leaves is a measured description rather than an explanation. Stance lives in dynamics and
+arousal in voice quality, and neither is where the reconstructive-cue argument placed them. Why a
+codec should retain the second and shed the first is therefore not settled here, and would require
+probing the codec representations for the cues themselves rather than probing cues and codecs
+separately. [Ch.6] carries that as the next step. The asymmetry in what Mimi retains is a measurement
+and stands. The mechanism offered for it was a reading of the prosody literature, and the reading was
+half wrong. A measure supervised on categorical emotion labels, which are substantially arousal-loaded,
 would therefore register the axis that survives more readily than the axis that does not. The same
 concern applies to the emotion-preserving objectives now being proposed. Making affect a training
 target is the right move, and which affective quantity supervises it determines whether the

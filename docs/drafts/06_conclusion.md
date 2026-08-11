@@ -36,10 +36,13 @@ capacities no configuration recovers more than +0.025 against a gap of roughly 0
 bounds rather than explains the result. The identity control is held-out shows rather than unseen
 speakers, since the corpus carries show labels only.
 
-The fifth constrains the interpretation offered in [Ch.5]. This study measures whether a pragmatic
-category is recoverable, not which acoustic property carries it. The account of why arousal survives
-and stance does not is consistent with the cue inventories of Rockwell (2000) and Lan et al. (2019)
-but is not tested here. It is a hypothesis this design can generate and cannot evaluate [E].
+The fifth concerns the interpretation offered in [Ch.5]. A mechanism was proposed there for why
+arousal survives compression and stance does not, resting on level cues being reconstructive and
+contour cues not. Probing the cue groups directly supports half of it and refutes the other half
+[4.5, 5.4]. Stance is carried by dynamics rather than levels, as proposed, but voice quality rather
+than level is the strongest arousal carrier, which the proposal had the wrong way round. The
+asymmetry stands as a measurement and its explanation does not, and closing that gap requires probing
+the codec representations for individual cues rather than probing cues and codecs separately.
 
 ## 6.3 Why the loss is worth repairing
 
@@ -76,12 +79,13 @@ that differ in how much stance they encode, converting the associational claim o
 controlled one. This is the experiment the compute available here did not permit, and every other
 step assumes its outcome.
 
-**Identify which cues are lost.** The interpretation in [Ch.5] predicts that reconstruction-oriented
-encoders retain amplitude and mean F0 while shedding speech rate, F0 range and voice quality.
-Extracting those measures directly from the same clips and probing them against the same labels would
-convert that from a reading of the prosody literature into a measurement, and would say which
-properties an objective must protect. It is also the cheapest item here, since it requires no
-training and reuses the existing corpus.
+**Identify which cues are lost.** Half of this is now done. Extracting eGeMAPS from the same clips
+and probing its cue groups shows stance carried by F0 and loudness dynamics and arousal by voice
+quality [4.5], which refutes the mechanism [Ch.5] originally proposed. What remains is the other
+half, namely which of those cues a codec actually loses. That requires predicting each cue group from
+the codec representations at each rung of the ladder, rather than probing cues and codecs separately
+as here, and it would say directly which properties an objective must protect. It needs no training
+and reuses the corpus and features already extracted.
 
 **Choose the teacher layer by measurement.** WavLM carries 0.573 at layer 20 and 0.490 at layer 24,
 so the choice of distillation target is consequential for this contrast. Semantic distillation
