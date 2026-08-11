@@ -103,16 +103,22 @@ as the increment over context.
 ## 3.5 Representations and feature extraction
 
 Six representations are compared, with the text baseline supplying two conditions rather than one
-[below]. The selection is largely determined by the research question rather than by availability.
+[below]. With one exception, noted below, the selection is determined by the research question rather
+than by availability.
 
-**Why these models.** Mimi distils its first codebook from WavLM-Large, which produces
-1024-dimensional embeddings at 50 Hz (Défossez et al., 2024), so measuring what distillation
-transfers requires probing that model at that size. WavLM is therefore not a free choice.
+**Why these models.** Mimi is the object of study because it is the tokeniser a deployed full-duplex
+system actually consumes rather than a research codec [2.2], and it distils its first codebook from
+WavLM-Large, which produces 1024-dimensional embeddings at 50 Hz (Défossez et al., 2024). Measuring
+what that distillation transfers therefore requires probing WavLM at that size, so WavLM is not a
+free choice.
 HuBERT-large is its matched control, sharing architecture, depth and width and differing chiefly in
 WavLM's noise and overlapped-speech augmentation, so the pair isolates that augmentation rather than
-scale. The Whisper-small encoder is smaller than both, at 13 layers of 768 units against 25 of 1,024,
-which makes the supervised comparison conservative. Any advantage it shows over the self-supervised
-encoders cannot be attributed to capacity. The Descript codec is used as the undistilled contrast
+scale. The Whisper encoder is included to test whether a transcription objective strips paralinguistic
+content, so the objective rather than the scale is the variable under test. The small variant, at 13
+layers of 768 units against 25 of 1,024, is the one genuinely constrained choice here, and the
+constraint bears asymmetrically on the conclusion. A null result would have been uninterpretable,
+since a failure to recover stance could not be separated from insufficient capacity. The positive
+result reported in [4.3] is not, since capacity can only have worked against it. The Descript codec is used as the undistilled contrast
 because it sits on the reconstruction-only branch of the lineage in [2.1]. SpeechTokenizer would not
 serve, since it also distils from a self-supervised teacher and so does not contrast on the variable
 of interest, and DAC is preferred to EnCodec as the more recent reconstruction-only codec and one
