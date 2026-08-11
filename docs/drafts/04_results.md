@@ -158,6 +158,16 @@ paralinguistic content and extends them to pragmatic stance under a lexical cont
 | All 8, the deployed condition | 0.381 | 0.310 | +0.071 | 0.005 |
 | Codebooks 1 to 7 only | 0.352 | 0.311 | +0.041 | 0.015 |
 
+**Cumulatively.** Probing CB0, then CB0 to 1, and so on to the full stack, the endpoints settle the
+question and the middle does not. Codebook 0 alone reaches +0.069 and all eight together reach
++0.071, so seven additional codebooks and 14,336 additional dimensions buy 0.002. In the reverse
+direction the seven acoustic codebooks without CB0 reach only +0.041, and adding CB0 takes them to
++0.071. The intermediate blocks are not flat, rising to +0.092 at CB0 to 3 and falling to +0.052 at
+CB0 to 6 before recovering. That excursion is non-monotonic and spans 0.040, most of the margin
+itself, and it tracks accumulated dimensionality rather than accumulated content, since each
+codebook adds 2,048 sparse dimensions to an 873-clip problem. It is the same effect measured at 0.031
+pooled and 0.128 within a phrase [4.3], appearing here a third time.
+
 The distilled codebook is the strongest single block. Two acoustic refinement codebooks clear their
 nulls weakly, at p 0.020 and p 0.035, and the remaining five are statistically indistinguishable from
 chance. What the acoustic stack does not do is add to the distilled one, since all eight together

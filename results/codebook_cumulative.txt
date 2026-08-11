@@ -1,0 +1,31 @@
+CUMULATIVE CODEBOOK LADDER, Mimi, three-way stance, W2
+8 codebooks of 2048 bins. Each block probed with its own permutation
+null, 200 permutations. Codebook 0 is the WavLM-distilled stream.
+==============================================================================
+
+FORWARD, adding codebooks to the distilled one
+block                dims   macroF1   chance   margin       p    delta
+CB0                  2048     0.402    0.333   +0.069   0.005
+CB0-1                4096     0.395    0.326   +0.070   0.005   +0.001
+CB0-2                6144     0.412    0.322   +0.089   0.005   +0.020
+CB0-3                8192     0.411    0.319   +0.092   0.005   +0.002
+CB0-4               10240     0.377    0.315   +0.062   0.005   -0.030
+CB0-5               12288     0.372    0.314   +0.058   0.005   -0.004
+CB0-6               14336     0.365    0.313   +0.052   0.005   -0.006
+CB0-7               16384     0.381    0.310   +0.071   0.005   +0.019
+
+REVERSE, adding codebooks from the last one backwards
+block                dims   macroF1   chance   margin       p
+CB7                  2048     0.343    0.328   +0.014   0.209
+CB6-7                4096     0.348    0.321   +0.027   0.065
+CB5-7                6144     0.332    0.316   +0.016   0.164
+CB4-7                8192     0.321    0.316   +0.006   0.358
+CB3-7               10240     0.329    0.313   +0.017   0.144
+CB2-7               12288     0.350    0.311   +0.039   0.025
+CB1-7               14336     0.352    0.311   +0.041   0.020
+CB0-7               16384     0.381    0.311   +0.071   0.005
+
+Read: if the forward deltas are near zero from CB0-1 onward, the acoustic
+stack contributes nothing a probe can recover on top of the distilled
+codebook. The reverse direction separates that from the weaker claim that
+any single codebook would have served.
