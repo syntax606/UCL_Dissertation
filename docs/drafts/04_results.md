@@ -23,6 +23,37 @@ context contributing substantially, is consistent with both. The agreement parti
 is consistent in the same way, since those are the phrases whose functional ambiguity is widest
 (Gravano et al., 2012).
 
+**Models on the same clips.** The human figures above and the model figures below are routinely read
+against each other and should not be, since they differ in sample, in metric and in what the judge
+could see. Table 4.1a removes all three. Models are trained on the 813 clips the annotators never
+saw, with every episode appearing in the test set excluded from training, and scored on exactly the
+60 they did, in accuracy rather than macro-F1 because accuracy is what the human numbers are.
+
+| Condition | Modality | Accuracy |
+|---|---|---|
+| Human, transcript with context | text | 0.650 |
+| Human, audio with transcript | both | 0.730 |
+| WavLM and text, concatenated | both | 0.533 |
+| Whisper encoder | audio | 0.517 |
+| WavLM | audio | 0.500 |
+| HuBERT | audio | 0.500 |
+| eGeMAPS | audio | 0.500 |
+| Mimi, deployed | audio | 0.483 |
+| Text, discourse | text | 0.467 |
+
+The subset is balanced at twenty clips per class, so chance and the majority baseline are both 0.333.
+Every model condition clears that. None approaches the human audio figure, and the human
+transcript-only figure exceeds every model condition including the one given both modalities.
+
+Two properties of this subset make it harder than the corpus and should be stated before the gap is
+interpreted. It is stance-balanced, so it is 33 per cent neutral against 17 per cent overall, and
+neutral is the weakest class, with WavLM reaching 0.435 on it against 0.635 and 0.652 on the other
+two. And a single train-and-test split is a harder evaluation than out-of-fold prediction.
+Decomposing WavLM accordingly, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60
+out-of-fold, and 0.500 under the held-out-episode split. On the most generous reading of the model
+side the gap to the human audio condition is therefore about 0.18, which at sixty items is roughly
+2.3 standard errors and is real without being precisely estimated.
+
 ## 4.2 Pooled stance decodability
 
 Table 4.1 reports the three-way stance probe on the primary window. Chance is the mean of each

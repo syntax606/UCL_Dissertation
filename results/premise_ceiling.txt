@@ -1,0 +1,26 @@
+MODELS AND HUMANS ON THE SAME 60 CLIPS
+Trained on clips from episodes absent from the test set, scored on the
+premise-check subset. Accuracy is the comparable metric, since that is what
+the human figures in [4.1] are. Macro-F1 given alongside.
+==============================================================================
+test clips: 60   held-out episodes: 60
+test stance mix: {'affiliative': 20, 'adversarial': 20, 'neutral': 20}
+majority-class accuracy on these 60: 0.333 (affiliative)
+three-way chance: 0.333
+
+condition                   modality    accuracy  macro-F1  train n
+------------------------------------------------------------------------------
+HUMAN, transcript + context text           0.650                   
+HUMAN, audio + transcript   both           0.730                   
+------------------------------------------------------------------------------
+WavLM                       audio          0.500     0.499      793
+Whisper encoder             audio          0.517     0.507      793
+HuBERT                      audio          0.500     0.498      793
+eGeMAPS                     audio          0.500     0.503      793
+Mimi, deployed              audio          0.483     0.415      793
+Text, discourse             text           0.467     0.456      793
+WavLM + text, concatenated  both           0.533     0.531      793
+
+The last row is the only model condition with the same information the human
+audio judges had. The rows above it are audio-only or text-only and are not
+directly comparable to the 0.73, though they are comparable to each other.

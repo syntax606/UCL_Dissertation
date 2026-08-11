@@ -47,6 +47,11 @@ That deployed systems handle this information poorly is established in [1.1], ac
 benchmarking, conflict resolution between words and voice, delivery-driven safety failures and
 human-robot interaction. This section states what the present findings add to it.
 
+The headroom is measurable rather than assumed. On the sixty clips human annotators judged, the best
+model condition reaches 0.533 accuracy against their 0.730 [4.1], so these representations carry
+something closer to half of what a listener recovers from the same audio. A repair programme is worth
+proposing only if there is something to recover, and that is the quantity.
+
 The findings add a specific constraint on how any of that can be addressed. A downstream model
 cannot act on what its input representation does not carry, so better modelling addresses information
 that is present and ignored and cannot address information that was never encoded. The distinction

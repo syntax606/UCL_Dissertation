@@ -121,6 +121,14 @@ of availability rather than a confusion, which offers a candidate mechanism for 
 vulnerabilities documented by Qian and Li (2026) without demonstrating that any deployed system
 exhibits it.
 
+Decodability well above chance is also not decodability at a useful level, and the study now carries
+an absolute anchor for that. On the sixty clips human annotators judged, the best model condition
+reaches 0.533 against their 0.730, and a human reading only the transcript reaches 0.650, which
+exceeds every model condition including the one given both audio and text [4.1]. Part of that gap is
+the harder class balance of that subset, and the rest is not. The claims below concern what these
+representations carry relative to one another and to chance, not what they carry relative to a
+listener.
+
 More broadly, this study measures whether information is linearly decodable from a frozen
 representation. It does not measure whether a system uses that information, and it addresses
 comprehension rather than generation. The defensible bridge to deployment is a necessary condition.
