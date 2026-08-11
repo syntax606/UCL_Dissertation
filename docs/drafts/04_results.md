@@ -1,64 +1,36 @@
 # Chapter 4: Results
 
-*(Draft. Target budget ~1,900 words. All figures from `results/`. Margins are macro-F1 minus the
-mean of that configuration's own permutation null, 200 permutations unless stated. Intervals are
-episode-cluster bootstrap. The primary window is W2 and the primary readout is mean and standard
-deviation pooling, both fixed in advance [3.5, 3.6].)*
+*(Draft. All figures from `results/`. Margins are macro-F1 minus the mean of that configuration's own
+permutation null, 200 permutations unless stated. Intervals are episode-cluster bootstrap. The
+primary window is W2 and the primary readout is mean and standard deviation pooling, both fixed in
+advance [3.5, 3.6]. Methodological checks that bear on how these figures should be read, rather than
+on what they say, are in Appendix [G].)*
 
 ## 4.1 The premise check
 
 Two auxiliary annotators judged a counterbalanced 60-clip subset against a hidden reference.
 Transcript with discourse context reached 0.65 accuracy and audio with transcript reached 0.73,
-against a three-way chance level of 0.33. Audio therefore adds a real increment over the words,
-while discourse context alone recovers a substantial part of the contrast. The agreement particles
-were hardest even from audio, at 0.58 for *okay* and 0.64 for *yeah*.
+against a three-way chance level of 0.33. Audio therefore adds a real increment over the words, while
+discourse context alone recovers a substantial part of the contrast. The agreement particles were
+hardest even from audio, at 0.58 for *okay* and 0.64 for *yeah*, which is expected given that those
+are the phrases whose functional ambiguity is widest (Gravano et al., 2012).
 
-Two features of this outcome shape how the conditions below are read. Stance is partly recoverable
-from surrounding words, so the interesting quantity is what audio adds rather than whether text
-fails. And the absolute level is what the prior literature predicts rather than a shortfall.
-Rockwell (2000) found listeners unable to discriminate spontaneous sarcasm from non-sarcasm at all,
-and Bryant and Fox Tree (2005) argue against a single dedicated ironic marker in favour of a family
-of cues recognised in context. An audio condition reaching 0.73 on spontaneous delivery, with
-context contributing substantially, is consistent with both. The agreement particles being hardest
-is consistent in the same way, since those are the phrases whose functional ambiguity is widest
-(Gravano et al., 2012).
+The absolute level is what the prior literature predicts rather than a shortfall. Rockwell (2000)
+found listeners unable to discriminate spontaneous sarcasm from non-sarcasm at all, and Bryant and
+Fox Tree (2005) argue against a single dedicated ironic marker in favour of a family of cues
+recognised in context. Both predict exactly this, a real audio increment on spontaneous delivery with
+context contributing substantially.
 
-**Models on the same clips.** The human figures above and the model figures below are routinely read
-against each other and should not be, since they differ in sample, in metric and in what the judge
-could see. Table 4.1 removes all three. Models are trained on the 813 clips the annotators never
-saw, with every episode appearing in the test set excluded from training, and scored on exactly the
-60 they did, in accuracy rather than macro-F1 because accuracy is what the human numbers are.
-
-| Condition | Modality | Accuracy |
-|---|---|---|
-| Human, transcript with context | text | 0.650 |
-| Human, audio with transcript | both | 0.730 |
-| WavLM and text, concatenated | both | 0.533 |
-| Whisper encoder | audio | 0.517 |
-| WavLM | audio | 0.500 |
-| HuBERT | audio | 0.500 |
-| eGeMAPS | audio | 0.500 |
-| Mimi, deployed | audio | 0.483 |
-| Text, discourse | text | 0.467 |
-
-The subset is balanced at twenty clips per class, so chance and the majority baseline are both 0.333.
-Every model condition clears that. None approaches the human audio figure, and the human
-transcript-only figure exceeds every model condition including the one given both modalities.
-
-Two properties of this subset make it harder than the corpus and should be stated before the gap is
-interpreted. It is stance-balanced, so it is 33 per cent neutral against 17 per cent overall, and
-neutral is the weakest class, with WavLM reaching 0.435 on it against 0.635 and 0.652 on the other
-two. And a single train-and-test split is a harder evaluation than out-of-fold prediction.
-Decomposing WavLM accordingly, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60
-out-of-fold, and 0.500 under the held-out-episode split. On the most generous reading of the model
-side the gap to the human audio condition is therefore about 0.18, which at sixty items is roughly
-2.3 standard errors and is real without being precisely estimated.
+Scoring the models on those same sixty clips, which is the only like-for-like comparison available,
+places the best model condition at 0.533 against the human 0.730 [G.1]. The representations examined
+below therefore carry something closer to half of what a listener recovers from the same audio, and
+the figures that follow should be read as relative to one another rather than as approaching human
+performance.
 
 ## 4.2 Pooled stance decodability
 
-Table 4.2 reports the three-way stance probe on the primary window. Chance is the mean of each
-configuration's own permutation null. The majority-class figure of 0.196 is given for completeness
-and is not the reference used, for the reasons set out in [3.6].
+Table 4.1 reports the three-way stance probe on the primary window. Chance is the mean of each
+configuration's own permutation null, for the reasons in [3.6].
 
 | Representation | layer | macro-F1 | 95% CI | chance | margin | p |
 |---|---|---|---|---|---|---|
@@ -66,114 +38,75 @@ and is not the reference used, for the reasons set out in [3.6].
 | Whisper encoder | 9 | 0.564 | [0.53, 0.60] | 0.332 | +0.232 | 0.005 |
 | HuBERT | 23 | 0.520 | [0.49, 0.56] | 0.334 | +0.186 | 0.005 |
 | Text, target word only | | 0.487 | [0.46, 0.52] | 0.313 | +0.174 | 0.005 |
+| eGeMAPS, 88 functionals | | 0.431 | | 0.327 | +0.104 | 0.010 |
 | Mimi, all 8 codebooks | | 0.381 | [0.35, 0.41] | 0.311 | +0.070 | 0.005 |
 | Text, with discourse | | 0.378 | [0.35, 0.41] | 0.333 | +0.045 | 0.010 |
 
 Every representation exceeds its own null. The three continuous encoders clear it by 0.19 to 0.24,
 while Mimi clears it by 0.070 and discourse text by 0.045.
 
-**A hand-crafted baseline.** Table 4.2 has no classical comparison, so it does not say whether
-+0.241 is large. Probing 88 eGeMAPS functionals under the same folds and probe gives 0.431 against a
-permutation chance of 0.327, a margin of +0.104 at p 0.010. WavLM's margin is therefore roughly 2.3
-times what a standard acoustic feature set recovers, which is the answer to whether the deep
-representation is doing work beyond pitch and energy. The same comparison places the deployed Mimi
-histogram, at +0.070, **below** the hand-crafted set, and the ordering holds under the lexical
-control, where eGeMAPS reaches 0.550 against Mimi's 0.466 and separates all eight phrases [4.3].
-These figures come from a separate run at 100 permutations without bootstrap intervals, so they are
-reported here rather than added to the table.
-
-Two entries need comment. The Whisper encoder performs within 0.01 of WavLM despite being a
-supervised transcription model and a considerably smaller one, 13 layers of 1,536 units against 25
-of 2,048. Section 4.5 returns to this. And the target-only text condition reaches 0.487, which
-should not be read as text recovering stance. Because the eight phrases differ in their stance base
-rates, a probe can score from word identity alone, and this condition is at chance only within a
-phrase. The within-word analysis in 4.3 removes that route entirely.
+Three entries need comment. **eGeMAPS** is the hand-crafted comparison, and it establishes that
+WavLM's margin is roughly 2.3 times what a standard acoustic feature set recovers, so the deep
+representation is doing work beyond pitch and energy. It also places the deployed Mimi condition
+**below** 88 classical features, an ordering that holds under the lexical control where eGeMAPS
+reaches 0.550 against Mimi's 0.466. **Whisper** performs within 0.01 of WavLM despite being a
+supervised transcription model and half the size, 13 layers of 768 units against 25 of 1,024, which
+[4.5] returns to. And the **target-only text** condition at 0.487 should not be read as text
+recovering stance, since the eight phrases differ in their stance base rates and a probe can score
+from word identity alone. It is at chance only within a phrase, which the next section enforces.
 
 ## 4.3 The lexical control
 
-Within each phrase the probe attempts that phrase's dominant binary stance contrast, so word
-identity carries no information. Means over the eight phrases are given in Table 4.3.
+Within each phrase the probe attempts that phrase's dominant binary stance contrast, so word identity
+carries no information.
 
-| Representation | Readout | mean within-word macro-F1 | degenerate cells |
-|---|---|---|---|
-| Whisper encoder | embedding, 1,536 | 0.672 | 0 of 8 |
-| WavLM | embedding, 2,048 | 0.659 | 0 of 8 |
-| HuBERT | embedding, 2,048 | 0.616 | 0 of 8 |
-| Mimi, pre-quantisation | embedding, 1,024 | 0.606 | 0 of 8 |
-| Mimi, post-quantisation | embedding, 1,024 | 0.594 | 0 of 8 |
-| Text, with discourse | embedding, 768 | 0.534 | 0 of 8 |
-| Mimi, deployed histogram | histogram, 16,384 | 0.466 | 3 of 8 |
+| Representation | Readout | mean within-word macro-F1 |
+|---|---|---|
+| Whisper encoder | embedding, 1,536 | 0.672 |
+| WavLM | embedding, 2,048 | 0.659 |
+| HuBERT | embedding, 2,048 | 0.616 |
+| Mimi, pre-quantisation | embedding, 1,024 | 0.606 |
+| Mimi, post-quantisation | embedding, 1,024 | 0.594 |
+| eGeMAPS | 88 functionals | 0.550 |
+| Text, with discourse | embedding, 768 | 0.534 |
+| Mimi, deployed histogram | histogram, 16,384 | 0.466 |
 
 Whisper is the strongest representation under the lexical control, marginally ahead of WavLM. Since
 the word cannot help here, this cannot be attributed to Whisper's lexical bias.
 
-**Mimi appears twice, and the gap between the two entries is the readout rather than the
-representation.** Under an embedding readout matched to what every other representation receives,
-Mimi reaches 0.594 and separates all eight phrases. Under the deployed histogram it reaches 0.466 and
-fails to separate three of them at all, emitting a single class for every clip on *yeah*, *sure* and
-*come on* and therefore scoring exactly the within-phrase majority. Those are the only degenerate
-cells in the study.
-
-The cause is dimensionality against cell size. The histogram is 16,384 sparse dimensions and each
-phrase cell holds between 58 and 129 clips, where the continuous encoders receive at most 2,048. The
-same asymmetry costs 0.031 of margin when pooled over all 873 clips [4.6], and 0.128 here, because
-the penalty scales with how few examples each probe sees.
-
-Two consequences follow. Mimi under the lexical control sits above the discourse-text baseline of
-0.534 rather than below it, and any statement to the contrary is a statement about the histogram.
-And the readout dependence observed pooled in [4.4], where Mimi's margin moves by 0.056 across
-summarisation choices while WavLM's moves by 0.009, is not a minor sensitivity but the largest single
-determinant of Mimi's measured performance under this analysis. Per-phrase figures for all three
-Mimi readouts are in [C.1], and `src/26_within_word_readout.py` reproduces the table.
+Mimi appears twice, and the difference between the two entries is the readout rather than the
+representation. Given an embedding readout matched to what every other representation receives, it
+reaches 0.594 and separates all eight phrases. Given the deployed 16,384-dimensional histogram it
+reaches 0.466 and fails to separate three of them at all. The cause is sparse dimensionality against
+cells of 58 to 129 clips, and the full decomposition is in [G.2]. What matters for the argument is
+that Mimi's measured within-word performance is determined more by how the token stream is summarised
+than by anything the tokens contain.
 
 ## 4.4 Controls
 
 **Arousal.** Stance was decoded within each arousal level separately, so that energy is constant
 within each analysis. WavLM reaches 0.531 on low-arousal clips and 0.549 on high, against 0.573
-pooled. Whisper reaches 0.526 and 0.514, HuBERT 0.459 and 0.518. The same test on the discrete
-representations, run separately, leaves Mimi significant at both levels, at p 0.025 and p 0.017.
-Margins are reduced relative to the pooled analysis in seven of the eight model-by-level cells, by
-between 6 and 37 per cent, with the largest reductions in the discrete representations and the
-smallest in WavLM. The exception is Mimi before quantisation at high arousal, which is essentially
-unchanged. The two axes are therefore partly entangled, but stance is not reducible to arousal in any
-representation tested.
+pooled. Whisper reaches 0.526 and 0.514, HuBERT 0.459 and 0.518, and Mimi remains significant at both
+levels, at p 0.025 and p 0.017. Margins are reduced in seven of the eight model-by-level cells, by
+between 6 and 37 per cent. The two axes are therefore partly entangled, but stance is not reducible
+to arousal in any representation tested.
 
-**Speaker.** Regrouping folds by show, so that no show appears in both training and testing, moves
-WavLM from 0.573 to 0.530, Whisper from 0.564 to 0.536 and Mimi from 0.381 to 0.362. HuBERT falls
-further, from 0.520 to 0.450. The probe is therefore not principally recovering speaker identity.
-Because the corpus carries show names rather than speaker labels, and guests recur across shows,
-this control is properly described as held-out shows rather than unseen speakers.
+**Speaker.** Regrouping folds by show moves WavLM from 0.573 to 0.530, Whisper from 0.564 to 0.536
+and Mimi from 0.381 to 0.362, with HuBERT falling further from 0.520 to 0.450. The probe is therefore
+not principally recovering speaker identity. Because the corpus carries show names rather than
+speaker labels, this control is properly described as held-out shows rather than unseen speakers.
 
 **Context window.** Across the local, segment and discourse windows WavLM scores 0.561, 0.573 and
-0.511, Whisper 0.545, 0.564 and 0.531, HuBERT 0.537, 0.520 and 0.488. Performance is broadly flat
-and does not rise with more surrounding speech, which indicates the continuous encoders are reading
-delivery rather than leaning on discourse context. Mimi is the exception, at 0.392, 0.381 and 0.411.
+0.511, Whisper 0.545, 0.564 and 0.531, HuBERT 0.537, 0.520 and 0.488. Performance is flat and does
+not rise with more surrounding speech, which indicates the continuous encoders are reading delivery
+rather than leaning on discourse context. Mimi is the exception, rising slightly to 0.411 at the
+discourse window.
 
-**Readout.** Three summarisation methods were compared on identical forward passes. For WavLM the
-choice is immaterial, giving margins of +0.244 for mean and standard deviation pooling, +0.250 for
-four-segment pooling and +0.241 with frame-to-frame deltas added. For Mimi it is not, at +0.100,
-+0.097 and +0.153. Delta features recover 53 per cent more margin from Mimi while doing nothing for
-WavLM. This is not a capacity effect, since four-segment pooling gives Mimi four times the
-dimensions without benefit and WavLM's delta condition doubles its dimensions without benefit.
-
-**Probe capacity.** A non-linear probe was run on identical features and identical folds under six
-capacity settings, because gains under any single setting move by up to 0.06 and some change sign, so
-one configuration is not a sound basis for the conclusion. Under the primary setting the gain over
-the linear probe is negative for six of the eight representations, from -0.075 for the Whisper
-encoder to -0.006 for discourse text, with two small positive values, +0.019 for Mimi after
-quantisation and +0.004 for the Mimi histogram. The probe is functioning rather than failing to
-train, clearing its own permutation null by +0.229 on WavLM and +0.129 on Mimi at p 0.032 in both
-cases.
-
-Two consequences follow from the sweep rather than from the primary setting. Linear accessibility is
-not the limiting factor, since the largest gain anywhere across the six settings is +0.025 against a
-continuous-to-discrete gap of roughly 0.14, so any non-linear reserve is bounded at about a sixth of
-the quantity being interpreted. And the gains that occur track headroom rather than representation
-type. Every representation scoring above 0.500 gains at most +0.003 anywhere in the sweep, every
-representation below it gains between +0.010 and +0.025, the largest single gain falls on the
-continuous text embedding rather than on any discrete representation, and Mimi before quantisation
-gains less than Mimi after it. This does not rule out a mild penalty on quantised vectors. It bounds
-one.
+**Readout and probe capacity.** Two further controls are reported in [G.2] and [G.3]. Summarisation
+choice is immaterial for WavLM, moving its margin by 0.009 across three readouts, and material for
+Mimi, moving it by 0.056. And a non-linear probe run under six capacity settings recovers at most
++0.025 anywhere, against a continuous-to-discrete gap of roughly 0.14, so linear accessibility is not
+the limiting factor and the reported figures describe content rather than reach.
 
 ## 4.5 Where the contrast lives
 
@@ -184,9 +117,10 @@ rises to 0.561 by layer 8 and then plateaus across its top third, reaching 0.564
 
 The WavLM curve matches the three-stage account in which upper layers abstract toward linguistic
 content and shed paralinguistic detail. Whisper does not show that decline. Its supervised
-transcription objective was expected to reduce acoustic information in the final encoder layers,
-and on this task it does not, which is consistent with prior findings that ASR encoders retain
-paralinguistic content and extends them to pragmatic stance under a lexical control.
+transcription objective was expected to reduce acoustic information in the final encoder layers and
+on this task it does not, which is consistent with prior findings that ASR encoders retain
+paralinguistic content (Gong et al., 2023; Ma et al., 2026) and extends them to pragmatic stance
+under a lexical control.
 
 **Across Mimi's codebooks.** Each codebook was probed alone, with its own permutation null.
 
@@ -199,58 +133,22 @@ paralinguistic content and extends them to pragmatic stance under a lexical cont
 | All 8, the deployed condition | 0.381 | 0.310 | +0.071 | 0.005 |
 | Codebooks 1 to 7 only | 0.352 | 0.311 | +0.041 | 0.015 |
 
-**Cumulatively.** Probing CB0, then CB0 to 1, and so on to the full stack, the endpoints settle the
-question and the middle does not. Codebook 0 alone reaches +0.069 and all eight together reach
-+0.071, so seven additional codebooks and 14,336 additional dimensions buy 0.002. In the reverse
-direction the seven acoustic codebooks without CB0 reach only +0.041, and adding CB0 takes them to
-+0.071. The intermediate blocks are not flat, rising to +0.092 at CB0 to 3 and falling to +0.052 at
-CB0 to 6 before recovering. That excursion is non-monotonic and spans 0.040, most of the margin
-itself, and it tracks accumulated dimensionality rather than accumulated content, since each
-codebook adds 2,048 sparse dimensions to an 873-clip problem. It is the same effect measured at 0.031
-pooled and 0.128 within a phrase [4.3], appearing here a third time.
-
-The distilled codebook is the strongest single block. Two acoustic refinement codebooks clear their
-nulls weakly, at p 0.020 and p 0.035, and the remaining five are statistically indistinguishable from
-chance. What the acoustic stack does not do is add to the distilled one, since all eight together
-reach 0.381 against 0.402 for codebook 0 alone, and the seven acoustic codebooks without it reach
-0.352. Chapter 2 predicted the opposite distribution, and 2.3.3
-reports that as a corrected expectation.
-
-**Across acoustic cues.** The same 88 features can be split into groups and probed separately, which
-locates the contrast in measured acoustics rather than in a learned representation. Groups differ in
-size, so only comparably sized ones should be set against each other, and the spectral and formant
-block is excluded from the comparison below because it holds 51 of the 88.
-
-| Cue group | features | stance margin | arousal margin |
-|---|---:|---:|---:|
-| Contour, F0 and loudness dynamics | 12 | **+0.082** | +0.085 |
-| Level, loudness and F0 means | 9 | +0.052 | +0.084 |
-| Voice quality, jitter, shimmer, HNR | 10 | +0.044 | **+0.110** |
-| Temporal, rate and segment lengths | 6 | +0.025 | +0.017 |
-| Spectral and formant, not comparable | 51 | +0.088 | +0.098 |
-
-Stance is carried most by dynamics and arousal most by voice quality. Level cues are joint-lowest for
-arousal and middling for stance, and removing them from the full set leaves stance decoding unchanged
-at +0.107 against +0.104. The temporal group is the weakest for both and its arousal margin does not
-clear its null, at p 0.248.
-
-Two things follow. The annotated arousal axis is grounded in measured acoustics rather than resting
-on annotator judgement alone, since it is predictable from eGeMAPS at +0.108 on a binary task.
-And the cue account offered in [5.4] is half supported, since stance does live in dynamics rather
-than levels, but voice quality is the arousal carrier rather than a stance carrier as that section
-originally had it. Margins on the two tasks are not comparable to each other, since stance is
-three-way and arousal binary, so only the ordering within each column is read.
+The distilled codebook is the strongest single block. Two acoustic codebooks clear their nulls weakly
+and the remaining five are indistinguishable from chance. What the acoustic stack does not do is add
+to the distilled one. Probed cumulatively, codebook 0 alone reaches +0.069 and all eight together
+reach +0.071, so seven further codebooks and 14,336 further dimensions buy 0.002, while the seven
+acoustic codebooks without codebook 0 reach only +0.041 [G.4]. Chapter 2 predicted the opposite
+distribution and 2.2 reports that as a corrected expectation.
 
 ## 4.6 Locating the loss
 
-The comparison in Table 4.2 confounds quantisation with feature construction, frame rate,
-architecture and training objective. This section isolates the stages. Because the probe task holds
-the word constant throughout, the margins below are margins on delivery, so a loss localised to a
-stage is a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser
-operates in a projected space, so the comparable pair is the projected encoder latent against the
-summed codebook vectors before output projection, both pooled identically. Measured over all 873
-clips the cosine between them is 0.821 for Mimi and 0.773 for DAC, against 0.004 for the naive
-comparison that pairing would replace, confirming a shared space [3.5].
+The comparison in Table 4.1 confounds quantisation with feature construction, frame rate,
+architecture and training objective. This section isolates the stages. Because the word is held
+constant throughout, the margins below are margins on delivery, so a loss localised to a stage is a
+loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser operates in a projected
+space, so the comparable pair is the projected encoder latent against the summed codebook vectors
+before output projection, both pooled identically. Measured over all 873 clips their cosine is 0.821
+for Mimi and 0.773 for DAC, against 0.004 for the naive comparison that pairing would replace [3.5].
 
 | Representation | margin | encoder costs | quantisation costs |
 |---|---|---|---|
@@ -260,60 +158,51 @@ comparison that pairing would replace, confirming a shared space [3.5].
 | DAC, before quantisation | +0.062 | 0.182 | |
 | DAC, after quantisation | +0.087 | | −0.025 |
 
-In both codecs the encoder is the dominant contributor. For Mimi it costs roughly three times what
-quantisation does. For DAC it costs more still, and quantisation is marginally beneficial.
+**In both codecs the encoder is the dominant contributor.** For Mimi it costs roughly three times
+what quantisation does. For DAC it costs more still, and quantisation is marginally beneficial.
 
 DAC is a purely acoustic codec with no distillation objective, running at 75 Hz against Mimi's 12.5
 and compared at the first eight of its 32 codebooks [3.5]. Its encoder retains 47 per cent of what
-Mimi's does. The two converge at the token stage, where DAC
-reaches 88 per cent of Mimi, because quantisation helps DAC and hurts Mimi.
+Mimi's does, and the two converge at the token stage where DAC reaches 88 per cent of Mimi, because
+quantisation helps DAC and hurts Mimi.
 
-**The deployed condition.** The rungs above stop at post-quantisation embeddings, one step short of
-what Table 4.2 reports. A single run covering all four rungs on Mimi gives WavLM at +0.239, Mimi
-before quantisation at +0.130, Mimi after quantisation at +0.100 and the deployed histogram at
-+0.069, so on that run the encoder costs 0.109, quantisation 0.030 and the histogram readout a
-further 0.031. Summarising the token stream therefore costs about as much as quantising it, and
-four times as much again within a single phrase, where the cells are small enough for the
-dimensionality of a sparse histogram to bite [4.3].
+Adding the deployed histogram as a fourth rung, a single run gives WavLM +0.239, Mimi before
+quantisation +0.130, after quantisation +0.100 and the deployed histogram +0.069, so the encoder
+costs 0.109, quantisation 0.030 and the histogram readout a further 0.031. Summarising the token
+stream costs about as much as quantising it. The stability of these two costs under a change of
+readout is reported in [G.2].
 
-**Stability.** The two costs behave differently under a change of readout. The encoder cost holds at
-0.116 under mean and standard deviation pooling and 0.121 with deltas. The quantisation cost ranges
-from +0.056 under four-segment pooling to −0.036 with deltas, a swing sufficient to change its sign.
-Reported quantisation costs are therefore contingent on a readout choice that is rarely stated.[^runs]
+## 4.7 What the codec retains
 
-[^runs]: The readout comparison is a separate run from the cross-codec comparison above, which is why
-the encoder cost appears as 0.116 here and 0.112 there. The difference is run-to-run variation in
-permutation sampling and no argument turns on it. The encoder cost under four-segment pooling was not
-computed in that run, so the stability claim rests on two readouts rather than three.
+The decomposition above locates the loss without saying what is lost. If the encoder discards the
+acoustic detail that stance is built from, that would explain it. This section tests that directly by
+asking how well each acoustic cue group can be recovered from each rung, using ridge regression
+cross-validated by episode and reported as a fraction of what WavLM supports.
 
-## 4.7 The contrast-preservation score
+| Representation | contour | level | voice quality | temporal | spectral |
+|---|---:|---:|---:|---:|---:|
+| WavLM, ceiling, absolute R² | 0.283 | 0.607 | 0.225 | 0.557 | 0.345 |
+| Mimi, pre-quantisation | 153% | 147% | 158% | 106% | 170% |
+| Mimi, post-quantisation | 139% | 143% | 139% | 97% | 162% |
+| Mimi, deployed histogram | 98% | 106% | 109% | 78% | 121% |
+| DAC, pre-quantisation | 122% | 130% | 123% | 68% | 161% |
+| DAC, post-quantisation | 117% | 127% | 113% | 63% | 157% |
 
-Within each speaker-by-word cell with at least three exemplars of the minority stance, leave-one-out
-nearest-centroid classification was performed on distances alone. Fifteen cells qualify, giving 191
-decisions.
+**The codecs recover the acoustic cues better than WavLM does**, and they do so with half the
+features, 1,024 dimensions against 2,048, so the comparison runs against them. That includes the
+contour group, which is what stance is built from. Only the temporal group falls below WavLM, and it
+falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a
+frame-rate account.
 
-The originally stated chance level of 0.50 is wrong, because eligibility requires only three minority
-exemplars, so eligible cells are imbalanced and a constant predictor already beats it. Two
-replacements are defensible and they disagree. The whole-cell majority rate is 0.670, but it counts
-the held-out item's own label when determining which class is the majority, which is the leakage
-leave-one-out exists to prevent. The leave-one-out majority, predicting the most frequent class among
-the other n minus one, is 0.545, but it is anti-correlated with the truth on near-balanced cells,
-where removing an item flips the majority against it.
+Splitting the same 88 features by what they carry confirms where the two annotated axes live. Setting
+aside the spectral block, which holds 51 of the 88 and is not size-comparable, stance is carried most
+by contour at +0.082 against +0.052 for level and +0.044 for voice quality, and arousal most by voice
+quality at +0.110 against +0.085 and +0.084. Removing the level cues from the full set leaves stance
+decoding unchanged at +0.107 against +0.104. Arousal is separately predictable from eGeMAPS at
++0.108, so the annotated axis is grounded in measured acoustics rather than resting on annotator
+judgement alone.
 
-WavLM and Whisper reach 0.618, HuBERT 0.613, text 0.592 and Mimi 0.560. **Every representation falls
-inside the interval between the two baselines.** The measure therefore does not discriminate in
-either direction. It is uninformative rather than a clean failure, and it neither corroborates the
-probing results nor contradicts them.
-
-The measure's closest established relative is the minimal-pair ABX discriminability task (Schatz et
-al., 2013), which is likewise training-free and defined on distances between representations, and
-which is reported as the acoustic-level metric inside multi-level evaluation suites for exactly that
-reason (Dunbar et al., 2021). ABX avoids the difficulty encountered here by fixing the comparison as
-a triplet rather than estimating a class centroid, so it does not depend on cell size in the way a
-nearest-centroid measure does. That is the design lesson, and [Ch.6] takes it up.
-
-Two factors compound this. Only 15 of the available cells qualify, with 27 more one exemplar short of
-eligibility. And the measure is sensitive to implementation, with cosine distance or prior PCA
-moving scores by up to 0.07. Baselines and cell counts are computed exactly, from labels alone, in
-`src/23_cps_baseline.py`.
-
+Taken together these say something the ladder alone does not. The codec has not discarded the
+prosody. It represents the acoustic cues stance is built from more faithfully than the model that
+decodes stance best. What it lacks is the organisation that makes an interpersonal category readable
+off those cues, and Chapter 5 takes that up.

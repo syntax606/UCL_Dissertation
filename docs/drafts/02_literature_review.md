@@ -47,8 +47,8 @@ report the same weakness downstream (Jiang et al., 2025; Yang et al., 2026).
 
 ## 2.2 The representations under test
 
-Six representations are compared on a single task, recovering the pragmatic force of a phrase whose
-lexical content is held constant. Table 2.1 gives their characteristics.
+Seven representations are compared on a single task, recovering the pragmatic force of a phrase
+whose lexical content is held constant. Table 2.1 gives their characteristics.
 
 **Table 2.1.** Representations under test. Frame rate in Hz. Layers times hidden width for the
 continuous encoders, codebook vocabulary for the codecs. Specifications read from the checkpoints and
@@ -62,6 +62,7 @@ the primary papers.
 | Mimi (Défossez et al., 2024) | 24 kHz | 12.5 | | 2048 | hybrid, 8 codebooks, WavLM-distilled | RVQ |
 | DAC (Kumar et al., 2023) | 24 kHz | 75 | | 1024 | acoustic, 32 codebooks, first 8 used | RVQ |
 | MPNet text embedding | | | 768 | | continuous, text | none |
+| eGeMAPSv02 functionals | | | 88 | | hand-crafted acoustic | none |
 
 **Continuous encoders.** HuBERT and WavLM share a masked-prediction architecture and a documented
 layer-wise division of labour, with lower layers encoding local acoustic detail, middle layers
@@ -87,6 +88,12 @@ predicted that pragmatic force would sit in the acoustic codebooks rather than i
 concerns what a stream encodes about which words were said, and pragmatic force is orthogonal to it,
 so a finding either way licenses no inference about delivery. What predicts the outcome is the
 distillation source rather than the stream's conventional label.
+
+**The hand-crafted baseline.** The seventh entry is not a model. eGeMAPS supplies 88 interpretable
+acoustic functionals, and without it the study could show that a learned representation separates
+stance without establishing that this exceeds what pitch and energy alone would give. Because its
+features are individually interpretable they can also be grouped by what they measure, which is what
+the cue analysis in [4.7] requires.
 
 **The transcript baseline.** The text embedding is two objects with two roles [3.5]. Because the word
 is held constant, an embedding of the word alone is at chance within a phrase by construction and is

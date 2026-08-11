@@ -21,7 +21,7 @@ computational economy rather than for anything paralinguistic [Ch.5].
 
 Three hypotheses were tested and not supported, and reporting them is part of the result. The
 contrast-preservation score falls inside the interval between its two defensible baselines, 0.545 and
-0.670, in every representation, so it does not discriminate and is not corroboration. The proposal
+0.670, in every representation, so it does not discriminate and is not corroboration [G.5]. The proposal
 that these representations encode activation and are read downstream as intent does not hold, because
 stance survives at fixed arousal everywhere tested. And an apparent dissociation between the two axes
 reversed once the readout was varied, so it was a property of the summary rather than of the
@@ -32,17 +32,18 @@ Five constraints bound the positive findings, and the reasoning behind each is i
 pooled dimensionality, while the 0.034 for quantisation is clean. The attribution to distillation is
 associational rather than causal, and the decisive experiment would train one codec with and without
 the objective. Linear probing measures accessibility rather than presence, though across six probe
-capacities no configuration recovers more than +0.025 against a gap of roughly 0.14, so accessibility
+capacities no configuration recovers more than +0.025 against a gap of roughly 0.14 [G.3], so accessibility
 bounds rather than explains the result. The identity control is held-out shows rather than unseen
 speakers, since the corpus carries show labels only.
 
-The fifth concerns the interpretation offered in [Ch.5]. A mechanism was proposed there for why
-arousal survives compression and stance does not, resting on level cues being reconstructive and
-contour cues not. Probing the cue groups directly supports half of it and refutes the other half
-[4.5, 5.4]. Stance is carried by dynamics rather than levels, as proposed, but voice quality rather
-than level is the strongest arousal carrier, which the proposal had the wrong way round. The
-asymmetry stands as a measurement and its explanation does not, and closing that gap requires probing
-the codec representations for individual cues rather than probing cues and codecs separately.
+The fifth concerns the account in [5.2]. An earlier version of this study proposed that codecs retain
+reconstructive cues and shed contour-shaped ones, which the cue analysis refutes in both halves,
+since voice quality rather than level is the arousal carrier and the codecs retain every cue group at
+or above what WavLM supports [4.7]. What replaces it, that the constraint is organisation rather than
+fidelity, is an inference from those same measurements rather than an independent test of them.
+Establishing it would require showing that a representation can be reorganised without adding
+acoustic information and that stance becomes readable as a result, which is what the contrastive
+objective below proposes and is not run here.
 
 ## 6.3 Why the loss is worth repairing
 
@@ -79,13 +80,14 @@ that differ in how much stance they encode, converting the associational claim o
 controlled one. This is the experiment the compute available here did not permit, and every other
 step assumes its outcome.
 
-**Identify which cues are lost.** Half of this is now done. Extracting eGeMAPS from the same clips
-and probing its cue groups shows stance carried by F0 and loudness dynamics and arousal by voice
-quality [4.5], which refutes the mechanism [Ch.5] originally proposed. What remains is the other
-half, namely which of those cues a codec actually loses. That requires predicting each cue group from
-the codec representations at each rung of the ladder, rather than probing cues and codecs separately
-as here, and it would say directly which properties an objective must protect. It needs no training
-and reuses the corpus and features already extracted.
+**Test the organisation account directly.** This step has changed shape, because the question it was
+originally posed to answer has been answered. Which cues a codec loses is now measured, and the
+answer is none of them, since every group is retained at or above what WavLM supports [4.7]. So the
+open question is no longer which acoustic properties survive but why surviving acoustics are not
+usable. The sharpest test is a representation held fixed in its acoustic content and varied only in
+how that content is arranged, for instance by reorganising a codec latent under a contrastive
+objective without giving it access to any new signal. If stance becomes readable, organisation is the
+constraint. If it does not, something else is.
 
 **Choose the teacher layer by measurement.** WavLM carries 0.573 at layer 20 and 0.490 at layer 24,
 so the choice of distillation target is consequential for this contrast. Semantic distillation

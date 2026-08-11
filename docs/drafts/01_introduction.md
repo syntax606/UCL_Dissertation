@@ -198,7 +198,8 @@ that proved to be a property of the readout rather than of the representation [C
 Chapter 2 situates the study in the literatures on discrete speech tokens, probing of speech
 representations, and the pragmatics of same-word contrasts, and traces the codec design lineage the
 decomposition later measures. Chapter 3 describes the corpus, the two-tier annotation scheme, the
-premise check, the six representations and the probing protocol, including the pre-committed choices
-of readout and chance level. Chapter 4 reports seven analyses. Chapter 5 interprets them with
-attention to what they cannot support. Chapter 6 states the limitations and sets out a programme of
+premise check, the seven representations and the probing protocol, including the pre-committed choices
+of readout and chance level. Chapter 4 reports six analyses, with four methodological checks in
+Appendix G. Chapter 5 makes three moves, locating the loss upstream of the tokens, showing that what
+is lost is not the acoustics, and drawing out what follows for remedies. Chapter 6 states the limitations and sets out a programme of
 repair that follows from where the loss was found.

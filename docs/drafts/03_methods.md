@@ -102,7 +102,7 @@ as the increment over context.
 
 ## 3.5 Representations and feature extraction
 
-Six representations are compared, with the text baseline supplying two conditions rather than one
+Seven representations are compared, with the text baseline supplying two conditions rather than one
 [below]. With one exception, noted below, the selection is determined by the research question rather
 than by availability.
 
@@ -124,7 +124,12 @@ serve, since it also distils from a self-supervised teacher and so does not cont
 of interest, and DAC is preferred to EnCodec as the more recent reconstruction-only codec and one
 already benchmarked against Mimi elsewhere (Mousavi et al., 2026). MPNet is used for the text
 baseline because the argument requires a strong text competitor rather than a strawman, since the
-premise check shows discourse context recovers a substantial part of the contrast [4.1].
+premise check shows discourse context recovers a substantial part of the contrast [4.1]. The seventh
+representation is not a model at all. eGeMAPS supplies a hand-crafted acoustic baseline, without
+which the study could report that a learned representation separates stance without establishing
+that this is more than pitch and energy would give. It also serves a second purpose, since its
+features are individually interpretable and can therefore be grouped by what they measure, which is
+what the cue analysis in [4.7] requires.
 
 Feature extraction was run once on a single A100 GPU and the resulting features frozen. No representation is fine-tuned,
 which is the defining property of a diagnostic probing study. Each clip is processed
@@ -148,9 +153,12 @@ is run at 24 kHz (clips are resampled in memory). Mimi emits residual code strea
 is a WavLM-distilled stream and codebooks 1 to 7 carry acoustic refinement. All eight are
 retained. Each codebook's token sequence is summarised as a normalised unigram histogram over
 its codebook, and the eight histograms are concatenated into a single fixed vector per clip.
-Keeping the full stack matters for two reasons. It represents Mimi at the granularity a language
-model built on it would actually consume, and it allows the codebook-level analysis in [Ch.4] to
-probe each stream separately rather than assuming in advance where pragmatic information sits.
+Keeping the full stack matters because a model built on Mimi consumes every codebook, and because it
+allows the codebook-level analysis in [Ch.4] to probe each stream separately rather than assuming in
+advance where pragmatic information sits. The histogram is one summarisation among several and is
+adopted as the deployed condition because it preserves token identity, which no pooled readout does.
+Its cost relative to an embedding readout is measured rather than assumed, and turns out to be
+substantial [4.3, G.2].
 
 Codebook-level analysis is ordinarily confounded, and the lexical control is what removes the
 confound. Shi et al. (2026) show that phonetic content in a Mimi code stream is not confined to the
@@ -188,6 +196,14 @@ Descript codec, with per-clip minima of 0.766 and 0.717, confirming a shared spa
 diagnostics are produced by `src/24_projection_cosines.py`. Both sides are then pooled by mean
 and standard deviation, so the embedding readout is held constant and the histogram readout used for
 the deployed condition plays no part in this comparison.
+
+**Hand-crafted acoustic baseline.** The eGeMAPSv02 functionals are extracted with openSMILE, giving
+88 features per clip covering F0 statistics, loudness, spectral slope and balance, formants, voice
+quality through jitter, shimmer and harmonics-to-noise ratio, and rate proxies from voiced and
+unvoiced segment lengths. This is the standard minimal set for affective computing and is used here
+unmodified. For the cue analysis the 88 features are partitioned by what they measure into level,
+contour, voice quality, temporal and spectral groups, a partition fixed by the feature definitions
+rather than by inspecting results.
 
 **Text baseline.** A sentence-transformer (MPNet) encodes two texts per clip, following the two
 roles the premise check established. The **target-only** embedding encodes the bare target word.
@@ -229,24 +245,15 @@ respectively, closely agreeing). The majority figure is reported alongside for c
 Using the permutation null rather than the majority score materially changes interpretation of
 the weaker representations, as Chapter 4 discusses.
 
-**Probe capacity.** A linear probe measures whether information is linearly accessible, which is
-not the same as whether it is present, a distinction developed at length by Belinkov (2022) and the
-central caveat on probing as a method. The companion concern, that a probe may succeed by memorising
-rather than by reading structure, is addressed by Hewitt and Liang (2019) through control tasks with
-randomised labels. The empirical permutation null used throughout this study is an instance of that
-idea, since it refits the entire pipeline on shuffled labels and reports the observed score against
-that distribution rather than against an analytic chance level. To test that this constraint is not driving the results, a
-small non-linear probe was run as a companion on identical features and identical folds, a
-single-hidden-layer network of 64 units with strong weight decay and early stopping. It is kept
-deliberately small, because a sufficiently powerful probe can learn a task from almost any
-representation and thereby report on itself rather than on the encoding.
-
-Because the gain over a linear probe depends on the capacity chosen, and moves by up to 0.06 across
-reasonable settings, the comparison is run under six configurations varying hidden width, weight
-decay and early stopping rather than under one. The quantity carried into [Ch.4] is accordingly the
-largest gain observed anywhere in that sweep, which is a bound and is stable, rather than the
-per-representation ordering at any single setting, which is not. Full settings are in Appendix [B]
-and the procedure is in `src/22_nonlinear_probe.py`.
+**Probe capacity.** A linear probe measures whether information is linearly accessible, which is not
+the same as whether it is present, a distinction developed at length by Belinkov (2022). The
+companion concern, that a probe may succeed by memorising rather than by reading structure, is
+addressed by Hewitt and Liang (2019) through control tasks with randomised labels, and the empirical
+permutation null used throughout is an instance of that idea. Accessibility is tested rather than
+argued around, by a small strongly regularised non-linear probe run on identical features and folds
+under six capacity settings, since the gain over a linear probe depends on the capacity chosen. The
+quantity carried forward is the bound across that sweep rather than the ordering at any one setting
+[G.3].
 
 **Uncertainty and significance.** Two procedures accompany every headline score. A 95%
 confidence interval is obtained by an **episode-cluster bootstrap** that resamples whole episodes
@@ -255,16 +262,22 @@ rather than individual clips, respecting the non-independence of clips nested in
 the fraction of permutations reaching the observed macro-F1, establishing that decodability
 exceeds chance.
 
-**Seven analyses.** The results chapter reports seven views, each named by the section that
-reports it. Pooled three-way decodability at each model's best layer [4.2]. The per-phrase
-within-word contrast, which is the lexical control at the heart of the design and under which word
-identity carries no information [4.3]. Four controls, namely matched arousal, fold grouping by show,
-a context-window sweep and a readout comparison [4.4]. A layer sweep and a codebook-level probe
-[4.5]. The quantisation ladder, comparing the continuous teacher against each codec's projected
-encoder latent and post-quantisation vectors under the shared embedding readout, on two codecs of
-different design [4.6]. And a training-free contrast-preservation score, a within-speaker,
-within-word, leave-one-out nearest-centroid measure reported with the caveats developed in [Ch.5]
-[4.7].
+**The analyses.** Chapter 4 reports six, each named by the section that carries it. Pooled three-way
+decodability at each model's best layer [4.2]. The per-phrase within-word contrast, which is the
+lexical control at the heart of the design and under which word identity carries no information
+[4.3]. Three controls, namely matched arousal, fold grouping by show and a context-window sweep
+[4.4]. A layer sweep and a codebook-level probe [4.5]. The quantisation ladder, comparing the
+continuous teacher against each codec's projected encoder latent and post-quantisation vectors under
+a shared embedding readout, on two codecs of different design [4.6]. And a cue-retention analysis
+[4.7], which asks not whether stance is decodable but whether the acoustic properties it is built
+from are recoverable, by ridge regression from each representation to each eGeMAPS feature,
+cross-validated on the same folds and reported as R-squared averaged within cue group. That last
+analysis is what separates a codec discarding acoustic detail from a codec retaining it in an
+unusable arrangement, and the two are otherwise indistinguishable from decoding scores alone.
+
+Four further checks bear on how these figures should be read rather than on what they say, and are
+reported in Appendix [G]. They are the model-against-human comparison on the premise subset, the
+readout decomposition, a probe-capacity sweep, and a training-free contrast-preservation measure.
 
 Hyperparameters, exact dimensionalities, and the full per-phrase counts are given in Appendix
 [B]. All code and the analysis scripts are released so that, given a corpus and the label store,

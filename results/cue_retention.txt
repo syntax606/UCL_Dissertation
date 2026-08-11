@@ -1,0 +1,41 @@
+WHICH CUES DOES THE CODEC LOSE?
+Ridge from each representation to each eGeMAPS feature, cross-validated by
+episode, R-squared averaged within cue group. Retention is the fraction of
+WavLM's R-squared, WavLM being the continuous ceiling and Mimi's teacher.
+873 clips.
+================================================================================================
+  computed WavLM (teacher, ceiling)
+  computed Mimi, pre-quantisation
+  computed Mimi, post-quantisation
+  computed Mimi, deployed histogram
+  computed DAC, pre-quantisation
+  computed DAC, post-quantisation
+
+ABSOLUTE, mean cross-validated R-squared
+representation                          contour              level      voice quality           temporalspectral and formant
+WavLM (teacher, ceiling)                  0.283              0.607              0.225              0.557              0.345
+Mimi, pre-quantisation                    0.435              0.890              0.355              0.589              0.588
+Mimi, post-quantisation                   0.395              0.870              0.311              0.539              0.559
+Mimi, deployed histogram                  0.278              0.646              0.245              0.435              0.416
+DAC, pre-quantisation                     0.345              0.792              0.276              0.379              0.553
+DAC, post-quantisation                    0.331              0.773              0.254              0.354              0.541
+
+RETENTION, as a fraction of WavLM
+representation                          contour              level      voice quality           temporalspectral and formant
+Mimi, pre-quantisation                    153%               147%               158%               106%               170% 
+Mimi, post-quantisation                   139%               143%               139%                97%               162% 
+Mimi, deployed histogram                   98%               106%               109%                78%               121% 
+DAC, pre-quantisation                     122%               130%               123%                68%               161% 
+DAC, post-quantisation                    117%               127%               113%                63%               157% 
+
+cue group                                        carries
+contour (dynamics)                                stance
+voice quality                                    arousal
+level (means)                                both weakly
+temporal (rate)                                  neither
+spectral and formant           both, not size-comparable
+
+Read: the mechanism in [5.4] requires the group carrying arousal to be
+retained along the ladder and the group carrying stance to be lost. If both
+are retained equally, the asymmetry in what the codec keeps is not explained
+by which cues it keeps, and some other account is needed.

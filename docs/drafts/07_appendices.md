@@ -467,3 +467,138 @@ because the eight phrases differ in their stance base rates and a probe can scor
 word identity alone, so the pooled figure of 0.487 must be read with that artefact in mind. Neutral
 stance is concentrated in the agreement particles, and high-arousal neutral is represented by only 26
 clips, so any analysis crossing both axes at that cell is thin [B.5].
+
+---
+
+# Appendix G. Methodological checks
+
+These bear on how the figures in Chapter 4 should be read rather than on what they say. Each was run
+because the corresponding claim would otherwise rest on an untested assumption.
+
+## G.1 Models and humans on the same sixty clips
+
+Source: `src/29_premise_ceiling.py`, `results/premise_ceiling.txt`.
+
+The human accuracies in [4.1] and the model macro-F1 figures in [4.2] are routinely read against each
+other and should not be, since they differ in sample, in metric and in what the judge could see.
+Models are trained on the 813 clips the annotators never saw, with every episode appearing in the test
+set excluded from training, and scored on exactly the 60 they did, in accuracy.
+
+| Condition | Modality | Accuracy |
+|---|---|---|
+| Human, transcript with context | text | 0.650 |
+| Human, audio with transcript | both | 0.730 |
+| WavLM and text, concatenated | both | 0.533 |
+| Whisper encoder | audio | 0.517 |
+| WavLM | audio | 0.500 |
+| HuBERT | audio | 0.500 |
+| eGeMAPS | audio | 0.500 |
+| Mimi, deployed | audio | 0.483 |
+| Text, discourse | text | 0.467 |
+
+The subset is balanced at twenty per class, so chance and the majority baseline are both 0.333. Every
+model clears it and none approaches the human audio figure.
+
+Two properties make this subset harder than the corpus. It is 33 per cent neutral against 17 per cent
+overall, and neutral is the weakest class, with WavLM reaching 0.435 on it against 0.635 and 0.652 on
+the other two. And a single split is a harder evaluation than out-of-fold prediction. Decomposing
+WavLM, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60 out-of-fold, and 0.500 under
+the held-out-episode split. On the most generous reading of the model side the gap is about 0.18,
+roughly 2.3 standard errors at sixty items.
+
+## G.2 Readout, and why Mimi appears twice in Table 4.2
+
+Sources: `src/26_within_word_readout.py`, `results/within_word_readout.txt`, `results/ladder_by_readout.txt`.
+
+Mimi's deployed summarisation is a per-codebook unigram histogram of 16,384 sparse dimensions. The
+continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 58 to
+129 clips, so that asymmetry is far more punishing than it is pooled.
+
+| Representation | Readout | mean within-word macro-F1 | degenerate cells |
+|---|---|---|---|
+| Mimi, pre-quantisation | embedding, 1,024 | 0.606 | 0 of 8 |
+| Mimi, post-quantisation | embedding, 1,024 | 0.594 | 0 of 8 |
+| Mimi, deployed histogram | histogram, 16,384 | 0.466 | 3 of 8 |
+
+A degenerate cell is one where the probe emitted a single class and therefore scored exactly the
+within-phrase majority. All three are Mimi under the histogram, on `yeah`, `sure` and `come on`, and
+they are the only such cells in the study. Under an embedding readout none degenerates, so the failure
+is the sparse summary against small cells rather than an absence of content. The histogram costs 0.031
+of margin pooled over all 873 clips and 0.128 within a phrase.
+
+Across three summarisations on identical forward passes, WavLM's margin moves by 0.009 and Mimi's by
+0.056. The encoder cost in the ladder holds at 0.116 and 0.121 under the two readouts for which it was
+computed, while the quantisation cost ranges from +0.056 under four-segment pooling to −0.036 with
+deltas, a swing sufficient to change its sign. That comparison is a separate run from the cross-codec
+one, which is why the encoder cost appears as 0.116 there and 0.112 in [4.6]. The difference is
+run-to-run variation in permutation sampling and no argument turns on it.
+
+## G.3 Probe capacity
+
+Sources: `src/22_nonlinear_probe.py`, `results/linear_vs_nonlinear_probe.txt`.
+
+A linear probe reports whether information is linearly accessible rather than whether it is present
+(Belinkov, 2022), and that ambiguity would bear most heavily on the continuous-against-discrete
+comparison. A non-linear probe was run on identical features and folds under six capacity settings,
+since gains under any single setting move by up to 0.06 and some change sign.
+
+The largest gain observed anywhere across the six settings is +0.025, against a continuous-to-discrete
+gap of roughly 0.14, so any non-linear reserve is bounded at about a sixth of the quantity being
+interpreted. The gains that occur track headroom rather than representation type. Every representation
+scoring above 0.500 gains at most +0.003 anywhere, every representation below it gains between +0.010
+and +0.025, the largest single gain falls on the continuous text embedding rather than on any discrete
+representation, and Mimi before quantisation gains less than Mimi after it. This does not rule out a
+mild penalty on quantised vectors. It bounds one.
+
+The probe is functioning rather than failing to train, clearing its own permutation null by +0.229 on
+WavLM and +0.129 on Mimi at p 0.032. It was kept deliberately small and strongly regularised, since a
+sufficiently powerful probe learns the task from almost any representation and reports on itself, so
+this rules out modest non-linear encoding rather than any conceivable encoding.
+
+## G.4 The cumulative codebook ladder
+
+Source: `src/28_codebook_ladder.py`, `results/codebook_cumulative.txt`.
+
+Probing codebook 0, then codebooks 0 to 1, and so on to the full stack, at 200 permutations.
+
+| Block | dims | margin | delta |
+|---|---:|---:|---:|
+| CB0 | 2,048 | +0.069 | |
+| CB0-1 | 4,096 | +0.070 | +0.001 |
+| CB0-2 | 6,144 | +0.089 | +0.020 |
+| CB0-3 | 8,192 | +0.092 | +0.002 |
+| CB0-4 | 10,240 | +0.062 | −0.030 |
+| CB0-5 | 12,288 | +0.058 | −0.004 |
+| CB0-6 | 14,336 | +0.052 | −0.006 |
+| CB0-7 | 16,384 | +0.071 | +0.019 |
+
+The endpoints settle the claim and the middle does not. Codebook 0 alone reaches +0.069 and all eight
+reach +0.071. In reverse, the seven acoustic codebooks without codebook 0 reach +0.041, and adding it
+takes them to +0.071. The intermediate blocks are non-monotonic across a 0.040 band, which is most of
+the margin itself and is not the shape of accumulating signal. It tracks accumulated dimensionality,
+since each codebook adds 2,048 sparse dimensions to an 873-clip problem, and it is the same effect
+measured at 0.031 pooled and 0.128 within a phrase [G.2].
+
+## G.5 The contrast-preservation score
+
+Sources: `src/23_cps_baseline.py`, `results/cps_baseline.txt`.
+
+Within each speaker-by-word cell holding at least three exemplars of the minority stance, leave-one-out
+nearest-centroid classification was performed on distances alone. Fifteen cells qualify, giving 191
+decisions.
+
+The originally stated chance level of 0.50 is wrong, since eligibility requires only three minority
+exemplars and a constant predictor already beats it. Two replacements are defensible and they
+disagree. The whole-cell majority rate is 0.670 but counts the held-out item's own label when
+determining the majority, which is the leakage leave-one-out exists to prevent. The leave-one-out
+majority is 0.545 but is anti-correlated with the truth on near-balanced cells.
+
+WavLM and Whisper reach 0.618, HuBERT 0.613, text 0.592 and Mimi 0.560. Every representation falls
+inside the interval, so the measure does not discriminate in either direction. It is uninformative
+rather than a clean failure.
+
+The failure is structural rather than incidental. Estimating a class centroid inside a cell makes the
+measure depend on cell size, which is why only 15 cells qualify with 27 more one exemplar short. The
+minimal-pair ABX task avoids this by fixing the comparison as a triplet, so no centroid is estimated
+and no cell need be large (Schatz et al., 2013), which is how it functions inside multi-level
+evaluation suites (Dunbar et al., 2021). [Ch.6] takes that up as the specification for a replacement.
