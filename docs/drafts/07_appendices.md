@@ -189,8 +189,8 @@ and +0.025. The largest gain of all falls on the continuous text embedding rathe
 representation, and Mimi before quantisation gains less than Mimi after it, so the pattern tracks
 remaining headroom rather than discreteness [4.4].
 
-The linear column here is produced by `src/22_nonlinear_probe.py` and differs from Table 4.1 by up to
-0.003 because the two scripts build their fold assignment from separately loaded manifests. Table 4.1
+The linear column here is produced by `src/22_nonlinear_probe.py` and differs from Table 4.2 by up to
+0.003 because the two scripts build their fold assignment from separately loaded manifests. Table 4.2
 remains the reference for absolute figures and this appendix is the reference for gains, which is why
 [4.4] is written in terms of gains throughout.
 

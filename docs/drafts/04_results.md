@@ -25,7 +25,7 @@ is consistent in the same way, since those are the phrases whose functional ambi
 
 **Models on the same clips.** The human figures above and the model figures below are routinely read
 against each other and should not be, since they differ in sample, in metric and in what the judge
-could see. Table 4.1a removes all three. Models are trained on the 813 clips the annotators never
+could see. Table 4.1 removes all three. Models are trained on the 813 clips the annotators never
 saw, with every episode appearing in the test set excluded from training, and scored on exactly the
 60 they did, in accuracy rather than macro-F1 because accuracy is what the human numbers are.
 
@@ -56,7 +56,7 @@ side the gap to the human audio condition is therefore about 0.18, which at sixt
 
 ## 4.2 Pooled stance decodability
 
-Table 4.1 reports the three-way stance probe on the primary window. Chance is the mean of each
+Table 4.2 reports the three-way stance probe on the primary window. Chance is the mean of each
 configuration's own permutation null. The majority-class figure of 0.196 is given for completeness
 and is not the reference used, for the reasons set out in [3.6].
 
@@ -82,7 +82,7 @@ phrase. The within-word analysis in 4.3 removes that route entirely.
 ## 4.3 The lexical control
 
 Within each phrase the probe attempts that phrase's dominant binary stance contrast, so word
-identity carries no information. Means over the eight phrases are given in Table 4.2.
+identity carries no information. Means over the eight phrases are given in Table 4.3.
 
 | Representation | Readout | mean within-word macro-F1 | degenerate cells |
 |---|---|---|---|
@@ -208,7 +208,7 @@ reports that as a corrected expectation.
 
 ## 4.6 Locating the loss
 
-The comparison in Table 4.1 confounds quantisation with feature construction, frame rate,
+The comparison in Table 4.2 confounds quantisation with feature construction, frame rate,
 architecture and training objective. This section isolates the stages. Because the probe task holds
 the word constant throughout, the margins below are margins on delivery, so a loss localised to a
 stage is a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser
@@ -234,7 +234,7 @@ Mimi's does. The two converge at the token stage, where DAC
 reaches 88 per cent of Mimi, because quantisation helps DAC and hurts Mimi.
 
 **The deployed condition.** The rungs above stop at post-quantisation embeddings, one step short of
-what Table 4.1 reports. A single run covering all four rungs on Mimi gives WavLM at +0.239, Mimi
+what Table 4.2 reports. A single run covering all four rungs on Mimi gives WavLM at +0.239, Mimi
 before quantisation at +0.130, Mimi after quantisation at +0.100 and the deployed histogram at
 +0.069, so on that run the encoder costs 0.109, quantisation 0.030 and the histogram readout a
 further 0.031. Summarising the token stream therefore costs about as much as quantising it, and
