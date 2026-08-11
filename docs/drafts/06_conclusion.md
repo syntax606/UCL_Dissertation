@@ -81,7 +81,9 @@ training and reuses the existing corpus.
 **Choose the teacher layer by measurement.** WavLM carries 0.573 at layer 20 and 0.490 at layer 24,
 so the choice of distillation target is consequential for this contrast. Semantic distillation
 conventionally takes a mid-stack layer or an average across layers, selected for alignment with
-linguistic content (Zhang et al., 2024a; Jo et al., 2025). Where the optimum sits for prosodic
+linguistic content (Zhang et al., 2024a; Jo et al., 2025). The Moshi report does not state which
+WavLM layer Mimi distils from, which is itself informative, since a choice worth 0.083 on this
+contrast is not one the report treats as a variable. Where the optimum sits for prosodic
 properties is not settled either, since de la Fuente and Jurafsky (2024) locate suprasegmental
 categories in the middle third of a twelve-layer model while the peak observed here is at layer 20 of
 24. That disagreement is the reason to select a target from a probe curve on the property of interest

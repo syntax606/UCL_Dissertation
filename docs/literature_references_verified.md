@@ -184,6 +184,24 @@ dissertation.
 | Sicherman and Adi, 2023 | Amitay Sicherman, Yossi Adi. *Analysing Discrete Self Supervised Speech Representation for Spoken Language Modeling.* | 2301.00591, **ICASSP 2023** | The canonical cite for "semantic" units being phonetic. Finds units correlate strongly with phonemes and phoneme families and weakly with speaker or gender. |
 | Arora et al., 2025 | *On The Landscape of Spoken Language Models: A Comprehensive Survey.* | 2504.08528 | Major survey that deliberately adopts "phonetic tokens" over "semantic tokens" for this reason. Worth citing as a survey independent of the footnote. **Verify the full author list from the title page before submission.** |
 
+### Moshi facts verified from the paper (2026-08, arXiv HTML)
+
+Checked directly because the drafts now rest on them.
+
+- **Mimi distils from WavLM-Large.** The report states WavLM "projects a 16kHz waveform into
+  1024-dimensional embeddings sampled at 50Hz", and that it distils "semantic information from a
+  self-supervised model (WavLM (Chen et al., 2022) in our case)". This is what makes the choice of
+  WavLM-large in [3.5] determined rather than free.
+- **The distillation target layer is not specified.** No layer number appears anywhere in the report.
+  [6.4] states this as an absence rather than inferring a final-layer target, which an earlier
+  reading suggested and which is not supported by the text.
+- **Backchanneling appears in the instruction prompts** for whole-transcript generation, without
+  assignment to a speaker, and multi-stream training samples one conversational side at random as
+  Moshi's own. Both quoted in [1.1].
+- **Fisher is 8 kHz telephone audio upsampled to 24 kHz with AudioSR.** Not currently used in the
+  drafts. Available for [5.4] if the argument that nothing in the pipeline was optimised for
+  prosodic fidelity is ever extended upstream of the tokeniser.
+
 ### Three citation collisions to handle consistently
 
 1. **Two unrelated papers named AffectCodec**, eleven days apart in May 2026, with entirely

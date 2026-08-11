@@ -52,7 +52,10 @@ high, 528 low). Every phrase carries a well-powered binary stance contrast.
 
 For each retained occurrence, three context windows were cut, all centred on the midpoint of
 the target word as located from the word-level timestamps. These are a **local** window of 6 s
-(plus or minus 3 s), a **segment** window of 10 s, and a **discourse** window of 16 s. Windows
+(plus or minus 3 s), a **segment** window of 10 s, and a **discourse** window of 16 s. The durations
+are set against the transcript segments they sit in, which have a median length of 5.4 s, so the
+three windows correspond approximately to the target segment alone, the target segment with one
+neighbour either side, and the target with roughly a full conversational turn either side. Windows
 are symmetric fixed durations rather than segment-boundary-aligned spans, which keeps the amount
 of acoustic context strictly comparable across clips. All clips are 16 kHz mono with EBU R128
 loudness normalisation, so that overall level cannot act as a trivial cue. Holding three nested
@@ -99,10 +102,25 @@ as the increment over context.
 
 ## 3.5 Representations and feature extraction
 
-Six representations are compared, spanning self-supervised continuous encoders, a supervised
-continuous encoder, a deployed discrete tokenizer, a second discrete codec used as a contrast, and
-a text baseline. Feature extraction was
-run once on a single A100 GPU and the resulting features frozen. No representation is fine-tuned,
+Six representations are compared, with the text baseline supplying two conditions rather than one
+[below]. The selection is largely determined by the research question rather than by availability.
+
+**Why these models.** Mimi distils its first codebook from WavLM-Large, which produces
+1024-dimensional embeddings at 50 Hz (Défossez et al., 2024), so measuring what distillation
+transfers requires probing that model at that size. WavLM is therefore not a free choice.
+HuBERT-large is its matched control, sharing architecture, depth and width and differing chiefly in
+WavLM's noise and overlapped-speech augmentation, so the pair isolates that augmentation rather than
+scale. The Whisper-small encoder is smaller than both, at 13 layers of 768 units against 25 of 1,024,
+which makes the supervised comparison conservative. Any advantage it shows over the self-supervised
+encoders cannot be attributed to capacity. The Descript codec is used as the undistilled contrast
+because it sits on the reconstruction-only branch of the lineage in [2.1]. SpeechTokenizer would not
+serve, since it also distils from a self-supervised teacher and so does not contrast on the variable
+of interest, and DAC is preferred to EnCodec as the more recent reconstruction-only codec and one
+already benchmarked against Mimi elsewhere (Mousavi et al., 2026). MPNet is used for the text
+baseline because the argument requires a strong text competitor rather than a strawman, since the
+premise check shows discourse context recovers a substantial part of the contrast [4.1].
+
+Feature extraction was run once on a single A100 GPU and the resulting features frozen. No representation is fine-tuned,
 which is the defining property of a diagnostic probing study. Each clip is processed
 individually (batch size one), so there is no padding to pool over.
 
