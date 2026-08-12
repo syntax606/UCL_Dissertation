@@ -1,0 +1,39 @@
+DOES THE ARGMAX LAYER CHOICE HOLD UP?
+Nested selection: the layer is chosen inside each training split, then
+scored on held-out episodes. Probe, folds and metric as src/18.
+==============================================================================
+
+WAVLM  873 clips, 25 layers, 753 episodes
+  reported in src/18      L20  0.573
+  best fixed layer here   L20  0.573   (argmax over all data, same bias)
+  hardcoded layer, honest L20  0.573
+  NESTED selection            0.569   <- unbiased estimate
+  optimism from the argmax    +0.003
+  layer picked per fold   [18, 20, 21, 20, 20]  UNSTABLE
+  top-4 layers span       0.029   (L20, L19, L17, L16)
+  18s
+
+HUBERT  873 clips, 25 layers, 753 episodes
+  reported in src/18      L23  0.520
+  best fixed layer here   L23  0.520   (argmax over all data, same bias)
+  hardcoded layer, honest L23  0.520
+  NESTED selection            0.491   <- unbiased estimate
+  optimism from the argmax    +0.029
+  layer picked per fold   [20, 23, 10, 21, 23]  UNSTABLE
+  top-4 layers span       0.027   (L23, L21, L24, L19)
+  18s
+
+WHISPER  873 clips, 13 layers, 753 episodes
+  reported in src/18      L9   0.564
+  best fixed layer here   L9   0.564   (argmax over all data, same bias)
+  hardcoded layer, honest L9   0.564
+  NESTED selection            0.549   <- unbiased estimate
+  optimism from the argmax    +0.015
+  layer picked per fold   [12, 8, 9, 10, 10]  UNSTABLE
+  top-4 layers span       0.016   (L9, L8, L11, L12)
+  9s
+
+Read: if NESTED sits well below the reported figure, the reported figure
+was inflated by choosing the winner on the same data. If the per-fold picks
+disagree, the peak is noise and src/31 should save a band of layers rather
+than baking one constant into every downstream result.

@@ -22,3 +22,8 @@ _cfg = _load_yaml_flat(PROJECT_ROOT / "configs" / "paths.yaml")
 # Source audio + word-level transcripts (supply your own; see configs/paths.example.yaml)
 AUDIO_DIR = Path(os.environ.get("PC_AUDIO_DIR", _cfg.get("audio_dir", "/path/to/podcast-audio")))
 TRANSCRIPTS_DIR = Path(os.environ.get("PC_TRANSCRIPTS_DIR", _cfg.get("transcripts_dir", "/path/to/podcast-transcripts")))
+
+# Frame-level features (src/31). Several GB, so redirectable to an external disk
+# without editing code. Defaults inside the repo, git-ignored like features/.
+FRAMES_DIR = Path(os.environ.get("PC_FRAMES_DIR",
+                                 _cfg.get("frames_dir", str(PROJECT_ROOT / "features_frames"))))

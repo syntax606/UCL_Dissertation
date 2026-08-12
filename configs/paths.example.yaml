@@ -7,3 +7,8 @@ audio_dir: /path/to/podcast-audio
 # Directory of word-level transcripts: per-show subfolders containing
 # <episode_id>.json with segments[].words[].{word,start,end} (e.g. WhisperX output)
 transcripts_dir: /path/to/podcast-transcripts
+
+# Optional. Where src/31 writes frame-level sequences (several GB). Omit to use
+# features_frames/ inside the repo, which is git-ignored. Set this to an external
+# disk if the main volume is tight.
+# frames_dir: /Volumes/YourDrive/pragmatic_contrast_frames

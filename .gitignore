@@ -14,6 +14,8 @@ offline_annotator/_*.log
 
 # ---- Features (large; >100MB/file, add via git-lfs or release once extracted) ----
 features/
+# frame-level sequences from src/31 (several GB); relocate with PC_FRAMES_DIR
+features_frames/
 
 # ---- Raw exports / abandoned Label Studio setup / transcript-bearing JSON ----
 annotations_batch_*.json
