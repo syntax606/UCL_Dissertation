@@ -77,6 +77,7 @@ ALL = ["wavlm", "hubert", "whisper", "mimi", "dac", "sylber", "dycast"]
 # so their length varies per clip and the allocation needs headroom over whatever
 # the probe clip happened to produce.
 HEADROOM = {"sylber": 4.0, "dycast": 3.0}
+N_PROBE = 8       # clips inspected before allocating, so sizing is not hostage to clip 0
 
 
 # --------------------------------------------------------------------- io
@@ -105,27 +106,28 @@ class Writer:
     checkpoint would have tried to pickle all of it.
     """
 
-    def __init__(self, name, window, n, T, D, dtype, resume=False):
+    def __init__(self, name, window, n, T=None, D=None, dtype=None, resume=False):
         self.dir = OUT / name
         self.dir.mkdir(parents=True, exist_ok=True)
         self.stem = self.dir / window
         self.xp = Path(f"{self.stem}.X.npy")
-        self.T, self.name = T, name
+        self.name = name
         lp = Path(f"{self.stem}.lengths.npy")
         # "w+" truncates and zeroes. On resume that would silently wipe every clip
-        # already written and refill it with zeros, so the file must be reopened
-        # in place instead.
+        # already written and refill it with zeros, so the file is reopened in
+        # place and its shape is read back rather than recomputed.
         if resume and self.xp.exists():
             self.X = np.lib.format.open_memmap(self.xp, mode="r+")
-            if self.X.shape != (n, T, D):
+            if self.X.shape[0] != n:
                 raise ValueError(
-                    f"{name}: existing array is {self.X.shape}, this run wants "
-                    f"{(n, T, D)}. Rerun with --force.")
+                    f"{name}: existing array holds {self.X.shape[0]} clips, this "
+                    f"run has {n}. Rerun with --force.")
             self.lengths = np.load(lp) if lp.exists() else np.zeros(n, dtype=np.int32)
         else:
             self.X = np.lib.format.open_memmap(
                 self.xp, mode="w+", dtype=dtype, shape=(n, T, D))
             self.lengths = np.zeros(n, dtype=np.int32)
+        self.T = self.X.shape[1]
         self.n_empty = 0
 
     def write(self, i, arr):
@@ -265,20 +267,38 @@ def run(key, window, ids, paths, per_clip, dtypes, force=False, every=100):
         except Exception as e:
             print(f"  progress file unusable ({e}), starting over")
 
-    # shapes from the first clip, plus headroom where the model picks its own units
-    probe = per_clip(paths[0])
-    head = HEADROOM.get(key, 1.0)
-    writers = {}
-    for name, arr in probe.items():
-        T = max(int(np.ceil(arr.shape[0] * head)), 1)
-        writers[name] = Writer(name, window, n, T, arr.shape[1], dtypes[name],
-                               resume=start > 0)
+    # On resume the shapes are already on disk, so nothing needs probing and no
+    # forward pass is wasted.
+    writers, probes = {}, {}
+    if start > 0:
+        writers = {name: Writer(name, window, n, dtype=dt, resume=True)
+                   for name, dt in dtypes.items()}
+    else:
+        # Shapes come from several clips, not one. A single probe is fragile in two
+        # ways: if that clip comes back empty there is no width to allocate from,
+        # and for a model that picks its own units the length it happens to produce
+        # is a poor basis for sizing every other clip.
+        k = min(N_PROBE, n)
+        for i in range(k):
+            probes[i] = per_clip(paths[i])
+        head = HEADROOM.get(key, 1.0)
+        for name, dt in dtypes.items():
+            arrs = [probes[i][name] for i in range(k)]
+            two_d = [a for a in arrs if a.ndim == 2 and a.shape[0] > 0]
+            if not two_d:
+                print(f"  SKIPPED {name}: first {k} clips all came back empty, "
+                      f"cannot determine width")
+                continue
+            T = max(int(np.ceil(max(a.shape[0] for a in two_d) * head)), 1)
+            writers[name] = Writer(name, window, n, T, two_d[0].shape[1], dt)
+        if not writers:
+            return
 
     t0 = time.time()
     for i in range(start, n):
-        out = probe if i == 0 else per_clip(paths[i])
-        for name, arr in out.items():
-            writers[name].write(i, arr)
+        out = probes.get(i) or per_clip(paths[i])
+        for name, w in writers.items():
+            w.write(i, out[name])
         if (i + 1) % every == 0:
             for w in writers.values():
                 w.X.flush()
