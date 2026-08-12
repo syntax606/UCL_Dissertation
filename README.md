@@ -79,7 +79,7 @@ the frame sequence, after which every readout becomes cheap post-processing.
 | issue | status |
 |---|---|
 | `src/18` picks the layer by `argmax` on the same data it reports from, inflating WavLM by 0.003, Whisper by 0.015 and **HuBERT by 0.029** | measured in `src/32`, drafts not yet updated |
-| HuBERT's layer is genuinely unstable across folds, picks ranged over L10 to L23 | `src/31` now saves a band rather than one layer |
+| HuBERT's layer is genuinely unstable across folds, picks ranged over L10 to L23 | `src/31` saves every layer, so the choice moves downstream |
 | every stored feature is order-free, so the timing question is unanswerable against them | `src/31` written and tested, not yet run at full scale |
 | this README previously described Mimi as `(n, 14336)` from codebooks 1 to 7 | wrong on both counts, the array is `(873, 16384)` and codebook 0 is the carrier |
 
@@ -141,8 +141,11 @@ docs/drafts/              dissertation chapters
 DATA_AVAILABILITY.md      what can and cannot be shared, and why
 ```
 
-`features/` and `features_frames/` are both gitignored. `features_frames/` runs to several
-GB and can be relocated to another disk with `PC_FRAMES_DIR` without editing any code.
+`features/` and `features_frames/` are both gitignored. `features_frames/` holds every
+layer and runs to roughly 56 GB, which is nothing on a GPU instance and too much for a
+laptop. Run the readout sweep on the box where the frames already are, and bring home the
+results plus only the layers that turn out to matter. `PC_FRAMES_DIR` relocates the whole
+tree to another disk without editing any code.
 
 ---
 
@@ -253,14 +256,24 @@ python3 src/27_egemaps.py                # 88 functionals plus cue groups
 python3 src/31_extract_frames.py --models all   # frame sequences, the rebuild
 ```
 
-`src/31` is the current one. It keeps the frame sequence instead of pooling at extraction
-time, saves a band of layers rather than one, stores float16 with a `lengths` vector so no
-readout ever pools over padding, and checkpoints every 100 clips so a crash on a rented
-box resumes rather than restarts.
+`src/31` is the current one, and it selects nothing. A transformer forward pass computes
+every hidden state whether or not they are collected, so keeping all 25 layers costs no
+extra GPU time, only disk. Choosing a layer at extraction would mean choosing under the
+pooled readout, which is the instrument being replaced. Layer, readout and codebook
+decisions all move downstream.
+
+Output is one directory per representation holding `<window>.X.npy`,
+`<window>.lengths.npy` and `<window>.ids.npy`. Plain `.npy` rather than `.npz` so a
+readout can memory-map a single layer without loading the rest, and so extraction streams
+to disk clip by clip. Memory stays flat regardless of layer count. Use `load_frames()`
+from the same module to read it back lazily.
+
+Progress is an integer on disk rather than a copy of the data, so a crash on a rented box
+resumes where it stopped. Resume has been checked against a clean run and is bit-identical.
 
 ```bash
 python3 src/31_extract_frames.py --models dycast --limit 8   # smoke test first
-python3 src/31_extract_frames.py --models all                # roughly 6 GB out
+python3 src/31_extract_frames.py --models all                # roughly 56 GB out
 ```
 
 ### Phase 3, probing and analysis

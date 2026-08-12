@@ -8,37 +8,51 @@ step, src/21 pools DAC the same way. A contour cannot be recovered from a mean a
 a standard deviation, so every question about timing is unanswerable against the
 stored features no matter how the probe is written.
 
-This script saves the frames themselves. Readouts then become post-processing over
-a saved array, computed in seconds and iterated without touching a model again,
-which is the property the current pipeline lacks.
+This script saves the frames themselves, for EVERY layer. A transformer forward
+pass computes all hidden states whether or not they are collected, so keeping all
+25 costs no extra GPU time, only disk. Selecting a layer here would mean choosing
+under the pooled readout, which is the instrument this rebuild exists to replace,
+and src/32 showed that choice is neither stable across folds nor honest about its
+own performance. So nothing is chosen here. Layer, readout and codebook decisions
+all move downstream, where they can be made against the evidence.
 
-Storage is float16, which halves the footprint and is well inside the precision a
-linear probe resolves. Sequences are right-padded to the longest clip in the set
-and a lengths vector is saved alongside, so no readout ever pools over padding.
+Storage is one directory per representation holding three files:
+
+    <window>.X.npy         (clips, frames, dim), float16 or int16, memory-mappable
+    <window>.lengths.npy   (clips,) true frame count, padding starts after it
+    <window>.ids.npy       (clips,) candidate_id, aligned with X
+
+.npy rather than .npz so downstream readouts can mmap one representation without
+loading tens of GB, and so this script can stream to disk clip by clip instead of
+holding the whole run in memory.
 
   representation   what is saved                             frame rate
-  wavlm            hidden_states[20]                         50 Hz
-  hubert           hidden_states[23]                         50 Hz
-  whisper          encoder hidden_states[9], valid frames    50 Hz
+  wavlm_L0..L24    every hidden state                        50 Hz
+  hubert_L0..L24   every hidden state                        50 Hz
+  whisper_L0..L12  encoder hidden states, valid frames only   50 Hz
   mimi_pre         input_proj(latent), quantiser space       12.5 Hz
   mimi_post        summed codebook vectors, same space       12.5 Hz
   mimi_codes       raw code indices, int16                   12.5 Hz
   dac_pre          encoder output                            75 Hz
   dac_post         quantised output                          75 Hz
-  sylber           per-syllable features + [start, end]      ~4 Hz, variable
+  sylber           per-syllable features, plus boundaries    ~4 Hz, variable
   dycast           plats, pcodes, toks, durs                 ~6-24 Hz, variable
 
-mimi_codes is saved because the discrete stream cannot take a temporal basis.
-Code indices are categorical, so index 5 is not between 4 and 6 and a trend
-coefficient over them is meaningless. Its order-aware summary has to be transition
-statistics over consecutive codes, which needs the sequence, not a histogram.
+mimi_codes is saved because the discrete stream cannot take a temporal basis. Code
+indices are categorical, so index 5 is not between 4 and 6 and a trend coefficient
+over them is meaningless. Its order-aware summary has to be transition statistics
+over consecutive codes, which needs the sequence, not a histogram.
+
+N_CODEBOOKS = 8 is the deployed Mimi configuration, 1 semantic plus 7 acoustic of
+32 available. For DAC it is a deliberate truncation of 32 down to Mimi's budget,
+matching src/21, so DAC figures here characterise DAC-held-to-Mimi and not DAC.
 
 Usage:
   python3 src/31_extract_frames.py --models dycast --limit 8
-  python3 src/31_extract_frames.py --models wavlm hubert whisper
   python3 src/31_extract_frames.py --models all
+  python3 src/31_extract_frames.py --models wavlm --force
 """
-import argparse, csv, pickle, sys, time, warnings
+import argparse, csv, json, sys, time, warnings
 from pathlib import Path
 
 import numpy as np
@@ -55,14 +69,14 @@ CLASSES = ("affiliative", "neutral", "adversarial")
 CKPT = {"wavlm": "microsoft/wavlm-large", "hubert": "facebook/hubert-large-ll60k",
         "whisper": "openai/whisper-small", "mimi": "kyutai/mimi",
         "dac": "descript/dac_24khz", "dycast": "lucadellalib/dycast"}
-BEST_LAYER = {"wavlm": 20, "hubert": 23, "whisper": 9}
-# src/32 showed the argmax layer choice is not stable across folds, and that the
-# reported figures were inflated by choosing the winner on the same data
-# (wavlm +0.003, whisper +0.015, hubert +0.029). So a band is saved rather than
-# one layer, and the choice is made honestly downstream instead of baked in here.
-BAND = {"wavlm": [19, 20, 21], "hubert": [19, 21, 23], "whisper": [8, 9, 11]}
 N_CODEBOOKS = 8
 ALL = ["wavlm", "hubert", "whisper", "mimi", "dac", "sylber", "dycast"]
+
+# Fixed-rate models give the same frame count for every clip of the same duration,
+# so the array is allocated exactly. Sylber and DyCAST decide their own boundaries,
+# so their length varies per clip and the allocation needs headroom over whatever
+# the probe clip happened to produce.
+HEADROOM = {"sylber": 4.0, "dycast": 3.0}
 
 
 # --------------------------------------------------------------------- io
@@ -83,67 +97,105 @@ def read_wav(path, target_sr):
     return wav
 
 
-def save(name, window, ids, seqs, extra=None, dtype=np.float16):
-    """Right-pad to the longest sequence and record true lengths.
+class Writer:
+    """Streams one representation to a memory-mapped .npy, one clip at a time.
 
-    A clip can legitimately come back with nothing in it. Sylber finds no
-    syllables in silence or in a stretch of laughter, and numpy gives that back
-    as shape (0,) rather than (0, D), so taking the width from seqs[0] or calling
-    lens.max() on an all-empty set would fail. Width is taken from the first clip
-    that has one and empties are normalised, so a blank clip becomes length 0 and
-    is skipped by any readout that respects lengths.
+    Nothing accumulates in RAM. At 25 layers the list-of-arrays approach this
+    replaces would have held tens of GB before writing anything, and the periodic
+    checkpoint would have tried to pickle all of it.
     """
-    D = next((s.shape[1] for s in seqs if s.ndim == 2 and s.shape[0] > 0), None)
-    if D is None:
-        print(f"  SKIPPED {name}: every clip came back empty")
-        return
-    seqs = [s if (s.ndim == 2 and s.shape[1] == D) else np.zeros((0, D), dtype)
-            for s in seqs]
-    n_empty = sum(1 for s in seqs if len(s) == 0)
-    if n_empty:
-        print(f"  note: {n_empty}/{len(seqs)} clips empty for {name}, saved as length 0")
-    lens = np.array([len(s) for s in seqs], dtype=np.int32)
-    T = max(int(lens.max()), 1)
-    X = np.zeros((len(seqs), T, D), dtype=dtype)
-    for i, s in enumerate(seqs):
-        X[i, :len(s)] = s.astype(dtype)
-    p = OUT / name / f"{window}.npz"
-    p.parent.mkdir(parents=True, exist_ok=True)
-    payload = {"ids": np.array(ids), "X": X, "lengths": lens}
-    if extra:
-        payload.update(extra)
-    np.savez_compressed(p, **payload)
-    mb = p.stat().st_size / 1e6
-    # p is only under ROOT when PC_FRAMES_DIR is unset, so relative_to would raise
-    # as soon as frames are redirected to an external disk.
-    try:
-        shown = p.relative_to(ROOT)
-    except ValueError:
-        shown = p
-    print(f"  saved {name:12} {X.shape} {X.dtype}  lens {lens.min()}-{lens.max()}"
-          f"  {mb:.0f} MB -> {shown}")
+
+    def __init__(self, name, window, n, T, D, dtype, resume=False):
+        self.dir = OUT / name
+        self.dir.mkdir(parents=True, exist_ok=True)
+        self.stem = self.dir / window
+        self.xp = Path(f"{self.stem}.X.npy")
+        self.T, self.name = T, name
+        lp = Path(f"{self.stem}.lengths.npy")
+        # "w+" truncates and zeroes. On resume that would silently wipe every clip
+        # already written and refill it with zeros, so the file must be reopened
+        # in place instead.
+        if resume and self.xp.exists():
+            self.X = np.lib.format.open_memmap(self.xp, mode="r+")
+            if self.X.shape != (n, T, D):
+                raise ValueError(
+                    f"{name}: existing array is {self.X.shape}, this run wants "
+                    f"{(n, T, D)}. Rerun with --force.")
+            self.lengths = np.load(lp) if lp.exists() else np.zeros(n, dtype=np.int32)
+        else:
+            self.X = np.lib.format.open_memmap(
+                self.xp, mode="w+", dtype=dtype, shape=(n, T, D))
+            self.lengths = np.zeros(n, dtype=np.int32)
+        self.n_empty = 0
+
+    def write(self, i, arr):
+        # A clip can legitimately come back with nothing in it. Sylber finds no
+        # syllables in silence or laughter, and numpy returns that as shape (0,)
+        # rather than (0, D). Length 0 is recorded and every readout that respects
+        # lengths will skip it.
+        if arr.ndim != 2 or arr.shape[0] == 0:
+            self.lengths[i] = 0
+            self.n_empty += 1
+            return
+        t = arr.shape[0]
+        if t > self.T:
+            raise ValueError(
+                f"{self.name}: clip {i} produced {t} frames, allocated {self.T}. "
+                f"Raise HEADROOM for this model and rerun with --force.")
+        self.X[i, :t] = arr.astype(self.X.dtype)
+        self.lengths[i] = t
+
+    def flush(self, ids, done):
+        self.X.flush()
+        np.save(f"{self.stem}.lengths.npy", self.lengths)
+        np.save(f"{self.stem}.ids.npy", np.array(ids))
+        (self.dir / f".{Path(self.stem).name}.progress").write_text(str(done))
+
+    def close(self, ids):
+        self.flush(ids, len(ids))
+        (self.dir / f".{Path(self.stem).name}.progress").unlink(missing_ok=True)
+        mb = self.xp.stat().st_size / 1e6
+        lo, hi = int(self.lengths.min()), int(self.lengths.max())
+        empt = f"  {self.n_empty} empty" if self.n_empty else ""
+        try:
+            shown = self.xp.relative_to(ROOT)
+        except ValueError:
+            shown = self.xp
+        print(f"  saved {self.name:14} {self.X.shape} {self.X.dtype}  "
+              f"lens {lo}-{hi}{empt}  {mb:.0f} MB -> {shown}")
+
+
+def load_frames(name, window="W2_segment"):
+    """Read back what this script wrote, without pulling X into memory.
+
+    Downstream readouts should use this. X stays memory-mapped, so a single layer
+    can be scanned without loading the rest.
+    """
+    stem = OUT / name / window
+    return {"X": np.load(f"{stem}.X.npy", mmap_mode="r"),
+            "lengths": np.load(f"{stem}.lengths.npy"),
+            "ids": np.load(f"{stem}.ids.npy", allow_pickle=True)}
 
 
 # ----------------------------------------------------- frame extractors
-# wavlm / whisper / mimi are src/20's functions unchanged. hubert shares the
-# wavlm path. dac follows src/21.
-def frames_hidden(model, fe, wav, device, band):
-    """One forward pass, several layers out. band is a list of layer indices."""
+# wavlm / whisper / mimi follow src/20's functions. hubert shares the wavlm path.
+# dac follows src/21. All now return every layer rather than a selected one.
+def frames_hidden(model, fe, wav, device):
     import torch
     iv = fe(wav, sampling_rate=16000, return_tensors="pt").input_values.to(device)
     with torch.no_grad():
         hs = model(iv, output_hidden_states=True).hidden_states
-    return [hs[L][0].float().cpu().numpy() for L in band]
+    return [h[0].float().cpu().numpy() for h in hs]
 
 
-def frames_whisper(enc, fe, wav, device, band):
+def frames_whisper(enc, fe, wav, device):
     """Whisper pads every input to 30 s, so only the real frames are kept."""
     import torch
     valid = min(1500, int(round(len(wav) / 16000 * 50)))
     feats = fe(wav, sampling_rate=16000, return_tensors="pt").input_features.to(device)
     with torch.no_grad():
         hs = enc(feats, output_hidden_states=True).hidden_states
-    return [hs[L][0, :valid].float().cpu().numpy() for L in band]
+    return [h[0, :valid].float().cpu().numpy() for h in hs]
 
 
 def frames_mimi(model, wav, device):
@@ -185,47 +237,59 @@ def frames_dac(model, wav, device):
 
 # -------------------------------------------------------------- runner
 def run(key, window, ids, paths, per_clip, dtypes, force=False, every=100):
-    """Walk the clips for one model, checkpointing so a crash is not a restart.
+    """Walk the clips for one model, streaming each to disk as it is produced.
 
-    per_clip(path) returns {output_name: (T, D) array}. Progress is written to a
-    pickle every `every` clips and removed once the real files land, so a run that
-    dies at clip 800 on a rented box resumes there rather than from zero. Finished
-    models are skipped outright unless --force.
+    per_clip(path) returns {output_name: (T, D) array}. Shapes are taken from the
+    first clip and the arrays allocated once, so memory stays flat regardless of
+    how many layers are saved. Progress is a small integer on disk rather than a
+    copy of the data, so a run that dies at clip 800 on a rented box resumes there.
     """
-    finals = {n: OUT / n / f"{window}.npz" for n in dtypes}
-    if all(p.exists() for p in finals.values()) and not force:
-        print(f"  already done, skipping ({', '.join(dtypes)}). --force to redo")
+    n = len(paths)
+    done_file = OUT / f".{key}_{window}.done"
+    if done_file.exists() and not force:
+        print(f"  already done, skipping. --force to redo")
         return
-    ckpt = OUT / f".partial_{key}_{window}.pkl"
-    acc, start = {n: [] for n in dtypes}, 0
-    if ckpt.exists() and not force:
+
+    # Resume is decided BEFORE any writer is opened. Opening first and reopening
+    # after would zero the file and lose everything already extracted.
+    prog = OUT / f".{key}_{window}.progress"
+    start = 0
+    if prog.exists() and not force:
         try:
-            with open(ckpt, "rb") as f:
-                d = pickle.load(f)
-            if d["ids"] == ids[:d["done"]]:
-                acc, start = d["acc"], d["done"]
-                print(f"  resuming from clip {start}/{len(paths)}")
+            saved = json.loads(prog.read_text())
+            if saved["ids"] == ids[:saved["done"]]:
+                start = saved["done"]
+                print(f"  resuming from clip {start}/{n}")
             else:
-                print("  checkpoint does not match this clip list, starting over")
+                print("  progress file is for a different clip list, starting over")
         except Exception as e:
-            print(f"  checkpoint unreadable ({e}), starting over")
+            print(f"  progress file unusable ({e}), starting over")
+
+    # shapes from the first clip, plus headroom where the model picks its own units
+    probe = per_clip(paths[0])
+    head = HEADROOM.get(key, 1.0)
+    writers = {}
+    for name, arr in probe.items():
+        T = max(int(np.ceil(arr.shape[0] * head)), 1)
+        writers[name] = Writer(name, window, n, T, arr.shape[1], dtypes[name],
+                               resume=start > 0)
 
     t0 = time.time()
-    for i in range(start, len(paths)):
-        for n, v in per_clip(paths[i]).items():
-            acc[n].append(v)
-        done = i + 1
-        if done % every == 0:
-            OUT.mkdir(parents=True, exist_ok=True)
-            tmp = ckpt.with_suffix(".pkl.tmp")
-            with open(tmp, "wb") as f:
-                pickle.dump({"ids": ids[:done], "done": done, "acc": acc}, f, 4)
-            tmp.replace(ckpt)                      # atomic, never a torn file
-            print(f"  {done}/{len(paths)}  {time.time()-t0:.0f}s", flush=True)
+    for i in range(start, n):
+        out = probe if i == 0 else per_clip(paths[i])
+        for name, arr in out.items():
+            writers[name].write(i, arr)
+        if (i + 1) % every == 0:
+            for w in writers.values():
+                w.X.flush()
+                np.save(f"{w.stem}.lengths.npy", w.lengths)
+            prog.write_text(json.dumps({"done": i + 1, "ids": ids[:i + 1]}))
+            print(f"  {i+1}/{n}  {time.time()-t0:.0f}s", flush=True)
 
-    for n, dt in dtypes.items():
-        save(n, window, ids, acc[n], dtype=dt)
-    ckpt.unlink(missing_ok=True)
+    for w in writers.values():
+        w.close(ids)
+    prog.unlink(missing_ok=True)
+    done_file.write_text(json.dumps(sorted(writers)))
 
 
 # ------------------------------------------------------------------ main
@@ -235,7 +299,7 @@ def main():
     ap.add_argument("--window", default="W2_segment")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--force", action="store_true",
-                    help="redo models whose outputs already exist, ignore checkpoints")
+                    help="redo models already finished, ignore any progress file")
     args = ap.parse_args()
     models = ALL if args.models == ["all"] else args.models
 
@@ -245,6 +309,7 @@ def main():
     rows = load_keepers(args.limit)
     ids = [r["candidate_id"] for r in rows]
     paths = [CLIPS / args.window / (i + ".wav") for i in ids]
+    OUT.mkdir(parents=True, exist_ok=True)
     print(f"device={device} | clips={len(rows)} | window={args.window} | models={models}")
 
     for key in models:
@@ -255,23 +320,23 @@ def main():
             from transformers import AutoFeatureExtractor, AutoModel
             fe = AutoFeatureExtractor.from_pretrained(CKPT[key])
             m = AutoModel.from_pretrained(CKPT[key]).to(device).eval()
-            band = BAND[key]
-            def per_clip(p, m=m, fe=fe, band=band, key=key):
-                F = frames_hidden(m, fe, read_wav(p, 16000), device, band)
-                return {f"{key}_L{L}": F[j] for j, L in enumerate(band)}
+            nl = m.config.num_hidden_layers + 1
+            def per_clip(p, m=m, fe=fe, key=key):
+                return {f"{key}_L{j}": F for j, F in
+                        enumerate(frames_hidden(m, fe, read_wav(p, 16000), device))}
             run(key, args.window, ids, paths, per_clip,
-                {f"{key}_L{L}": np.float16 for L in band}, args.force)
+                {f"{key}_L{j}": np.float16 for j in range(nl)}, args.force)
 
         elif key == "whisper":
             from transformers import WhisperFeatureExtractor, WhisperModel
             fe = WhisperFeatureExtractor.from_pretrained(CKPT["whisper"])
             enc = WhisperModel.from_pretrained(CKPT["whisper"]).to(device).eval().get_encoder()
-            band = BAND["whisper"]
-            def per_clip(p, enc=enc, fe=fe, band=band):
-                F = frames_whisper(enc, fe, read_wav(p, 16000), device, band)
-                return {f"whisper_L{L}": F[j] for j, L in enumerate(band)}
+            nl = enc.config.encoder_layers + 1
+            def per_clip(p, enc=enc, fe=fe):
+                return {f"whisper_L{j}": F for j, F in
+                        enumerate(frames_whisper(enc, fe, read_wav(p, 16000), device))}
             run("whisper", args.window, ids, paths, per_clip,
-                {f"whisper_L{L}": np.float16 for L in band}, args.force)
+                {f"whisper_L{j}": np.float16 for j in range(nl)}, args.force)
 
         elif key == "mimi":
             from transformers import MimiModel
@@ -302,8 +367,10 @@ def main():
             seg = Segmenter(model_ckpt="sylber", device=device if device != "mps" else "cpu")
             def per_clip(p, seg=seg):
                 o = seg(str(p), in_second=True)
-                return {"sylber": np.asarray(o["segment_features"], dtype=np.float32),
-                        "sylber_bounds": np.asarray(o["segments"], dtype=np.float32)}
+                f = np.asarray(o["segment_features"], dtype=np.float32)
+                b = np.asarray(o["segments"], dtype=np.float32)
+                return {"sylber": f,
+                        "sylber_bounds": b if b.ndim == 2 else np.zeros((0, 2), np.float32)}
             run("sylber", args.window, ids, paths, per_clip,
                 {"sylber": np.float16, "sylber_bounds": np.float32}, args.force)
 
