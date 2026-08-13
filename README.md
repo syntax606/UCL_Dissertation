@@ -26,11 +26,17 @@ So what is lost is not acoustic detail, it is organisation. Which is consistent 
 only part of Mimi that carries stance being the codebook distilled from a model trained on
 a linguistic objective.
 
-**Temporal cues are the single exception**, and they are the reason the timing rebuild
-matters. Retention against WavLM runs 106 per cent for Mimi pre-quantisation, 78 per cent
-for the deployed histogram, and 63 to 68 per cent for DAC. Every other cue family is
-retained at or above 97 per cent. DAC runs at 75 Hz against Mimi's 12.5 and is *worse* on
-temporal, so this is not a matter of sampling density.
+**Temporal cues are the single exception.** Retention against WavLM runs 106 per cent for
+Mimi pre-quantisation, 78 per cent for the deployed histogram, and 63 to 68 per cent for
+DAC. Every other cue family is retained at or above 97 per cent. DAC runs at 75 Hz against
+Mimi's 12.5 and is *worse* on temporal, so this is not a matter of sampling density.
+
+Probing frame sequences directly rather than pooled summaries gives that a second,
+independent line of support. How much the probe gains from frame **order**, measured
+against a shuffled control at matched dimensionality, declines monotonically along the same
+ladder: +0.113 for WavLM, +0.080 for Mimi before quantisation, +0.048 after, and nothing
+at all for DAC. So the organisation that is lost is at least partly temporal, and it is
+lost progressively rather than at any single step.
 
 ### Headline numbers
 
@@ -47,7 +53,7 @@ an empirical permutation null of roughly 0.33.
 | text, discourse context | 0.378 | +0.045 |
 
 The three neural encoder figures are the **nested** estimates from `src/32`, not the
-`argmax` figures still printed by `src/18`. See "corrections in flight" below.
+`argmax` figures still printed by `src/18`. All six carry a caveat about precision, below.
 
 Quantisation ladder, from the matched two-codec run in `src/21`. Mimi loses 0.112 at the
 encoder against 0.034 at the quantiser. DAC loses 0.182 at the encoder and *gains* 0.025
@@ -60,36 +66,106 @@ Human ceiling on the 60-clip premise subset. Annotators reach 0.730 with audio a
 transcript, 0.650 on transcript alone. The best model condition reaches 0.533. Decoding
 above chance is not decoding at a useful level.
 
-### What is being rebuilt, and why
+### How much precision these numbers can carry
 
-Every array in `features/` is **pooled**. Mean and standard deviation over frames, or a
-unigram histogram over codes. All of them are permutation-invariant, so shuffling the
-frames leaves the input identical.
+Less than three decimal places, and this was found the hard way.
 
-That is a problem, because pragmatic force lives partly in *change over time*. A rising
-`yeah?` and a falling `yeah.` have the same mean by construction. So the measured loss
-cannot currently be attributed between the codec and the readout.
+`GroupKFold` assigns folds differently in scikit-learn 1.7 and 1.9. On byte-identical
+inputs that moves WavLM L20 from 0.553 to 0.573. Holding everything else constant and
+varying only which episodes land in which fold, macro-F1 moves by **sd 0.010, range up to
+0.06**:
 
-The frames were discarded at extraction time and the GPU instance that produced them no
-longer exists, so this cannot be recovered by re-analysis. `src/31` re-extracts and keeps
-the frame sequence, after which every readout becomes cheap post-processing.
+| representation | mean | sd | min | max |
+|---|---:|---:|---:|---:|
+| wavlm_L20 | 0.5573 | 0.0094 | 0.5305 | 0.5706 |
+| hubert_L23 | 0.5052 | 0.0125 | 0.4776 | 0.5300 |
+| mimi_pre | 0.4680 | 0.0145 | 0.4401 | 0.5005 |
+| mimi_codes | 0.3699 | 0.0088 | 0.3488 | 0.3857 |
+
+Three consequences. The figures above are tied to a library version on a machine that no
+longer exists. They sit at the top of their own range, WavLM's 0.573 being above the
+maximum of 25 random partitions. And **differences under roughly 0.03 are not robust** to
+a choice nobody thinks of as a choice.
+
+`src/34` therefore defines its own partitions rather than delegating to `GroupKFold`, and
+reports the mean over 25 of them with an sd. Anything new should do the same.
+
+### The timing result
+
+Whether stance survives a readout that respects frame order, `src/34`. Each readout is
+compared against **its own frame-shuffled control**, which matches on dimensionality and on
+every feature's marginal distribution while destroying order, paired on identical
+partitions so partition noise cancels.
+
+Temporal order carries stance, and the amount declines monotonically along the processing
+ladder:
+
+| representation | order effect | ± | t |
+|---|---:|---:|---:|
+| WavLM L20 | **+0.113** | 0.013 | 44.6 |
+| HuBERT L23 | +0.086 | 0.020 | 21.3 |
+| Mimi pre-quantisation | +0.080 | 0.018 | 21.9 |
+| Whisper L9 | +0.070 | 0.015 | 23.6 |
+| Mimi post-quantisation | +0.048 | 0.019 | 13.0 |
+| Sylber | +0.042 | 0.016 | 13.1 |
+| DyCAST pre | +0.025 | 0.014 | 8.7 |
+| DyCAST post | +0.022 | 0.017 | 6.6 |
+| DAC pre | −0.007 | 0.019 | −1.9 |
+| DAC post | −0.018 | 0.018 | −4.9 |
+
+That decline tracks the stance-decoding decline, which makes it a candidate mechanism
+rather than a correlation. The codec does not merely carry less stance, it carries less of
+the temporal structure stance is expressed through.
+
+**Three hypotheses were tested and are not supported.** They were stated before the run.
+
+The loss is **not** an artefact of the readout. Time-aware readouts gain at most +0.031,
+which is at the edge of partition noise, and the ranking in [Ch.4] is unchanged. WavLM and
+Whisper both peak under `seg4`, at 0.588 and 0.577 against 0.557 and 0.548 for
+mean-and-std.
+
+Variable-frame-rate tokenisers do **not** preserve more. Sylber reaches 0.446 and DyCAST
+0.40, both below Mimi pre-quantisation at 0.468. Syllable-aligned tokenisation at roughly
+4 Hz does not recover prosodic content.
+
+Timing features alone sit **at chance**. Token count, rate and duration moments reach 0.316
+for Sylber and 0.338 for DyCAST against a null near 0.33. Order-aware summaries of the
+discrete streams, run-length and change-rate, also score below the unigram histogram they
+were meant to improve on.
+
+### What was rebuilt, and why
+
+Every array in `features/` is **pooled**, mean and standard deviation over frames or a
+unigram histogram over codes, so all of them are invariant to frame order. A rising
+`yeah?` and a falling `yeah.` have the same mean by construction, which left the measured
+loss unattributable between the codec and the readout.
+
+The frames had been discarded at extraction time and the GPU instance that produced them
+no longer existed, so this was a rebuild rather than a re-analysis. `src/31` re-extracts
+and keeps the frame sequence for **every layer**, since a forward pass computes them all
+regardless and selecting one would mean selecting under the readout being replaced.
+
+Verified: mean-pooling the rebuilt frames reproduces the original A100 features at
+**cosine 1.000000**, so the new pipeline agrees with the one the existing figures came
+from.
 
 ### Corrections in flight
 
 | issue | status |
 |---|---|
 | `src/18` picks the layer by `argmax` on the same data it reports from, inflating WavLM by 0.003, Whisper by 0.015 and **HuBERT by 0.029** | measured in `src/32`, drafts not yet updated |
-| HuBERT's layer is genuinely unstable across folds, picks ranged over L10 to L23 | `src/31` saves every layer, so the choice moves downstream |
-| every stored feature is order-free, so the timing question is unanswerable against them | `src/31` written and tested, not yet run at full scale |
+| HuBERT's layer is unstable across folds, picks ranged over L10 to L23 | `src/31` saves every layer, so the choice moves downstream |
+| single-partition macro-F1 carries sd 0.010 from fold assignment alone, and depends on the scikit-learn version | fixed in `src/34`, drafts not yet updated |
 | this README previously described Mimi as `(n, 14336)` from codebooks 1 to 7 | wrong on both counts, the array is `(873, 16384)` and codebook 0 is the carrier |
 
 ### Open questions
 
-- Whether the loss survives a readout that respects time. This is the live experiment.
-- Whether variable-frame-rate tokenisers behave differently. Sylber and DyCAST are
-  installed and verified to run on this corpus, with no results yet.
-- Whether EnCodec, X-Codec and SpeechTokenizer still earn a place once the timing result
-  is known. All three are fixed-rate, so they extend the ladder without testing timing.
+- Whether the order effect peaks at a different layer than stance decoding does. The full
+  63-layer sweep addresses this.
+- Whether EnCodec, X-Codec and SpeechTokenizer earn a place. All three are fixed-rate, so
+  they extend the ladder without testing timing, and the timing result above lowers the
+  value of adding them.
+- The absolute permutation null has not been recomputed under the new partitioning.
 
 ---
 
@@ -142,10 +218,14 @@ DATA_AVAILABILITY.md      what can and cannot be shared, and why
 ```
 
 `features/` and `features_frames/` are both gitignored. `features_frames/` holds every
-layer and runs to roughly 56 GB, which is nothing on a GPU instance and too much for a
-laptop. Run the readout sweep on the box where the frames already are, and bring home the
-results plus only the layers that turn out to matter. `PC_FRAMES_DIR` relocates the whole
-tree to another disk without editing any code.
+layer of every model and runs to **56.7 GB** (52.8 GiB), which does not fit on a laptop.
+`PC_FRAMES_DIR` relocates the tree to any disk without editing code, so it can sit on an
+external drive or on cloud storage beside the GPU.
+
+Regenerating it costs about 35 minutes and under a dollar, given the clips and
+`requirements-gpu.txt`, so it is cheaper to rebuild than to store indefinitely. Each
+representation is a separate memory-mapped `.npy`, so a readout reads one 892 MB layer at a
+time rather than the whole tree, which makes even a USB drive workable.
 
 ---
 
@@ -164,9 +244,23 @@ cp configs/paths.example.yaml configs/paths.yaml   # gitignored
 # or per-run: PC_AUDIO_DIR=... PC_TRANSCRIPTS_DIR=... PC_FRAMES_DIR=...
 ```
 
-**Record the environment.** The instance that produced the current `features/` is gone and
-left no dependency manifest behind, which is why those numbers cannot be regenerated
-exactly. Run `pip freeze > requirements-gpu.txt` on any GPU box and commit it.
+**GPU environment.** `requirements-gpu.txt` is a `pip freeze` of the environment that
+produced `features_frames/`, committed so the rebuild is reproducible. Recreate it with
+
+```bash
+python3 -m venv venv && venv/bin/pip install \
+    torch==2.7.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+venv/bin/pip install -r requirements-gpu.txt
+```
+
+Two traps, both hit on the way here. `librosa` pulls numpy 2.x, which breaks array interop
+with a torch built against 1.x, so numpy must be held below 2. And building on top of
+Ubuntu's system `python3` packages produces a stale `networkx` that calls the removed
+`np.int`, plus a Pillow too old for `transformers`. Build a clean venv rather than one with
+`--system-site-packages`.
+
+The instance that produced the older `features/` left no manifest, which is why those
+figures cannot be regenerated exactly.
 
 ---
 
@@ -286,7 +380,12 @@ p-value**.
 ```bash
 python3 src/18_probe.py                  # the main battery, six views
 python3 src/32_layer_selection.py        # is the layer choice honest and stable
+python3 src/34_timing_probe.py --reps core --reps-n 25    # needs features_frames/
 ```
+
+`src/34` is the one to reach for on anything new. It defines its own episode-to-fold
+partitions and averages 25 of them, so its figures do not shift with the scikit-learn
+version, and it pairs every order-aware readout against its own frame-shuffled control.
 
 | script | question |
 |---|---|
@@ -302,6 +401,8 @@ python3 src/32_layer_selection.py        # is the layer choice honest and stable
 | `28_codebook_ladder.py` | cumulative codebooks, is codebook 0 doing the work |
 | `30_cue_retention.py` | which acoustic cues does the codec actually lose |
 | `32_layer_selection.py` | nested layer selection against argmax |
+| `33_readouts.py` | the readout library, imported not run |
+| `34_timing_probe.py` | does stance survive a readout that respects time |
 
 Every script writes a text file into `results/`, which is committed. Those files are the
 record of what was actually run.
