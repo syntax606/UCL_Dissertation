@@ -1,0 +1,218 @@
+DOES STANCE SURVIVE A READOUT THAT RESPECTS TIME?
+Representation held fixed, readout varied. 'shuffled' applies the same
+readout to frame-shuffled clips, so it matches on dimensionality and on
+every feature's marginal distribution but destroys order.
+
+Every score is the mean over 25 independent episode-to-fold
+partitions, with its sd. A single partition is not a stable measurement:
+holding everything else constant, fold assignment alone moves macro-F1 by
+sd 0.010 and range up to 0.06, and sklearn changed its own assignment
+between 1.7 and 1.9. Partitions are defined here, not by GroupKFold, so
+these numbers do not depend on which sklearn is installed.
+
+'order' is PAIRED: real minus shuffled on each partition separately, then
+averaged. Partition noise is shared by both and cancels, so its sd is much
+smaller than the sd of either column. t is order / stderr(order).
+========================================================================================================
+representation readout     dims  macroF1      ±  shuffled      ±   order      ±      t  chance
+wavlm_L0       meanstd     2048    0.400  0.010         —      —       —      —      —     nan
+wavlm_L0       basis8      8192    0.365  0.012     0.341  0.015  +0.024  0.018    7.0     nan
+wavlm_L0       seg4        8192    0.408  0.011     0.406  0.010  +0.002  0.013    0.7     nan
+wavlm_L1       meanstd     2048    0.412  0.010         —      —       —      —      —     nan
+wavlm_L1       basis8      8192    0.389  0.014     0.361  0.011  +0.028  0.017    8.2     nan
+wavlm_L1       seg4        8192    0.437  0.013     0.418  0.009  +0.019  0.015    6.0     nan
+wavlm_L2       meanstd     2048    0.434  0.013         —      —       —      —      —     nan
+wavlm_L2       basis8      8192    0.414  0.010     0.387  0.013  +0.027  0.017    7.8     nan
+wavlm_L2       seg4        8192    0.445  0.014     0.441  0.010  +0.005  0.017    1.4     nan
+wavlm_L3       meanstd     2048    0.423  0.014         —      —       —      —      —     nan
+wavlm_L3       basis8      8192    0.415  0.010     0.391  0.010  +0.024  0.014    8.5     nan
+wavlm_L3       seg4        8192    0.441  0.013     0.430  0.012  +0.011  0.014    4.0     nan
+wavlm_L4       meanstd     2048    0.436  0.011         —      —       —      —      —     nan
+wavlm_L4       basis8      8192    0.436  0.010     0.402  0.013  +0.034  0.015   11.3     nan
+wavlm_L4       seg4        8192    0.447  0.012     0.435  0.012  +0.013  0.015    4.3     nan
+wavlm_L5       meanstd     2048    0.439  0.012         —      —       —      —      —     nan
+wavlm_L5       basis8      8192    0.444  0.011     0.397  0.012  +0.047  0.015   15.7     nan
+wavlm_L5       seg4        8192    0.444  0.012     0.435  0.015  +0.008  0.017    2.5     nan
+wavlm_L6       meanstd     2048    0.457  0.011         —      —       —      —      —     nan
+wavlm_L6       basis8      8192    0.467  0.011     0.402  0.008  +0.065  0.014   23.6     nan
+wavlm_L6       seg4        8192    0.466  0.013     0.467  0.016  -0.001  0.015   -0.2     nan
+wavlm_L7       meanstd     2048    0.461  0.014         —      —       —      —      —     nan
+wavlm_L7       basis8      8192    0.478  0.012     0.407  0.009  +0.071  0.015   23.9     nan
+wavlm_L7       seg4        8192    0.481  0.013     0.476  0.013  +0.004  0.017    1.4     nan
+wavlm_L8       meanstd     2048    0.460  0.010         —      —       —      —      —     nan
+wavlm_L8       basis8      8192    0.483  0.012     0.407  0.010  +0.076  0.017   21.9     nan
+wavlm_L8       seg4        8192    0.491  0.009     0.476  0.014  +0.015  0.017    4.5     nan
+wavlm_L9       meanstd     2048    0.473  0.010         —      —       —      —      —     nan
+wavlm_L9       basis8      8192    0.484  0.011     0.419  0.010  +0.065  0.015   21.0     nan
+wavlm_L9       seg4        8192    0.505  0.014     0.473  0.011  +0.032  0.017    9.2     nan
+wavlm_L10      meanstd     2048    0.479  0.013         —      —       —      —      —     nan
+wavlm_L10      basis8      8192    0.492  0.011     0.412  0.010  +0.080  0.018   22.4     nan
+wavlm_L10      seg4        8192    0.512  0.009     0.478  0.013  +0.035  0.018    9.7     nan
+wavlm_L11      meanstd     2048    0.483  0.011         —      —       —      —      —     nan
+wavlm_L11      basis8      8192    0.496  0.011     0.418  0.011  +0.078  0.015   26.3     nan
+wavlm_L11      seg4        8192    0.526  0.011     0.489  0.010  +0.037  0.014   13.0     nan
+wavlm_L12      meanstd     2048    0.496  0.013         —      —       —      —      —     nan
+wavlm_L12      basis8      8192    0.493  0.008     0.434  0.011  +0.058  0.014   21.0     nan
+wavlm_L12      seg4        8192    0.543  0.014     0.493  0.010  +0.050  0.016   15.5     nan
+wavlm_L13      meanstd     2048    0.498  0.014         —      —       —      —      —     nan
+wavlm_L13      basis8      8192    0.517  0.009     0.432  0.010  +0.085  0.012   35.8     nan
+wavlm_L13      seg4        8192    0.550  0.012     0.494  0.009  +0.056  0.013   20.9     nan
+wavlm_L14      meanstd     2048    0.499  0.013         —      —       —      —      —     nan
+wavlm_L14      basis8      8192    0.538  0.009     0.433  0.011  +0.105  0.015   34.0     nan
+wavlm_L14      seg4        8192    0.547  0.011     0.497  0.013  +0.049  0.015   16.6     nan
+wavlm_L15      meanstd     2048    0.511  0.010         —      —       —      —      —     nan
+wavlm_L15      basis8      8192    0.541  0.011     0.436  0.012  +0.104  0.016   32.8     nan
+wavlm_L15      seg4        8192    0.559  0.009     0.501  0.010  +0.058  0.013   22.4     nan
+wavlm_L16      meanstd     2048    0.524  0.012         —      —       —      —      —     nan
+wavlm_L16      basis8      8192    0.549  0.012     0.438  0.013  +0.110  0.014   38.9     nan
+wavlm_L16      seg4        8192    0.580  0.006     0.521  0.011  +0.059  0.013   22.6     nan
+wavlm_L17      meanstd     2048    0.517  0.012         —      —       —      —      —     nan
+wavlm_L17      basis8      8192    0.536  0.015     0.433  0.013  +0.103  0.017   31.0     nan
+wavlm_L17      seg4        8192    0.576  0.010     0.523  0.014  +0.053  0.018   14.8     nan
+wavlm_L18      meanstd     2048    0.534  0.012         —      —       —      —      —     nan
+wavlm_L18      basis8      8192    0.553  0.013     0.447  0.010  +0.106  0.012   46.2     nan
+wavlm_L18      seg4        8192    0.577  0.009     0.540  0.014  +0.037  0.018   10.5     nan
+wavlm_L19      meanstd     2048    0.539  0.011         —      —       —      —      —     nan
+wavlm_L19      basis8      8192    0.553  0.011     0.443  0.012  +0.110  0.014   39.0     nan
+wavlm_L19      seg4        8192    0.580  0.014     0.546  0.013  +0.034  0.018    9.5     nan
+wavlm_L20      meanstd     2048    0.557  0.009         —      —       —      —      —     nan
+wavlm_L20      basis8      8192    0.555  0.011     0.442  0.009  +0.113  0.013   44.6     nan
+wavlm_L20      seg4        8192    0.588  0.010     0.553  0.010  +0.035  0.012   14.0     nan
+wavlm_L21      meanstd     2048    0.542  0.011         —      —       —      —      —     nan
+wavlm_L21      basis8      8192    0.539  0.013     0.444  0.010  +0.095  0.015   31.1     nan
+wavlm_L21      seg4        8192    0.592  0.013     0.548  0.013  +0.043  0.015   14.9     nan
+wavlm_L22      meanstd     2048    0.522  0.015         —      —       —      —      —     nan
+wavlm_L22      basis8      8192    0.508  0.011     0.415  0.009  +0.093  0.011   41.8     nan
+wavlm_L22      seg4        8192    0.547  0.011     0.515  0.015  +0.031  0.019    8.1     nan
+wavlm_L23      meanstd     2048    0.500  0.014         —      —       —      —      —     nan
+wavlm_L23      basis8      8192    0.520  0.012     0.409  0.010  +0.111  0.017   33.2     nan
+wavlm_L23      seg4        8192    0.539  0.014     0.486  0.013  +0.053  0.016   16.3     nan
+wavlm_L24      meanstd     2048    0.480  0.014         —      —       —      —      —     nan
+wavlm_L24      basis8      8192    0.506  0.012     0.419  0.010  +0.087  0.017   25.2     nan
+wavlm_L24      seg4        8192    0.517  0.015     0.487  0.016  +0.029  0.018    8.0     nan
+hubert_L0      meanstd     2048    0.413  0.011         —      —       —      —      —     nan
+hubert_L0      basis8      8192    0.367  0.012     0.345  0.013  +0.021  0.016    6.5     nan
+hubert_L0      seg4        8192    0.412  0.009     0.429  0.012  -0.018  0.017   -5.3     nan
+hubert_L1      meanstd     2048    0.408  0.015         —      —       —      —      —     nan
+hubert_L1      basis8      8192    0.383  0.013     0.370  0.012  +0.013  0.017    3.8     nan
+hubert_L1      seg4        8192    0.431  0.010     0.419  0.014  +0.012  0.015    4.0     nan
+hubert_L2      meanstd     2048    0.430  0.013         —      —       —      —      —     nan
+hubert_L2      basis8      8192    0.412  0.013     0.401  0.011  +0.012  0.015    4.0     nan
+hubert_L2      seg4        8192    0.441  0.011     0.442  0.012  -0.001  0.013   -0.5     nan
+hubert_L3      meanstd     2048    0.408  0.009         —      —       —      —      —     nan
+hubert_L3      basis8      8192    0.425  0.016     0.404  0.012  +0.021  0.021    5.1     nan
+hubert_L3      seg4        8192    0.430  0.014     0.431  0.011  -0.001  0.016   -0.3     nan
+hubert_L4      meanstd     2048    0.429  0.010         —      —       —      —      —     nan
+hubert_L4      basis8      8192    0.428  0.011     0.403  0.012  +0.025  0.017    7.2     nan
+hubert_L4      seg4        8192    0.422  0.013     0.432  0.012  -0.010  0.017   -2.8     nan
+hubert_L5      meanstd     2048    0.432  0.010         —      —       —      —      —     nan
+hubert_L5      basis8      8192    0.431  0.009     0.408  0.012  +0.023  0.016    7.1     nan
+hubert_L5      seg4        8192    0.436  0.013     0.443  0.011  -0.007  0.015   -2.3     nan
+hubert_L6      meanstd     2048    0.440  0.013         —      —       —      —      —     nan
+hubert_L6      basis8      8192    0.437  0.011     0.409  0.011  +0.028  0.016    8.9     nan
+hubert_L6      seg4        8192    0.449  0.013     0.448  0.011  +0.001  0.013    0.3     nan
+hubert_L7      meanstd     2048    0.431  0.014         —      —       —      —      —     nan
+hubert_L7      basis8      8192    0.434  0.011     0.394  0.010  +0.040  0.015   13.0     nan
+hubert_L7      seg4        8192    0.451  0.013     0.445  0.009  +0.005  0.015    1.8     nan
+hubert_L8      meanstd     2048    0.433  0.013         —      —       —      —      —     nan
+hubert_L8      basis8      8192    0.436  0.009     0.401  0.011  +0.035  0.015   11.4     nan
+hubert_L8      seg4        8192    0.470  0.012     0.445  0.010  +0.025  0.013    9.7     nan
+hubert_L9      meanstd     2048    0.457  0.011         —      —       —      —      —     nan
+hubert_L9      basis8      8192    0.448  0.011     0.405  0.010  +0.043  0.014   16.0     nan
+hubert_L9      seg4        8192    0.468  0.012     0.461  0.012  +0.008  0.016    2.3     nan
+hubert_L10     meanstd     2048    0.457  0.015         —      —       —      —      —     nan
+hubert_L10     basis8      8192    0.469  0.013     0.409  0.014  +0.060  0.015   19.4     nan
+hubert_L10     seg4        8192    0.474  0.010     0.461  0.012  +0.013  0.012    5.3     nan
+hubert_L11     meanstd     2048    0.456  0.011         —      —       —      —      —     nan
+hubert_L11     basis8      8192    0.479  0.011     0.410  0.016  +0.069  0.016   21.3     nan
+hubert_L11     seg4        8192    0.490  0.010     0.473  0.014  +0.017  0.016    5.3     nan
+hubert_L12     meanstd     2048    0.450  0.013         —      —       —      —      —     nan
+hubert_L12     basis8      8192    0.479  0.009     0.411  0.012  +0.068  0.014   25.3     nan
+hubert_L12     seg4        8192    0.485  0.012     0.460  0.011  +0.024  0.014    8.3     nan
+hubert_L13     meanstd     2048    0.468  0.013         —      —       —      —      —     nan
+hubert_L13     basis8      8192    0.494  0.011     0.418  0.011  +0.075  0.017   22.3     nan
+hubert_L13     seg4        8192    0.505  0.011     0.468  0.011  +0.037  0.016   11.5     nan
+hubert_L14     meanstd     2048    0.467  0.014         —      —       —      —      —     nan
+hubert_L14     basis8      8192    0.495  0.008     0.417  0.010  +0.078  0.012   32.3     nan
+hubert_L14     seg4        8192    0.507  0.010     0.456  0.012  +0.052  0.013   20.7     nan
+hubert_L15     meanstd     2048    0.467  0.012         —      —       —      —      —     nan
+hubert_L15     basis8      8192    0.499  0.011     0.406  0.012  +0.093  0.017   27.0     nan
+hubert_L15     seg4        8192    0.504  0.013     0.465  0.011  +0.038  0.012   15.5     nan
+hubert_L16     meanstd     2048    0.480  0.016         —      —       —      —      —     nan
+hubert_L16     basis8      8192    0.505  0.012     0.414  0.010  +0.091  0.015   29.6     nan
+hubert_L16     seg4        8192    0.506  0.014     0.473  0.014  +0.033  0.017    9.6     nan
+hubert_L17     meanstd     2048    0.478  0.012         —      —       —      —      —     nan
+hubert_L17     basis8      8192    0.501  0.011     0.419  0.014  +0.082  0.018   22.5     nan
+hubert_L17     seg4        8192    0.521  0.014     0.472  0.009  +0.049  0.016   15.3     nan
+hubert_L18     meanstd     2048    0.474  0.013         —      —       —      —      —     nan
+hubert_L18     basis8      8192    0.514  0.010     0.426  0.011  +0.088  0.015   29.6     nan
+hubert_L18     seg4        8192    0.536  0.012     0.480  0.012  +0.056  0.015   18.5     nan
+hubert_L19     meanstd     2048    0.491  0.011         —      —       —      —      —     nan
+hubert_L19     basis8      8192    0.520  0.012     0.428  0.012  +0.092  0.016   28.1     nan
+hubert_L19     seg4        8192    0.535  0.010     0.492  0.011  +0.043  0.015   14.7     nan
+hubert_L20     meanstd     2048    0.493  0.009         —      —       —      —      —     nan
+hubert_L20     basis8      8192    0.514  0.009     0.426  0.011  +0.087  0.012   35.6     nan
+hubert_L20     seg4        8192    0.541  0.011     0.500  0.012  +0.041  0.015   14.1     nan
+hubert_L21     meanstd     2048    0.496  0.011         —      —       —      —      —     nan
+hubert_L21     basis8      8192    0.508  0.013     0.424  0.011  +0.084  0.016   25.7     nan
+hubert_L21     seg4        8192    0.525  0.010     0.503  0.011  +0.021  0.013    7.9     nan
+hubert_L22     meanstd     2048    0.474  0.011         —      —       —      —      —     nan
+hubert_L22     basis8      8192    0.485  0.012     0.414  0.014  +0.071  0.015   23.4     nan
+hubert_L22     seg4        8192    0.517  0.010     0.476  0.010  +0.040  0.012   17.0     nan
+hubert_L23     meanstd     2048    0.505  0.013         —      —       —      —      —     nan
+hubert_L23     basis8      8192    0.490  0.012     0.404  0.014  +0.086  0.020   21.3     nan
+hubert_L23     seg4        8192    0.526  0.014     0.492  0.012  +0.034  0.018    9.4     nan
+hubert_L24     meanstd     2048    0.469  0.013         —      —       —      —      —     nan
+hubert_L24     basis8      8192    0.468  0.012     0.416  0.013  +0.052  0.019   13.7     nan
+hubert_L24     seg4        8192    0.504  0.012     0.469  0.013  +0.035  0.017   10.5     nan
+whisper_L0     meanstd     1536    0.418  0.013         —      —       —      —      —     nan
+whisper_L0     basis8      6144    0.406  0.011     0.357  0.010  +0.049  0.014   17.2     nan
+whisper_L0     seg4        6144    0.439  0.014     0.384  0.012  +0.055  0.021   13.1     nan
+whisper_L1     meanstd     1536    0.427  0.015         —      —       —      —      —     nan
+whisper_L1     basis8      6144    0.412  0.013     0.395  0.013  +0.018  0.019    4.8     nan
+whisper_L1     seg4        6144    0.447  0.015     0.401  0.012  +0.045  0.013   17.0     nan
+whisper_L2     meanstd     1536    0.442  0.014         —      —       —      —      —     nan
+whisper_L2     basis8      6144    0.427  0.011     0.397  0.014  +0.029  0.017    8.7     nan
+whisper_L2     seg4        6144    0.469  0.016     0.430  0.013  +0.039  0.021    9.2     nan
+whisper_L3     meanstd     1536    0.480  0.015         —      —       —      —      —     nan
+whisper_L3     basis8      6144    0.437  0.010     0.397  0.012  +0.040  0.014   14.5     nan
+whisper_L3     seg4        6144    0.472  0.012     0.445  0.010  +0.027  0.010   13.2     nan
+whisper_L4     meanstd     1536    0.458  0.011         —      —       —      —      —     nan
+whisper_L4     basis8      6144    0.467  0.009     0.412  0.012  +0.055  0.016   17.0     nan
+whisper_L4     seg4        6144    0.482  0.013     0.458  0.014  +0.024  0.015    8.3     nan
+whisper_L5     meanstd     1536    0.470  0.012         —      —       —      —      —     nan
+whisper_L5     basis8      6144    0.478  0.012     0.429  0.011  +0.049  0.019   13.1     nan
+whisper_L5     seg4        6144    0.499  0.012     0.453  0.011  +0.046  0.014   16.6     nan
+whisper_L6     meanstd     1536    0.472  0.012         —      —       —      —      —     nan
+whisper_L6     basis8      6144    0.484  0.011     0.436  0.016  +0.048  0.020   11.8     nan
+whisper_L6     seg4        6144    0.523  0.012     0.477  0.014  +0.047  0.013   17.7     nan
+whisper_L7     meanstd     1536    0.508  0.013         —      —       —      —      —     nan
+whisper_L7     basis8      6144    0.504  0.009     0.436  0.011  +0.068  0.015   23.1     nan
+whisper_L7     seg4        6144    0.536  0.012     0.488  0.013  +0.047  0.015   15.6     nan
+whisper_L8     meanstd     1536    0.542  0.012         —      —       —      —      —     nan
+whisper_L8     basis8      6144    0.517  0.013     0.447  0.010  +0.070  0.019   18.8     nan
+whisper_L8     seg4        6144    0.571  0.014     0.530  0.013  +0.040  0.019   10.6     nan
+whisper_L9     meanstd     1536    0.548  0.011         —      —       —      —      —     nan
+whisper_L9     basis8      6144    0.521  0.010     0.451  0.012  +0.070  0.015   23.6     nan
+whisper_L9     seg4        6144    0.577  0.013     0.550  0.011  +0.027  0.014    9.5     nan
+whisper_L10    meanstd     1536    0.550  0.014         —      —       —      —      —     nan
+whisper_L10    basis8      6144    0.541  0.009     0.445  0.013  +0.095  0.013   35.5     nan
+whisper_L10    seg4        6144    0.585  0.011     0.541  0.011  +0.044  0.015   14.7     nan
+whisper_L11    meanstd     1536    0.546  0.011         —      —       —      —      —     nan
+whisper_L11    basis8      6144    0.541  0.012     0.455  0.011  +0.087  0.017   25.9     nan
+whisper_L11    seg4        6144    0.586  0.011     0.548  0.009  +0.037  0.011   16.9     nan
+whisper_L12    meanstd     1536    0.551  0.012         —      —       —      —      —     nan
+whisper_L12    basis8      6144    0.552  0.011     0.435  0.011  +0.118  0.017   35.0     nan
+whisper_L12    seg4        6144    0.606  0.012     0.551  0.011  +0.055  0.016   16.7     nan
+
+Read: 'order' is the readout's gain over its own shuffled control, so it
+is the part attributable to timing rather than to having more dimensions.
+If it is near zero everywhere, stance is not carried temporally and the
+pooled figures were not understating anything. If it is large for the
+codecs and small for the continuous encoders, the loss reported in [Ch.4]
+is partly an artefact of the readout rather than a property of the codec.
+
+A single partition would not settle this. Fold assignment alone moves the
+score by about as much as the effect being looked for, so an unpaired 0.02
+would be indistinguishable from a coin toss. The paired difference is what
+carries the claim, and its sd is the scale against which to read it.

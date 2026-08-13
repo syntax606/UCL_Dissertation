@@ -133,6 +133,43 @@ for Sylber and 0.338 for DyCAST against a null near 0.33. Order-aware summaries 
 discrete streams, run-length and change-rate, also score below the unigram histogram they
 were meant to improve on.
 
+### The layer sweep
+
+All 63 layers of the three encoders, three readouts each, `results/timing_layers.*`.
+
+Where stance decoding peaks and where the order effect peaks:
+
+| model | stance peak | order peak |
+|---|---|---|
+| WavLM | L20 | L20 |
+| Whisper | L12 | L12 |
+| HuBERT | L23 | **L15** |
+
+For WavLM and Whisper they coincide, so the layer chosen under a pooled readout was not
+the wrong one. HuBERT dissociates by eight layers, which is consistent with its curve
+already being the flat and unstable one in `src/32`.
+
+**`seg4` is the best readout, not the polynomial basis.** It takes 17 of the top 30 cells
+and all of the top ten. Four equal segments each pooled beats both order-free pooling and
+the smooth Legendre basis, which was the principled choice on paper. Coarse temporal
+position appears to matter more than smooth contour shape.
+
+Best cell per model across the whole sweep:
+
+| | | |
+|---|---|---:|
+| Whisper | L12, `seg4` | **0.606** |
+| WavLM | L21, `seg4` | 0.592 |
+| HuBERT | L20, `seg4` | 0.541 |
+
+This has a consequence for [Ch.4], which reports WavLM as the strongest representation at
+0.573 against Whisper's 0.564. Under a time-aware readout at each model's own best layer,
+Whisper reaches 0.606 and WavLM 0.592. The 0.014 between them is well inside the
+partition noise measured above, so the honest statement is that **the two are level**,
+where the chapter currently has WavLM ahead. Whisper also peaks at its final encoder
+layer, which sits awkwardly with the usual account of paralinguistic content residing in
+middle layers.
+
 ### What was rebuilt, and why
 
 Every array in `features/` is **pooled**, mean and standard deviation over frames or a
