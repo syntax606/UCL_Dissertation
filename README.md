@@ -119,10 +119,11 @@ the temporal structure stance is expressed through.
 
 **Three hypotheses were tested and are not supported.** They were stated before the run.
 
-The loss is **not** an artefact of the readout. Time-aware readouts gain at most +0.031,
-which is at the edge of partition noise, and the ranking in [Ch.4] is unchanged. WavLM and
-Whisper both peak under `seg4`, at 0.588 and 0.577 against 0.557 and 0.548 for
-mean-and-std.
+The loss is **not** an artefact of the readout. Time-aware readouts gain at most +0.031
+at a fixed layer, which is at the edge of partition noise, and no representation moves past
+another on the strength of it. The codec-versus-encoder gap is unchanged. (The layer sweep
+below does disturb the ordering of the top two encoders, but by rebalancing WavLM against
+Whisper, not by narrowing the gap to the codecs.)
 
 Variable-frame-rate tokenisers do **not** preserve more. Sylber reaches 0.446 and DyCAST
 0.40, both below Mimi pre-quantisation at 0.468. Syllable-aligned tokenisation at roughly
@@ -195,6 +196,21 @@ from.
 | single-partition macro-F1 carries sd 0.010 from fold assignment alone, and depends on the scikit-learn version | fixed in `src/34`, drafts not yet updated |
 | this README previously described Mimi as `(n, 14336)` from codebooks 1 to 7 | wrong on both counts, the array is `(873, 16384)` and codebook 0 is the carrier |
 
+### What the drafts still claim that the data no longer supports
+
+Nothing here weakens the paper's argument. All of it is precision and ranking.
+
+| the drafts say | the data says | where |
+|---|---|---|
+| HuBERT reaches 0.520, margin +0.186 | 0.491 and +0.157 once the layer is chosen honestly | `04_results.md` 37-39 |
+| WavLM 0.573 is the strongest representation | level with Whisper once time is respected, 0.592 against 0.606, a gap inside the noise | `04_results.md` 37-39 |
+| figures given to three decimals | fold assignment alone contributes sd 0.010, so differences under about 0.03 are not robust | throughout |
+| Whisper's best layer is L9 | L12 under repeated partitions, and it is the final encoder layer | `03_methods.md`, `04_results.md` |
+
+Two lines in `04_results.md` describing the layer *curve* are correct as written, since the
+curve really does peak where it says. Only the sentences treating a peak as an unbiased
+estimate need changing. This is a drafting pass, not a recomputation.
+
 ### Open questions
 
 - Whether the order effect peaks at a different layer than stance decoding does. The full
@@ -263,6 +279,29 @@ Regenerating it costs about 35 minutes and under a dollar, given the clips and
 `requirements-gpu.txt`, so it is cheaper to rebuild than to store indefinitely. Each
 representation is a separate memory-mapped `.npy`, so a readout reads one 892 MB layer at a
 time rather than the whole tree, which makes even a USB drive workable.
+
+Full rebuild on a fresh GPU box:
+
+```bash
+# 1. code and clips (the clips are gitignored, so copy them, do not clone them)
+rsync -az --exclude features/ --exclude corpus.duckdb \
+      ~/Desktop/pragmatic_contrast/ ubuntu@<host>:~/repo/
+
+# 2. environment, clean venv, never --system-site-packages
+python3 -m venv venv && venv/bin/pip install \
+    torch==2.7.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+venv/bin/pip install -r requirements-gpu.txt
+
+# 3. extract, then probe beside the frames
+export PC_FRAMES_DIR=~/frames
+venv/bin/python src/31_extract_frames.py --models all
+venv/bin/python src/34_timing_probe.py --reps core --reps-n 25
+
+# 4. bring back only results/, a few kilobytes
+```
+
+`src/31` resumes from a checkpoint if it dies partway, and skips models already finished
+unless `--force`.
 
 ---
 
@@ -443,6 +482,19 @@ version, and it pairs every order-aware readout against its own frame-shuffled c
 
 Every script writes a text file into `results/`, which is committed. Those files are the
 record of what was actually run.
+
+| file | what it holds |
+|---|---|
+| `probe_results.txt` | the six-view battery from `src/18`, including the layer curve |
+| `layer_selection.txt` | nested against argmax layer choice, the optimism figures |
+| `timing_probe.txt` / `.csv` | the core timing experiment, ten representations, six readouts |
+| `timing_layers.txt` / `.csv` | all 63 encoder layers, three readouts |
+| `cue_retention.txt` | which acoustic cue families each rung keeps |
+| `codebook_cumulative.txt` | is codebook 0 doing the work |
+| `premise_ceiling.txt` | models against humans on the same 60 clips |
+| `quantisation_ladder.txt`, `dac_vs_mimi.txt` | encoder against quantiser, one codec and two |
+| `egemaps_baseline.txt` | 88 hand-crafted functionals |
+| `within_word_readout.txt`, `projection_cosines.txt`, `cps_baseline.txt` | methodological checks |
 
 ---
 
