@@ -54,8 +54,8 @@ every configuration tested [G.5]. The continuous encoders clear it by roughly 0.
 the deployed token stream by 0.04.
 
 Two entries need comment. **eGeMAPS** is the hand-crafted comparison, and it places the
-deployed Mimi condition below 88 classical acoustic functionals, so the deep
-representation is not simply recovering pitch and energy better. And the **target-only
+deployed Mimi condition below 88 classical acoustic functionals, so the deployed token
+stream is not recovering something a standard feature set already captures. And the **target-only
 text** condition at 0.493 should not be read as text recovering stance, since the eight
 phrases differ in their stance base rates and a probe can score from word identity
 alone.
@@ -63,20 +63,26 @@ alone.
 That confound is what the lexical control removes. Within each phrase the probe attempts
 that phrase's dominant binary contrast, so word identity carries no information.
 
-| Representation | mean within-word macro-F1 |
-|---|---:|
-| Whisper encoder | 0.672 |
-| WavLM | 0.659 |
-| Mimi, before quantisation | 0.606 |
-| Mimi, after quantisation | 0.594 |
-| eGeMAPS | 0.550 |
-| Text, with discourse context | 0.534 |
-| Mimi, deployed histogram | 0.466 |
+| Representation | mean within-word macro-F1 | sd | mean per-phrase sd |
+|---|---:|---:|---:|
+| Whisper encoder L9 | 0.658 | 0.010 | 0.030 |
+| WavLM L20 | 0.656 | 0.010 | 0.030 |
+| Mimi, before quantisation | 0.609 | 0.015 | 0.036 |
+| Mimi, after quantisation | 0.586 | 0.015 | 0.036 |
+| Text, with discourse context | 0.554 | 0.010 | 0.035 |
+| eGeMAPS, 88 functionals | 0.551 | 0.010 | 0.033 |
+| Mimi, deployed histogram | 0.464 | 0.010 | 0.022 |
 
 The ordering survives the control, which is the result the rest of the chapter depends
 on. Whatever the codecs are losing, they are not losing it because the probe was reading
-the word. These within-word figures are single-partition and are carried from the
-original run, so they should be read as approximate against the ±0.03 threshold above.
+the word.
+
+Two things follow from the third column. Individual phrase cells hold 68 to 127 clips
+and move by roughly 0.030 with the partition alone, three times as much as the averaged
+figure, so per-phrase results are reported in Appendix [C] and are not read as
+orderings. And WavLM and Whisper are separated by 0.002 against an sd of 0.010, so they
+are not distinguishable here. The layer sweep reaches the same conclusion from a
+different direction [G.6].
 
 ## 4.3 Where the loss is
 
