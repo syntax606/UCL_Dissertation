@@ -59,8 +59,8 @@ checkpoints and the primary papers.
 | MPNet text embedding | | | 768 | | continuous, text | none |
 | eGeMAPSv02 functionals | | | 88 | | hand-crafted acoustic | none |
 
-HuBERT-large was probed throughout as a matched self-supervised control for WavLM and is
-reported in Appendix [H].
+HuBERT-large (Hsu et al., 2021) was probed throughout as a matched self-supervised control
+for WavLM and is reported in Appendix [H].
 
 **Continuous encoders.** WavLM and HuBERT share a masked-prediction architecture and a
 documented layer-wise division of labour, with lower layers encoding local acoustic
@@ -147,8 +147,10 @@ removes those markers by holding the word constant. What remains is the
 conversation-analytic notion of affiliation and disaffiliation (Stivers, 2008; Steensig,
 2019).
 
-**Response tokens.** *Yeah*, *okay*, *right* and *sure* are response tokens, and their
-defining property is the one this study exploits. Gravano et al. (2012) show them to be
+**Response tokens.** *Yeah*, *okay*, *right* and *sure* are response tokens. Schegloff
+(1982) establishes their function as continuers, signalling that a turn is passing rather
+than being taken, and that function is carried by delivery because the words themselves
+carry no propositional content. Gravano et al. (2012) show them to be
 systematically ambiguous between agreeing, signalling continued attention and marking a
 topic shift, with those functions distinguished in spontaneous dialogue by prosodic
 realisation rather than by wording, and they frame that ambiguity as a problem for spoken
@@ -187,9 +189,9 @@ means the pipeline is decomposed rather than compared end to end.
 | Mousavi et al. (2026) | mixed | no | yes | no | multi-task |
 | Ren et al. (2024) | acted | no | yes | no | emotion, categorical |
 | Sun et al. (2026) | spontaneous podcast | no | yes | no | emotion, categorical |
-| Qian, Figueroa & Skantze (2025) | spontaneous feedback | **yes, lexical form** | no | no | perceived similarity |
+| Qian, Figueroa and Skantze (2025) | spontaneous feedback | **yes, lexical form** | no | no | perceived similarity |
 | O'Connor Russell et al. (2026) | spontaneous dyads | by vocoding | no | no | turn-taking |
-| Gichamba & Busogi (2026) | read speech | n/a | yes | by frame rate | reconstruction |
+| Gichamba and Busogi (2026) | read speech | n/a | yes | by frame rate | reconstruction |
 | Yang et al. (2026) | synthesised and acted | yes, system level | n/a | no | behavioural |
 | **This study** | **spontaneous podcast** | **yes, phrase level** | **yes** | **yes, and by architecture** | **stance and arousal** |
 

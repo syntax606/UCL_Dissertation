@@ -79,8 +79,11 @@ One finding here sits against a near neighbour. Qian, Figueroa and Skantze (2025
 prosodic similarity of conversational feedback under an independent lexical control, and
 report prosodic information concentrated in middle layers with Whisper the weakest of
 four models, attributing that to its ASR objective. Whisper is among the strongest
-representations here and peaks at its final encoder layer [4.2, G.6]. The tasks differ
-in a way that may account for it. They measure unsupervised cosine similarity against
+representations here and peaks at its final encoder layer [4.2, G.6]. That direction is
+not without support, since work adapting Whisper for speech emotion recognition finds
+affective information available in its encoder (Ma et al., 2026), and models built on ASR
+encoders have been shown to support joint audio and speech understanding
+(Gong et al., 2023). The tasks differ in a way that may account for the disagreement. They measure unsupervised cosine similarity against
 human judgements, which uses the representation space undifferentiated, while a trained
 probe locates a subspace. A representation can organise prosodic information so that it
 is linearly separable without it being metrically prominent. Their model is also

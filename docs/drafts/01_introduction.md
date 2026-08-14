@@ -19,8 +19,9 @@ pragmatic rather than phonetic sensitivity.
 
 The class of words that makes this possible is also the class that matters most for the
 systems under study. Response tokens such as *yeah*, *okay* and *right* carry no
-dictionary meaning, conveying the speaker's stance through phonetic form, prosodic shape
-and placement in the flow of talk (Gardner, 2001), functions distinguished in spontaneous
+dictionary meaning, functioning as continuers that signal a turn is passing rather than
+being taken (Schegloff, 1982), and conveying the speaker's stance through phonetic form,
+prosodic shape and placement in the flow of talk (Gardner, 2001), functions distinguished in spontaneous
 dialogue by delivery rather than by wording (Gravano et al., 2012). Human listeners
 recover the distinction from audio well above chance though not reliably, at 0.73 against
 a three-way chance of 0.33 in the premise check reported here [4.1].
