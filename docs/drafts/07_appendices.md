@@ -27,7 +27,7 @@ Every clip additionally carries a **confidence** value of clear or borderline, a
 **secondary function** where a clip plausibly supports two readings.
 
 Annotating arousal separately rather than folding it into a single intensity scale is what makes the
-matched-arousal control in [4.4] possible. A single scale would have made stance and energy
+matched-arousal control in [4.6] possible. A single scale would have made stance and energy
 inseparable by construction.
 
 ## A.2 The fourteen function tags
@@ -95,7 +95,7 @@ Discarding requires selecting a reason from the fixed list in A.4 and cannot be 
 
 Two properties of this design matter for the analyses. Placing arousal on a separate card, after the
 function tag but not derived from it, is the procedural counterpart of treating the two axes as
-independent, which is what the matched-arousal control in [4.4] requires. And deriving stance from
+independent, which is what the matched-arousal control in [4.6] requires. And deriving stance from
 the tag rather than asking for it directly means the three-way label inherits the consistency of the
 fourteen-way scheme instead of being a fresh judgement per clip. Nine of the 873 kept clips are
 marked borderline.
@@ -122,7 +122,7 @@ Sources: `src/17_extract_features.py`, `src/18_probe.py`, `src/22_nonlinear_prob
 | Random seed | 42 |
 
 Grouping by episode rather than by clip prevents leakage through shared speaker, topic and recording
-conditions. The speaker control in [4.4] regroups by show and is reported separately.
+conditions. The speaker control in [4.6] regroups by show and is reported separately.
 
 ## B.2 Uncertainty and significance
 
@@ -136,7 +136,7 @@ conditions. The speaker control in [4.4] regroups by show and is reported separa
 | p-value | `(count(null >= observed) + 1) / (n_permutations + 1)` |
 
 The permutation null rather than the majority-class score is the reference throughout, for the
-reasons in [3.6]. The majority-class figure of 0.196 is reported alongside for completeness only.
+reasons in [3.7]. The majority-class figure of 0.196 is reported alongside for completeness only.
 
 ## B.3 Non-linear probe
 
@@ -187,12 +187,12 @@ Rows are ordered by linear score, which makes the pattern visible. The four repr
 0.500 have a maximum gain of +0.003 anywhere in the sweep. The four below have maxima between +0.010
 and +0.025. The largest gain of all falls on the continuous text embedding rather than on a discrete
 representation, and Mimi before quantisation gains less than Mimi after it, so the pattern tracks
-remaining headroom rather than discreteness [4.4].
+remaining headroom rather than discreteness [4.6].
 
 The linear column here is produced by `src/22_nonlinear_probe.py` and differs from Table 4.2 by up to
 0.003 because the two scripts build their fold assignment from separately loaded manifests. Table 4.2
 remains the reference for absolute figures and this appendix is the reference for gains, which is why
-[4.4] is written in terms of gains throughout.
+[4.6] is written in terms of gains throughout.
 
 ## B.4 Feature dimensionalities
 
@@ -211,7 +211,7 @@ Measured from the stored arrays rather than restated from the extraction code. E
 | Text, both conditions | (873, 768) | 768 | MPNet sentence embedding |
 
 Two consequences are relied on in the chapters. WavLM contributes twice Mimi's pooled width, which
-is why the 0.112 attributed to the codec encoder is reported as an upper bound [Ch.6]. And the two
+is why the 0.089 attributed to the codec encoder is reported as an upper bound [Ch.6]. And the two
 sides of each ladder rung share a dimension exactly, 1,024 against 1,024 for Mimi and 2,048 against
 2,048 for the Descript codec, which is why the quantisation estimate does not carry that caveat.
 
@@ -233,7 +233,7 @@ All 873 kept clips. Columns are stance by arousal.
 
 Three features of this table bear on the analyses. Neutral stance is concentrated in the agreement
 particles, with `okay`, `right` and `yeah` holding 138 of the 147 neutral clips and four phrases
-holding none, which is why the within-word contrast in [4.3] is the dominant binary contrast per
+holding none, which is why the within-word contrast in [4.2] is the dominant binary contrast per
 phrase rather than a uniform three-way task. High-arousal neutral has only 26 clips, so any analysis
 crossing both axes at that cell is thin. And the phrases differ in their stance base rates, which is
 the artefact that lets a probe score above chance from word identity alone in the pooled target-only
@@ -281,7 +281,7 @@ pair reaches a cosine of 0.821 for Mimi and 0.773 for the Descript codec, with p
 output, reaches 0.004 with mean norms of 1.5 against 39.9, so it compares vectors that are neither
 aligned nor of comparable scale. `src/24_projection_cosines.py` writes these to `results/`.
 
-An earlier draft of [3.5] and [4.6] gave 0.808 and 0.008 for two of these, from a run whose output
+An earlier draft of [3.5] and [4.3] gave 0.808 and 0.008 for two of these, from a run whose output
 was printed rather than saved. The figures above supersede them and are measured over the full
 corpus. Nothing in the argument turns on the difference.
 
@@ -298,33 +298,46 @@ the label store and given in B.6.
 
 ## C.1 Per-phrase within-word contrast, full detail
 
-The chapter reports means over the eight phrases [4.3]. The per-phrase figures for WavLM, with the
-contrast attempted and the within-phrase majority baseline, are as follows.
+The chapter reports means over the eight phrases [4.2]. Per-phrase figures are given here
+rather than in the body because they are not stable enough to be read as orderings. Each
+cell holds 68 to 127 clips against 873 for the pooled tables, and moves by roughly 0.030
+with the partition alone, three times the movement of the averaged figure. Source
+`results/within_word_repeated.txt`, `src/36`, 25 partitions.
 
-| Phrase | Contrast | n | macro-F1 | majority |
-|---|---|---:|---:|---:|
-| `come_on` | adversarial / affiliative | 127 | 0.723 | 0.417 |
-| `fine` | adversarial / affiliative | 68 | 0.440 | 0.370 |
-| `great` | adversarial / affiliative | 96 | 0.786 | 0.356 |
-| `okay` | neutral / adversarial | 116 | 0.689 | 0.376 |
-| `really` | adversarial / affiliative | 103 | 0.806 | 0.335 |
-| `right` | affiliative / neutral | 107 | 0.647 | 0.371 |
-| `sure` | affiliative / adversarial | 103 | 0.666 | 0.394 |
-| `yeah` | affiliative / neutral | 95 | 0.519 | 0.403 |
+**WavLM L20**, mean over 25 partitions with the spread across them.
 
-Per-phrase performance varies considerably, from 0.440 on `fine` to 0.806 on `really`, and the mean
-of 0.659 should be read with that spread in mind. Across all five representations, three cells are
-degenerate, meaning the probe emitted a single class and scored exactly the within-phrase majority.
-All three are Mimi under the deployed histogram readout, on `yeah`, `sure` and `come on`, and they
-are the only such cells in the study [4.3]. Under an embedding readout of the same token stream no
-cell degenerates, so the failure is the 16,384-dimensional sparse summary against cells of 58 to 129
-clips rather than an absence of content. Per-phrase figures for all three Mimi readouts are in
-`results/within_word_readout.txt`, produced by `src/26_within_word_readout.py`. Two phrases, `fine` at 0.440 and `yeah` at 0.519,
-sit close to their own within-phrase majority baselines of 0.370 and 0.403, so the mean is carried by
-the other six. The equivalent tables for the other representations are in `probe_results.txt` under
-view C.
+| Phrase | Contrast | n | macro-F1 | sd | min | max |
+|---|---|---:|---:|---:|---:|---:|
+| `come_on` | adversarial / affiliative | 127 | 0.722 | 0.026 | 0.672 | 0.757 |
+| `fine` | adversarial / affiliative | 68 | 0.446 | 0.036 | 0.377 | 0.514 |
+| `great` | adversarial / affiliative | 96 | 0.782 | 0.019 | 0.743 | 0.818 |
+| `okay` | neutral / adversarial | 116 | 0.673 | 0.029 | 0.623 | 0.764 |
+| `really` | adversarial / affiliative | 103 | 0.821 | 0.024 | 0.757 | 0.864 |
+| `right` | affiliative / neutral | 107 | 0.673 | 0.022 | 0.621 | 0.706 |
+| `sure` | affiliative / adversarial | 103 | 0.600 | 0.036 | 0.539 | 0.679 |
+| `yeah` | affiliative / neutral | 95 | 0.533 | 0.051 | 0.444 | 0.629 |
+| **mean** | | | **0.656** | **0.010** | 0.630 | 0.673 |
 
----
+**Mimi, deployed histogram**, the same eight cells.
+
+| Phrase | n | macro-F1 | sd | min | max |
+|---|---:|---:|---:|---:|---:|
+| `come_on` | 127 | 0.418 | 0.006 | 0.415 | 0.446 |
+| `fine` | 68 | 0.378 | 0.028 | 0.327 | 0.428 |
+| `great` | 96 | 0.600 | 0.038 | 0.530 | 0.689 |
+| `okay` | 116 | 0.436 | 0.027 | 0.384 | 0.493 |
+| `really` | 103 | 0.685 | 0.038 | 0.601 | 0.747 |
+| `right` | 107 | 0.397 | 0.030 | 0.355 | 0.474 |
+| `sure` | 103 | 0.399 | 0.011 | 0.391 | 0.423 |
+| `yeah` | 95 | 0.402 | 0.002 | 0.399 | 0.403 |
+| **mean** | | **0.464** | **0.010** | 0.445 | 0.484 |
+
+Two observations that hold across representations. `yeah` and `fine` are the hardest cells
+in every representation tested, and `yeah` also carries the widest spread at sd 0.051, so
+the ordering among the weaker phrases should not be relied on. And the gap between WavLM
+and the deployed histogram is present in every one of the eight cells, which is what makes
+the averaged difference in [4.2] a property of the representations rather than of one or
+two phrases.
 
 # Appendix D. Premise-check design
 
@@ -426,17 +439,17 @@ tokenisation directly.
 
 ---
 
-# Appendix F. The reasoning behind the five constraints
+# Appendix F. The reasoning behind the constraints in [6.2]
 
 Source: `docs/limitations.md`, which holds the full treatment. Section [6.2] states the constraints and
 this appendix gives the reasoning each rests on.
 
 **Why the encoder figure is an upper bound and the quantisation figure is not.** In the ladder,
-WavLM contributes 2,048 pooled features against Mimi's 1,024, so part of the 0.112 attributed to
+WavLM contributes 2,048 pooled features against Mimi's 1,024, so part of the 0.089 attributed to
 distillation and the codec encoder could be dimensionality rather than information loss. The
 quantisation estimate does not carry that risk, because the pre-quantisation and post-quantisation
 representations have identical dimensionality, identical pooling and an identical source [B.4]. Trust
-the 0.034 and treat the 0.112 as a ceiling.
+the 0.027 and treat the 0.089 as a ceiling.
 
 **Why the distillation attribution is associational.** Two comparisons support it, one across codecs
 and one within Mimi, and the internal one holds architecture, frame rate, training data and audio
@@ -450,7 +463,7 @@ linearly accessible rather than whether it is present, and that ambiguity would 
 the continuous-against-discrete comparison. It was tested rather than argued around. Across six probe
 capacities the largest gain anywhere is +0.025 against a gap of roughly 0.14, and the gains that
 occur track headroom rather than representation type, with the largest falling on the continuous text
-embedding [4.4]. Two residual points remain. The probe was kept deliberately small and strongly
+embedding [4.6]. Two residual points remain. The probe was kept deliberately small and strongly
 regularised, since a sufficiently powerful probe learns the task from almost any representation and
 reports on itself, so this rules out modest non-linear encoding rather than any conceivable encoding.
 And accessibility to a probe is not usability by a downstream model, which is why the claims in
@@ -461,6 +474,24 @@ labels, and guests recur across shows, so grouping folds by show does not guaran
 test share no speaker.
 
 **Why cue-level attribution was not attempted.** See Appendix [E].
+
+**Why architecture cannot be separated from training history.** The comparison in [4.5] holds frame
+rate constant and varies encoder architecture, but it does so across three publicly released
+checkpoints that also differ in their training data, schedules and objectives. Gichamba and Busogi
+(2026) provide the concrete reason for caution rather than a general one, having shown an apparent
+architectural limit in DAC at low frame rates resolving into a training misconfiguration once
+sequence length was matched. Separating the two requires codecs trained under matched conditions
+differing only in the temporal mechanism, which no public checkpoint set supplies.
+
+**Why the precision limit is stated as a constraint rather than a finding.** Fold assignment alone
+contributes a standard deviation of 0.010 with a range up to 0.06, and the assignment produced by a
+standard grouped splitter changed between two library releases, moving WavLM L20 from 0.553 to 0.573
+on identical inputs. Every figure reported is therefore a mean over 25 partitions defined in the
+analysis code [3.7]. This bounds what the study can claim, since differences under roughly 0.03 are
+not robust, and it also bounds what can be read from the wider literature, most of which reports
+single-partition figures to three decimals. It is treated here as a limitation on this study rather
+than as a result about others, because establishing the latter would require re-running work that is
+not reproduced here.
 
 **Other constraints.** Target-only text is at chance only within a phrase, not pooled across phrases,
 because the eight phrases differ in their stance base rates and a probe can score above chance from
@@ -506,7 +537,7 @@ WavLM, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60 out-of
 the held-out-episode split. On the most generous reading of the model side the gap is about 0.18,
 roughly 2.3 standard errors at sixty items.
 
-## G.2 Readout, and why Mimi appears twice in Table 4.2
+## G.2 Readout, and why Mimi appears twice in the within-word table
 
 Sources: `src/26_within_word_readout.py`, `results/within_word_readout.txt`, `results/ladder_by_readout.txt`.
 
@@ -529,9 +560,12 @@ of margin pooled over all 873 clips and 0.128 within a phrase.
 Across three summarisations on identical forward passes, WavLM's margin moves by 0.009 and Mimi's by
 0.056. The encoder cost in the ladder holds at 0.116 and 0.121 under the two readouts for which it was
 computed, while the quantisation cost ranges from +0.056 under four-segment pooling to −0.036 with
-deltas, a swing sufficient to change its sign. That comparison is a separate run from the cross-codec
-one, which is why the encoder cost appears as 0.116 there and 0.112 in [4.6]. The difference is
-run-to-run variation in permutation sampling and no argument turns on it.
+deltas, a swing sufficient to change its sign. That comparison is a separate run from the one
+reported in [4.3], which is why the encoder cost appears as 0.116 here and 0.089 there. The figures
+in this appendix are single-partition, predating the scheme in [3.7], while [4.3] is a mean over 25
+partitions. The gap is therefore a difference of measurement scheme rather than sampling noise, and
+this appendix is retained for the ordering it shows across readouts rather than for its absolute
+values.
 
 ## G.3 Probe capacity
 
@@ -602,3 +636,71 @@ measure depend on cell size, which is why only 15 cells qualify with 27 more one
 minimal-pair ABX task avoids this by fixing the comparison as a triplet, so no centroid is estimated
 and no cell need be large (Schatz et al., 2013), which is how it functions inside multi-level
 evaluation suites (Dunbar et al., 2021). [Ch.6] takes that up as the specification for a replacement.
+
+## G.6 The layer sweep
+
+All 63 encoder layers of the three continuous models, three readouts each, 25 partitions
+per cell, 189 cells. Source `results/timing_layers.*`, `src/34 --reps layers`.
+
+**Where stance decoding peaks against where the order effect peaks.**
+
+| model | stance peak | order peak | best cell overall |
+|---|---|---|---|
+| WavLM | L20, 0.557 | L20, +0.113 | L21 `seg4`, 0.592 |
+| Whisper | L12, 0.551 | L12, +0.117 | L12 `seg4`, **0.606** |
+| HuBERT | L23, 0.505 | **L15**, +0.092 | L20 `seg4`, 0.541 |
+
+For WavLM and Whisper the two coincide, so the layer chosen under an order-free readout is
+not the wrong one for a time-aware one. HuBERT dissociates by eight layers, which is
+consistent with its being the model whose layer selection is unstable [H].
+
+**`seg4` is the strongest readout, not the polynomial basis.** It takes 17 of the top 30
+cells and all of the top ten, against 7 for `meanstd` and 6 for `basis8`. Four equal
+segments each pooled beats both the order-free summary and the smooth Legendre basis,
+which was the principled choice on design grounds. Coarse temporal position appears to
+carry more than smooth contour shape does, and this is reported against expectation.
+
+**Consequence for the comparison in [4.2].** Read at each model's own best layer under a
+time-aware readout, Whisper reaches 0.606 and WavLM 0.592. That 0.014 is well inside the
+partition noise of 0.010, so the two are level rather than ordered. Whisper also peaks at
+its final encoder layer, which does not sit comfortably with accounts placing
+paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025).
+
+---
+
+# Appendix H. HuBERT-large
+
+HuBERT-large (Hsu et al., 2021) was probed throughout on identical folds, readouts and
+features as every other representation. It is reported here rather than in the body
+because it duplicates WavLM as a masked-prediction self-supervised control, sharing
+architecture, depth and width and differing chiefly in WavLM's noise and overlapped-speech
+augmentation, and because its layer selection is not stable. It is reported rather than
+omitted because removing a condition after seeing its results would be selective
+reporting.
+
+**Pooled decodability**, mean over 25 partitions at L23.
+
+| readout | macro-F1 | sd | order effect | sd | t |
+|---|---:|---:|---:|---:|---:|
+| meanstd | 0.505 | 0.013 | — | | |
+| basis8 | 0.490 | 0.012 | +0.086 | 0.020 | 21.3 |
+| seg4 | 0.526 | 0.014 | +0.034 | 0.018 | 9.4 |
+| delta | 0.485 | 0.009 | +0.001 | 0.017 | 0.4 |
+
+HuBERT sits below WavLM at 0.557 and Whisper at 0.548, and its order effect of +0.086 sits
+between them, so including it would not have changed any claim in [Ch.4].
+
+**Why its layer choice is not stable.** Selecting the layer inside each training split and
+scoring on held-out episodes gives 0.491 against the 0.520 obtained by taking the argmax
+over all data, an optimism of **+0.029**, the largest of the three models. The layer chosen
+varies across folds, at L20, L23, L10, L21 and L23, and one of those is fifteen layers from
+the others. Its layer curve is correspondingly flat, moving 0.027 across its top four
+layers. WavLM and Whisper carry optimism of +0.003 and +0.015 by the same measure [G.6].
+
+**Where its order effect lives.** Stance decoding peaks at L23 while the order effect peaks
+at L15, the only dissociation of the three models [G.6]. Given the instability above, the
+more cautious reading is that L23 is not a reliable peak rather than that the two
+quantities genuinely separate in this model.
+
+**Within-word figures** are the single-partition values from the original run, 0.616 mean
+across the eight phrases, and were not recomputed under the partition scheme in [3.7].

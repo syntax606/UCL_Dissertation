@@ -50,7 +50,7 @@ Table 4.1 reports the three-way stance probe on the primary window.
 | Mimi, deployed tokens | 0.371 | 0.009 |
 
 Every representation exceeds the empirical permutation null, which sits near 0.33 in
-every configuration tested [G.5]. The continuous encoders clear it by roughly 0.22,
+every configuration tested [B.2]. The continuous encoders clear it by roughly 0.22,
 the deployed token stream by 0.04.
 
 Two entries need comment. **eGeMAPS** is the hand-crafted comparison, and it places the
@@ -75,7 +75,8 @@ that phrase's dominant binary contrast, so word identity carries no information.
 
 The ordering survives the control, which is the result the rest of the chapter depends
 on. Whatever the codecs are losing, they are not losing it because the probe was reading
-the word.
+the word. Mimi appears twice because the difference between those two rows is the readout
+rather than the representation, decomposed in [G.2].
 
 Two things follow from the third column. Individual phrase cells hold 68 to 127 clips
 and move by roughly 0.030 with the partition alone, three times as much as the averaged

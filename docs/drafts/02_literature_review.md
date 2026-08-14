@@ -169,7 +169,7 @@ correlates for ironic delivery, namely slower tempo, greater intensity, lowered 
 reduced F0 range and altered voice quality (Rockwell, 2000; Lan et al., 2019), while
 disputing whether these amount to a dedicated ironic tone or a family of cues recognised
 in context (Bryant and Fox Tree, 2005). That dispute bears on the premise check in [4.1],
-where context alone recovers much of the contrast.
+where context alone recovers much of the contrast. Appendix [E] gives the inventory.
 
 **Spontaneous against acted delivery.** Rockwell (2000) found listeners able to
 discriminate posed sarcasm and unable to discriminate spontaneous sarcasm, so the two are

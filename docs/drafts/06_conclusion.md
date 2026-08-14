@@ -35,9 +35,12 @@ Three hypotheses were stated before testing and are not supported, and reporting
 part of the result. Variable-frame-rate tokenisation does not recover the loss, with
 Sylber and DyCAST both below Mimi before quantisation. Timing features alone sit at
 chance. Order-aware summaries of the discrete streams score below the unigram histogram
-they were intended to improve on [4.6].
+they were intended to improve on [4.6]. A training-free contrast-preservation measure was
+also attempted and does not discriminate, since every representation falls inside the
+interval between its two defensible baselines, and the failure is structural rather than a
+matter of power [G.5].
 
-Four constraints bound the positive findings.
+Five constraints bound the positive findings.
 
 The architectural account is the best supported explanation available and it is not the
 only one. Gichamba and Busogi (2026) show an apparent architectural limit in DAC
@@ -45,6 +48,12 @@ resolving into a training misconfiguration once sequence length was matched. Fro
 public checkpoints cannot separate what an architecture can represent from what a
 particular training run taught it to represent, and settling that needs codecs trained
 under matched conditions differing only in the temporal mechanism.
+
+The encoder figure is an upper bound while the quantisation figure is not. WavLM
+contributes twice the pooled dimensionality of a codec latent, so part of the cost
+assigned to the encoder step could be dimensionality rather than content. The quantiser
+step compares a representation against itself at equal width and carries no such caveat,
+which matters because the ratio between the two is the claim [F].
 
 The attribution to distillation is associational. Mimi's codebook 0 carries the stance
 signal and codebook 0 is the distilled one, but the decisive experiment trains one codec
