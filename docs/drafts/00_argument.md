@@ -67,12 +67,16 @@ Temporal, and it drains progressively rather than at one step.
 | representation | order effect | sd | t |
 |---|---:|---:|---:|
 | WavLM L20 | +0.113 | 0.013 | 44.6 |
-| HuBERT L23 | +0.086 | 0.020 | 21.3 |
 | Mimi pre-quantisation | +0.080 | 0.018 | 21.9 |
 | Whisper L9 | +0.070 | 0.015 | 23.6 |
 | Mimi post-quantisation | +0.048 | 0.019 | 13.0 |
 | EnCodec pre-quantisation | +0.033 | 0.017 | 9.8 |
 | DAC pre-quantisation | −0.007 | 0.019 | −1.9 |
+
+HuBERT-large is omitted from the body and reported in Appendix H. It duplicates WavLM as
+a self-supervised control and its layer selection is not stable, ranging over L10 to L23
+across folds. It was probed throughout and its figures are reported rather than dropped,
+since removing a condition after seeing its results would be selective reporting.
 
 Source `results/timing_probe.csv`, `src/34`. Each readout is compared against its own
 frame-shuffled control, which matches on dimensionality and on every feature's
