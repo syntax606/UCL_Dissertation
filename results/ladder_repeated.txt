@@ -1,0 +1,30 @@
+QUANTISATION LADDER, REPEATED PARTITIONS
+Mean over 25 independent episode-to-fold partitions, with sd. Partitions
+are defined in src/34 rather than by GroupKFold, whose assignment changed
+between scikit-learn 1.7 and 1.9. Compare against src/19 and src/21, which
+report a single partition each.
+==============================================================================
+rung                                macroF1     sd     min     max
+WavLM L20, continuous teacher         0.557  0.009   0.530   0.571
+Mimi, pre-quantisation                0.468  0.014   0.438   0.499
+Mimi, post-quantisation               0.441  0.014   0.417   0.464
+Mimi, deployed histogram              0.371  0.009   0.346   0.388
+DAC, pre-quantisation                 0.404  0.015   0.370   0.432
+DAC, post-quantisation                0.381  0.013   0.363   0.415
+EnCodec, pre-quantisation             0.396  0.012   0.374   0.418
+EnCodec, post-quantisation            0.400  0.010   0.385   0.416
+
+STEP COSTS, paired on partitions so partition noise cancels
+step                                              cost     sd      t
+encoder, WavLM to Mimi pre                      +0.089  0.014   30.8
+quantiser, Mimi pre to post                     +0.027  0.015    9.4
+readout, Mimi post to histogram                 +0.070  0.016   21.4
+encoder, WavLM to DAC pre                       +0.153  0.017   45.8
+quantiser, DAC pre to post                      +0.023  0.013    9.0
+encoder, WavLM to EnCodec pre                   +0.161  0.011   75.5
+quantiser, EnCodec pre to post                  -0.005  0.015   -1.5
+
+Read: a positive cost means the step loses stance. The claim in [Ch.4] is
+that the encoder step is the larger one and that this replicates across
+codecs of independent design. Costs here are paired across partitions, so
+their sd is the scale to judge them against, not the sd of either rung.
