@@ -1,220 +1,208 @@
 # Chapter 2: Literature Review
 
-*(Draft, restructured on the S2S-Arena related-work pattern. Two tables carry the per-item detail so
-the prose characterises families rather than individual papers. Citations are the verified set in
-docs/literature_references_verified.md, and all quoted material and all figures attributed to other
-papers have been checked against those papers.)*
+*(Draft. Two tables carry the per-item detail so the prose characterises families rather
+than individual papers. Quoted material has been checked against the source papers.)*
 
 ## 2.1 Discrete speech tokens
 
-Discrete audio tokens have become a general-purpose interface for speech modelling. They underpin
-codecs built for compression (Zeghidour et al., 2021; Défossez et al., 2022; Kumar et al., 2023),
-tokenisers built to feed language models (Zhang et al., 2024a; Ye et al., 2024; Défossez et al.,
-2024), full-duplex speech-to-speech dialogue systems (Défossez et al., 2024), and paralinguistic
-modelling from codes rather than waveforms (Sun et al., 2026; Zhang et al., 2024b; Ren et al., 2024),
-with an evaluation literature of its own (Mousavi et al., 2026; Deng et al., 2025; Wang et al.,
-2025b; Guo et al., 2025; Arora et al., 2025). What unites them is that the tokens, not the audio, are
-what the downstream model receives, which makes the informational content of the tokenisation step a
-first-order design question.
+Discrete audio tokens have become a general-purpose interface for speech modelling,
+underpinning codecs built for compression (Zeghidour et al., 2021; Défossez et al., 2022;
+Kumar et al., 2023), tokenisers built to feed language models, and full-duplex
+speech-to-speech dialogue (Défossez et al., 2024). What unites them is that the tokens,
+not the audio, are what the downstream model receives, which makes the informational
+content of the tokenisation step a first-order design question.
 
-**Two token families.** *Acoustic* tokens derive from codecs optimised for reconstruction and
-preserve signal-level detail. *Semantic* tokens derive from self-supervised or supervised speech
-models and encode phonetic or linguistic content.[^sem] Pragmatic meaning sits in neither cleanly.
-Sarcasm, reluctance and ironic agreement are not lexical content, but neither are they the arbitrary
-signal detail a codec preserves for reconstruction. They occupy a middle band of prosody, timing and
-emphasis that current tokenisation was not designed to retain.
+**Two token families.** *Acoustic* tokens derive from codecs optimised for reconstruction
+and preserve signal-level detail. *Semantic* tokens derive from self-supervised or
+supervised models and encode phonetic or linguistic content.[^sem] Pragmatic meaning sits
+in neither cleanly. Sarcasm, reluctance and ironic agreement are not lexical content, but
+neither are they the arbitrary signal detail a codec preserves for reconstruction. They
+occupy a middle band of prosody, timing and emphasis that tokenisation was not designed
+to retain.
 
-[^sem]: The term is a misnomer. So-called semantic tokens are better described as phonetic units
-(Sicherman and Adi, 2023) and generally lack semantic content in the linguistic sense (Arora et al.,
-2025), a point the review literature states explicitly (Guo et al., 2025) and codec probing confirms
-(Shi et al., 2026). This dissertation retains the conventional term for consistency with the systems
-it describes, and 2.2 sets out why the distinction settles nothing about pragmatic force.
+[^sem]: The term is a misnomer. So-called semantic tokens are better described as phonetic
+units (Sicherman and Adi, 2023) and generally lack semantic content in the linguistic
+sense (Arora et al., 2025). This dissertation retains the conventional term for
+consistency with the systems it describes.
 
-**A design lineage of added supervision.** Residual quantisation was established in service of
-reconstruction alone, in SoundStream (Zeghidour et al., 2021), EnCodec (Défossez et al., 2022) and
-the Descript codec (Kumar et al., 2023). SpeechTokenizer (Zhang et al., 2024a) introduced the
-modification that concerns this study, guiding the first quantiser with a self-supervised teacher so
-that the leading stream carries content and later streams carry refinement. Mimi (Défossez et al.,
-2024) inherits that arrangement with WavLM as teacher, and X-Codec (Ye et al., 2024) generalises it
-by injecting teacher features before quantisation rather than only supervising after. Which
-supervision is added determines what the tokens retain, which is why this study uses the Descript
-codec as its undistilled comparison.
+**A design lineage of added supervision.** Residual quantisation was established in
+service of reconstruction alone, in SoundStream (Zeghidour et al., 2021), EnCodec
+(Défossez et al., 2022) and DAC (Kumar et al., 2023). SpeechTokenizer (Zhang et al.,
+2024a) introduced the modification that concerns this study, guiding the first quantiser
+with a self-supervised teacher so that the leading stream carries content and later
+streams carry refinement. Mimi (Défossez et al., 2024) inherits that arrangement with
+WavLM as teacher, and X-Codec (Ye et al., 2024) generalises it by injecting teacher
+features before quantisation. Which supervision is added determines what the tokens
+retain, which is why the undistilled codecs serve as the comparison here.
 
-**Where the loss shows up.** DASB (Mousavi et al., 2026) finds discrete representations
-systematically less robust than continuous ones, with preserving phonetic content, speaker identity
-and paralinguistic cues simultaneously an open problem. Behavioural evaluations of deployed systems
-report the same weakness downstream (Jiang et al., 2025; Yang et al., 2026).
+**A second axis, less often discussed.** These systems also differ in how their encoders
+treat time, and not only in how often they sample it. DAC is purely convolutional,
+EnCodec adds recurrence, and Mimi adds a transformer bottleneck over the convolutional
+stack. That difference is orthogonal to the distillation lineage and turns out to predict
+what this study measures [4.5].
 
 ## 2.2 The representations under test
 
-Seven representations are compared on a single task, recovering the pragmatic force of a phrase
-whose lexical content is held constant. Table 2.1 gives their characteristics.
+Eight representations are compared on a single task, recovering the pragmatic force of a
+phrase whose lexical content is held constant.
 
-**Table 2.1.** Representations under test. Frame rate in Hz. Layers times hidden width for the
-continuous encoders, codebook vocabulary for the codecs. Specifications read from the checkpoints and
-the primary papers.
+**Table 2.1.** Representations under test. Frame rate in Hz. Specifications read from the
+checkpoints and the primary papers.
 
-| Representation | SR | FR | Layers × hidden | Vocab | Type | Quantisation |
+| Representation | SR | FR | Layers × hidden | Vocab | Type | Encoder time handling |
 |---|---|---:|---|---:|---|---|
-| WavLM-large (Chen et al., 2022) | 16 kHz | 50 | 25 × 1024 | | continuous, self-supervised | none |
-| HuBERT-large (Hsu et al., 2021) | 16 kHz | 50 | 25 × 1024 | | continuous, self-supervised | none |
-| Whisper-small encoder (Radford et al., 2023) | 16 kHz | 50 | 13 × 768 | | continuous, supervised | none |
-| Mimi (Défossez et al., 2024) | 24 kHz | 12.5 | | 2048 | hybrid, 8 codebooks, WavLM-distilled | RVQ |
-| DAC (Kumar et al., 2023) | 24 kHz | 75 | | 1024 | acoustic, 32 codebooks, first 8 used | RVQ |
+| WavLM-large (Chen et al., 2022) | 16 kHz | 50 | 25 × 1024 | | continuous, self-supervised | transformer |
+| Whisper-small enc. (Radford et al., 2023) | 16 kHz | 50 | 13 × 768 | | continuous, supervised | transformer |
+| Mimi (Défossez et al., 2024) | 24 kHz | 12.5 | | 2048 | hybrid, 8 codebooks, WavLM-distilled | conv + 8 attention layers |
+| DAC (Kumar et al., 2023) | 24 kHz | 75 | | 1024 | acoustic, first 8 of 32 codebooks | convolution only |
+| EnCodec (Défossez et al., 2022) | 24 kHz | 75 | | 1024 | acoustic, 8 codebooks | convolution + LSTM |
 | MPNet text embedding | | | 768 | | continuous, text | none |
 | eGeMAPSv02 functionals | | | 88 | | hand-crafted acoustic | none |
 
-**Continuous encoders.** HuBERT and WavLM share a masked-prediction architecture and a documented
-layer-wise division of labour, with lower layers encoding local acoustic detail, middle layers
-integrating prosodic and contextual information, and upper layers abstracting toward linguistic
-content (Pasad et al., 2021; Chiu et al., 2025). The mid-layer optimum is not absolute (Zhang et al.,
-2024b), which is why the full stack is probed. WavLM's noise and overlapped-speech augmentation makes
-it strong on speaker identity, a nuisance for any distance-based measure [3.6]. The Whisper encoder
-is the theoretically interesting case, since a transcription objective predicts a lexical bias the
-self-supervised encoders do not share, and the context-window comparison [Ch.4] separates that route
-from phrase-level delivery.
+HuBERT-large was probed throughout as a matched self-supervised control for WavLM and is
+reported in Appendix [H].
 
-**Codecs.** Mimi is used rather than a pure acoustic codec because it is the input tokeniser for
-deployed speech-to-speech systems, and a model built on it consumes the whole stack, which is why
-the headline condition is all eight codebooks together. The two codecs are matched at eight codebooks
-rather than at equal bitrate, so quantiser count is held constant while frame rate and codebook
-geometry vary. That is a limitation of the cross-codec contrast [Ch.6] and the closest available
-approximation to an ablation of the distillation objective without training a codec.
+**Continuous encoders.** WavLM and HuBERT share a masked-prediction architecture and a
+documented layer-wise division of labour, with lower layers encoding local acoustic
+detail, middle layers integrating prosodic and contextual information, and upper layers
+abstracting toward linguistic content (Pasad et al., 2021). Qian, Figueroa and Skantze
+(2025) locate prosodic information primarily in middle layers across four foundation
+models. That the optimum is not absolute is why the full stack is probed here rather than
+a layer assumed. The Whisper encoder is the theoretically interesting case, since a
+transcription objective predicts a lexical bias the self-supervised encoders do not
+share.
 
-**Naming the first codebook.** Codec probing (Shi et al., 2026) shows that distillation from WavLM
-injects phonetic rather than semantic knowledge, from which an earlier version of this chapter
-predicted that pragmatic force would sit in the acoustic codebooks rather than in codebook 0. Chapter
-4 shows the reverse [4.5]. The inference was a category error. The semantic-versus-phonetic axis
-concerns what a stream encodes about which words were said, and pragmatic force is orthogonal to it,
-so a finding either way licenses no inference about delivery. What predicts the outcome is the
-distillation source rather than the stream's conventional label.
+**Codecs.** Mimi is used rather than a pure acoustic codec because it is the input
+tokeniser for deployed speech-to-speech systems. DAC and EnCodec are matched to it at
+eight codebooks rather than at equal bitrate, so quantiser count is held constant while
+frame rate and codebook geometry vary. DAC and EnCodec are additionally matched to each
+other at 75 Hz, which is what permits frame rate to be separated from encoder
+architecture [4.5].
 
-**The hand-crafted baseline.** The seventh entry is not a model. eGeMAPS supplies 88 interpretable
-acoustic functionals, and without it the study could show that a learned representation separates
-stance without establishing that this exceeds what pitch and energy alone would give. Because its
-features are individually interpretable they can also be grouped by what they measure, which is what
-the cue analysis in [4.7] requires.
+**Naming the first codebook.** Codec probing (Shi et al., 2026) shows that distillation
+from WavLM injects phonetic rather than semantic knowledge, from which an earlier version
+of this chapter predicted that pragmatic force would sit in the acoustic codebooks rather
+than in codebook 0. Chapter 4 shows the reverse [4.6]. The inference was a category
+error, since the semantic-versus-phonetic axis concerns what a stream encodes about which
+words were said, and pragmatic force is orthogonal to it.
 
-**The transcript baseline.** The text embedding is two objects with two roles [3.5]. Because the word
-is held constant, an embedding of the word alone is at chance within a phrase by construction and is
-a manipulation check rather than a competitor. An embedding of the surrounding discourse is the
-substantive text baseline, since pragmatic cues leak into neighbouring words.
+## 2.3 What tokenisation loses, and what is proposed about it
 
-## 2.3 What tokenisation loses
+**On affect and prosody.** DASB (Mousavi et al., 2026) finds discrete representations
+systematically less robust than continuous ones. EMO-Codec (Ren et al., 2024) finds
+emotion recognition degraded after codec resynthesis. Sun et al. (2026) report a 6 to 14
+per cent drop on emotion recognition from discretised features, and two details matter
+beyond the figure. The loss is largely recoverable through multi-layer fusion and
+explicit reintroduction of paralinguistic features, which constrains how strongly any
+claim here can be stated. And continuous features are stable across configurations while
+discrete ones fluctuate, so instability is itself a signature of information loss. The
+defensible claim is therefore not that tokenisation destroys paralinguistic content,
+which that recovery falsifies, but that *default* tokenisation discards content
+recoverable only with deliberate intervention, and that deployed systems consume the
+defaults.
 
-**On prosody.** ProsodyLM (Qian et al., 2025) argues that token-then-model training is suboptimal for
-prosody and proposes explicit word-level prosody tokens, while Segmentation-Variant Codebooks
-(Sanders et al., 2025) argues that a single flat token rate cannot preserve prosodic and
-paralinguistic information. Both imply that standard tokenisation is not built to retain what this
-study targets.
+**The remedies currently proposed, and where they intervene.** One family intervenes at
+the codebook, through explicit word-level prosody tokens (Qian, Y. et al., 2025) or
+quantisation at multiple segmental units (Sanders et al., 2025). A second and larger
+family intervenes on the frame rate. FlexiCodec (Li et al., 2026) and CodecSlime allocate
+frames dynamically on the grounds that natural speech units are inherently dynamic in
+their rate of occurrence, so a fixed rate wastes capacity on silence and sustained vowels
+while under-resolving transients. Sylber (Cho et al., 2025) and DyCAST (Della Libera et
+al., 2026) go further, deriving the units from the signal or from character alignment
+rather than from a clock.
 
-**On affect.** EMO-Codec (Ren et al., 2024) resynthesises speech through legacy and neural codecs and
-finds emotion recognition degraded afterwards, with listening tests agreeing and the loss uneven
-across categories. Two codecs published in 2026 respond by making affect a training target, through
-emotion-guided modulation of the latent before quantisation (Shi et al., 2026b) and through
-block-diagonal projections separating emotion and acoustic subspaces inside the quantiser (Meng et
-al., 2026). Emotion preservation is therefore an active design objective, and the open question is
-not whether affect can be built into a codec but which affective quantity supervises it. This study
-separates stance from arousal and measures them independently [3.3], and Chapter 5 returns to what
-that separation implies.
+Two things about this family bear on the present study. Its stated motivation is
+predominantly semantic and phonetic rather than prosodic. FlexiCodec's own account of the
+syllabic line is that it "successfully extracts semantic units at 5-8Hz but largely
+discards the fine-grained acoustic details, prosody, and timing required for high-fidelity
+reconstruction", and SyllableLM describes its objective as coarse semantic units at low
+bitrate (Baade et al., 2025). So the literature that proposes variable rates as a fix for
+timing also records, of the systems that go furthest, that prosody is what they shed. And
+Gichamba and Busogi (2026), ablating frame rate on DAC from 1.6 to 100 Hz, find no
+evidence that frame rate imposes a fundamental barrier at all, tracing an apparent quality
+cliff to a training misconfiguration.
 
-**How much is lost, and how recoverable.** Sun et al. (2026) discretise a fine-tuned WavLM and
-evaluate emotion recognition on MSP-Podcast, reporting macro-F1 between 0.3133 and 0.3479, a 6 to 14
-per cent drop against continuous features. Two details matter beyond the figure. The loss is largely
-recoverable through multi-layer fusion and explicit reintroduction of paralinguistic features, which
-is the single most important constraint on how strongly the present claim can be stated. And
-continuous features are stable across configurations while discrete ones fluctuate, so instability is
-itself a signature of information loss, a diagnostic returned to in [Ch.4]. The defensible claim is
-therefore not that tokenisation destroys paralinguistic content, which that recovery falsifies, but
-that *default* tokenisation discards content recoverable only with deliberate intervention, and that
-deployed systems consume the defaults. A related line (Wang et al., 2026) finds paralinguistic
-complexity the most disruptive factor in speech-language modelling, so poorly represented, this
-information does not merely go missing but can destabilise modelling.
+**A mechanism for discrete instability.** Liu et al. (2024) show that codec encoders
+integrate context, so acoustically identical segments receive different token sequences
+depending on their surroundings, with consistency falling as codebook depth increases.
+Code identity is therefore less stable than the vector it decodes to, which bears directly
+on any summary computed over indices [4.3].
 
-**Why the standard comparisons overstate.** Both designs criticised in [1.2] fail in the same way. A
-probe on utterances whose words differ measures a mixture of delivery and vocabulary in unknown
-proportion, and more data does not separate them, because the confound is in the comparison rather
-than in the representation. Placing a continuous encoder against a token stream and assigning the
-difference to quantisation compares conditions differing simultaneously in architecture, objective,
-frame rate and feature construction, so the figure is real but is not a measurement of
-discretisation. The parallel is reconstruction-based codec evaluation, where a strong decoder masks
-deficiencies in the tokens and inflates apparent token quality (Mousavi et al., 2026). In each case
-the fix is to remove the intermediary and measure the step in isolation. None of this is a criticism
-of the findings above, which this study largely reproduces. It constrains what they can be used to
-conclude.
+**Why the standard comparisons overstate.** Both designs criticised in [1.2] fail in the
+same way. A probe on utterances whose words differ measures a mixture of delivery and
+vocabulary in unknown proportion. Placing a continuous encoder against a token stream and
+assigning the difference to quantisation compares conditions differing simultaneously in
+architecture, objective, frame rate and feature construction. In each case the fix is to
+remove the intermediary and measure the step in isolation. This is not a criticism of the
+findings above, which this study largely reproduces. It constrains what they can be used
+to conclude.
 
 ## 2.4 The linguistic construct
 
-The preceding sections concern what representations retain. This section establishes that the thing
-they might retain is a describable linguistic object rather than a label of convenience.
+**Stance.** Du Bois (2007) formalises stancetaking as a single act that evaluates an
+object, positions the speaker and calibrates alignment with an interlocutor, and it is
+alignment that this study operationalises. Biber and Finegan (1988) give the complementary
+account of lexical and grammatical stance marking, which matters because the design
+removes those markers by holding the word constant. What remains is the
+conversation-analytic notion of affiliation and disaffiliation (Stivers, 2008; Steensig,
+2019).
 
-**Stance.** Du Bois (2007) formalises stancetaking as a single act that evaluates an object, positions
-the speaker and calibrates alignment with an interlocutor, and it is alignment that this study
-operationalises. Biber and Finegan (1988) give the complementary account of lexical and grammatical
-stance marking, which matters because the design removes those markers by holding the word constant.
-What remains is the conversation-analytic notion of affiliation and disaffiliation (Stivers, 2008;
-Steensig, 2019), onto which the three-way axis maps closely enough that the annotation scheme is best
-understood as an operationalisation of it [3.3].
+**Response tokens.** *Yeah*, *okay*, *right* and *sure* are response tokens, and their
+defining property is the one this study exploits. Gravano et al. (2012) show them to be
+systematically ambiguous between agreeing, signalling continued attention and marking a
+topic shift, with those functions distinguished in spontaneous dialogue by prosodic
+realisation rather than by wording, and they frame that ambiguity as a problem for spoken
+dialogue systems, which is what this dissertation measures one stage earlier.
 
-**Response tokens.** The target phrases are not arbitrary short words. *Yeah*, *okay*, *right* and
-*sure* are response tokens, and their defining property is the one this study exploits. Gravano,
-Hirschberg and Beňuš (2012) show them to be systematically ambiguous between agreeing, signalling
-continued attention and marking a topic shift, with those functions distinguished in spontaneous
-dialogue by prosodic realisation rather than by wording, and they frame that ambiguity as a problem
-for spoken dialogue systems, which is what this dissertation measures one stage earlier. Their
-account also explains why neutral stance concentrates almost entirely in the agreement particles
-[B.5], since backchannelling is a function of that class specifically.
+**That delivery is separable from wording** is not assumed here. O'Connor Russell et al.
+(2026) vocoder speech to remove lexical content while preserving prosody and find
+turn-taking prediction retaining 87 to 91 per cent of clean-speech accuracy, concluding
+that prosodic and lexical cues are encoded in self-supervised representations with limited
+interdependence. Qian, Figueroa and Skantze (2025) reach the same design decision
+independently, grouping stimuli by lexical form to eliminate the effects of lexical
+semantics.
 
-**The acoustic signature.** An experimental literature converges on a small set of correlates for
-ironic and sarcastic delivery, namely slower tempo, greater intensity, lowered pitch, reduced F0
-range and altered voice quality (Rockwell, 2000; Lan et al., 2019), while disputing whether these
-amount to a dedicated ironic tone or a family of cues recognised in context (Bryant and Fox Tree,
-2002, 2005). That dispute bears on the premise check in [4.1], where context alone recovers much of
-the contrast, which a family-of-cues account predicts. The cues are also not uniform in how much a
-reconstruction objective needs them, which [Ch.5] takes up. Appendix [E] gives the inventory.
+**The acoustic signature.** An experimental literature converges on a small set of
+correlates for ironic delivery, namely slower tempo, greater intensity, lowered pitch,
+reduced F0 range and altered voice quality (Rockwell, 2000; Lan et al., 2019), while
+disputing whether these amount to a dedicated ironic tone or a family of cues recognised
+in context (Bryant and Fox Tree, 2005). That dispute bears on the premise check in [4.1],
+where context alone recovers much of the contrast.
 
-**Spontaneous against acted delivery.** Rockwell (2000) found listeners able to discriminate posed
-sarcasm and unable to discriminate spontaneous sarcasm at all, so the two are not interchangeable
-stimuli. Scherer (2003) sets that problem out for vocal emotion research generally, and it is why
-naturalistic podcast-derived corpora were built (Lotfian and Busso, 2019; Busso et al., 2025). This
-is the strongest reason to prefer spontaneous podcast audio over MUStARD, IEMOCAP or RAVDESS, and it
-calibrates expectations for the premise check, since spontaneous delivery is harder for human
-listeners and not only for models.
+**Spontaneous against acted delivery.** Rockwell (2000) found listeners able to
+discriminate posed sarcasm and unable to discriminate spontaneous sarcasm, so the two are
+not interchangeable stimuli. Scherer (2003) sets that problem out for vocal emotion
+research generally, and it is why naturalistic podcast-derived corpora were built (Lotfian
+and Busso, 2019).
 
 ## 2.5 Position of this study
 
-Table 2.2 places this study against the work closest to it on the dimensions that distinguish them.
+**Table 2.2.** Prior work on paralinguistic content in speech representations. *Lexical
+control* means wording is held constant so delivery is the only variable. *Stage-resolved*
+means the pipeline is decomposed rather than compared end to end.
 
-**Table 2.2.** Prior work on paralinguistic content in speech representations. *Lexical control*
-means the wording is held constant so delivery is the only variable. *Stage-resolved* means the
-pipeline is decomposed rather than compared end to end.
+| Study | Corpus | Lexical control | Discrete | Stage-resolved | Axis measured |
+|---|---|---|---|---|---|
+| Lin et al. (2022) | acted television | no | no | no | sarcasm, binary |
+| Mousavi et al. (2026) | mixed | no | yes | no | multi-task |
+| Ren et al. (2024) | acted | no | yes | no | emotion, categorical |
+| Sun et al. (2026) | spontaneous podcast | no | yes | no | emotion, categorical |
+| Qian, Figueroa & Skantze (2025) | spontaneous feedback | **yes, lexical form** | no | no | perceived similarity |
+| O'Connor Russell et al. (2026) | spontaneous dyads | by vocoding | no | no | turn-taking |
+| Gichamba & Busogi (2026) | read speech | n/a | yes | by frame rate | reconstruction |
+| Yang et al. (2026) | synthesised and acted | yes, system level | n/a | no | behavioural |
+| **This study** | **spontaneous podcast** | **yes, phrase level** | **yes** | **yes, and by architecture** | **stance and arousal** |
 
-| Study | Corpus | Lexical control | Continuous | Discrete | Stage-resolved | Axis measured |
-|---|---|---|---|---|---|---|
-| Lin et al. (2022) | acted television | no | yes | no | no | sarcasm, binary |
-| Zhang et al. (2024b) | acted and spontaneous | no | yes | no | no | paralinguistic, multi-task |
-| Mousavi et al. (2026) | mixed | no | yes | yes | no | multi-task |
-| Ren et al. (2024) | acted | no | no | yes | no | emotion, categorical |
-| Sun et al. (2026) | spontaneous podcast | no | yes | yes | no | emotion, categorical |
-| Shi et al. (2026) | read speech | no | no | yes | partial | semantic and phonetic |
-| Yang et al. (2026) | synthesised and acted | yes, system level | n/a | n/a | no | behavioural |
-| **This study** | **spontaneous podcast** | **yes, phrase level** | **yes** | **yes** | **yes** | **stance and arousal** |
+Two entries are close siblings and neither closes the question. Qian, Figueroa and Skantze
+(2025) adopt the same lexical control on the same class of words, but compare continuous
+representations only and measure perceived similarity rather than a decomposed pipeline.
+Gichamba and Busogi (2026) run a controlled single-variable ablation on a codec, but the
+variable is frame rate and the outcome is reconstruction quality.
 
-The closest precedent is Lin et al. (2022), who probed self-supervised models on prosody-related
-tasks including sarcasm using MUStARD (Castro et al., 2019), and found acoustic models beating a
-text-only baseline and low-level layers helping sarcasm specifically. That work establishes that
-speech representations carry pragmatic-prosodic signal text loses, so the generic claim that speech
-beats text is not available here as a finding. What its design leaves open is the lexical route,
-since MUStARD utterances differ in their words.
-
-Yang et al. (2026) independently adopt the same control at the level of whole systems, requiring
-benchmark queries to carry neutral textual content so that a model "cannot infer the speaker's state
-from words alone and must attend to vocal cues". That the two construction rules were arrived at
-separately is evidence the move is right rather than idiosyncratic. The two studies are
-complementary, theirs behavioural and asking whether a system responds appropriately, this one
-representational and asking whether the contrast is present to be responded to.
-
-Overall, existing work establishes that discretisation is lossy and weakest in the
-prosodic-paralinguistic band, but measures it either without holding wording constant, so delivery
-and vocabulary are confounded, or without decomposing the pipeline, so the loss cannot be localised.
-This study does both.
+Yang et al. (2026) independently adopt the same control at the level of whole systems,
+requiring benchmark queries to carry neutral textual content so that a model "cannot infer
+the speaker's state from words alone and must attend to vocal cues". That the construction
+rule was arrived at separately is evidence the move is right rather than idiosyncratic.
+The two studies are complementary, theirs behavioural and asking whether a system responds
+appropriately, this one representational and asking whether the contrast is present to be
+responded to.
