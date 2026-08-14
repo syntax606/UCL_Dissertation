@@ -14,53 +14,45 @@ labelling arousal independently of stance. Each of these is realised concretely 
 
 ## 3.2 Corpus and target phrases
 
-The material is naturalistic speech drawn from political podcasts and broadcast programmes,
-chosen over acted emotion corpora for two reasons. The central claim concerns how representations
-behave on the spontaneous delivery deployed systems actually encounter. And acted and spontaneous
-renditions of the same category are not interchangeable stimuli, a methodological problem set out
-for vocal emotion research generally by Scherer (2003) and demonstrated for sarcasm specifically by
-Rockwell (2000), who found listeners able to discriminate posed sarcasm from non-sarcasm but not
-spontaneous sarcasm. Naturalistic podcast-derived corpora were constructed in response to exactly
-this problem (Lotfian and Busso, 2019; Busso et al., 2025), and this corpus follows that precedent
-at a finer grain, since the unit of analysis is a single phrase rather than a speaking turn. Audio was
-transcribed with word-level timestamps and indexed so that individual token occurrences could
-be located and cut precisely.
+The material is naturalistic speech from political podcasts and broadcast programmes,
+chosen over acted emotion corpora because the claim concerns spontaneous delivery, and
+because acted and spontaneous renditions of the same category are not interchangeable
+stimuli. Scherer (2003) sets that problem out for vocal emotion research generally and
+Rockwell (2000) demonstrates it for sarcasm, finding listeners able to discriminate posed
+sarcasm but not spontaneous sarcasm. Naturalistic podcast-derived corpora were built in
+response to exactly this (Lotfian and Busso, 2019), and this corpus follows that
+precedent at a finer grain, since the unit of analysis is a single phrase rather than a
+speaking turn.
 
-The study targets eight short, high-frequency phrases whose pragmatic force varies by delivery
-while their lexical content is fixed, namely *yeah, okay, right, sure, great, fine, really,* and
-*come on*. These fall into three functional families. The agreement particles (*yeah, okay, right,
-sure*) are response tokens in the conversation-analytic sense, a class Gardner (2001) characterises
-as carrying no dictionary meaning but conveying the listener's stance through phonetic form,
-prosodic shape and placement, which is precisely the property this design requires. Individual
-members are well described. Schegloff (1982) establishes their continuer function, Beach (1993)
-shows *okay* pivoting between receipting prior talk and shifting to next matters, and Gardner (2007)
-distinguishes three uses of *right*. Gravano et al. (2012) add that these functions are separated in
-spontaneous dialogue by prosodic realisation rather than by wording, and frame that ambiguity as a
-problem for spoken dialogue systems. Their account predicts the distribution reported in [B.5],
-where neutral stance concentrates almost entirely in these four words, since backchannelling is a
-function of this class specifically. The evaluative terms (*great, fine*) and challenge markers
-(*really, come on*) are grouped here on functional grounds for this study rather than following an
-established classification.
+The study targets eight short high-frequency phrases whose pragmatic force varies by
+delivery while their lexical content is fixed, namely *yeah, okay, right, sure, great,
+fine, really* and *come on*. The four agreement particles are response tokens in the
+conversation-analytic sense, a class Gardner (2001) characterises as carrying no
+dictionary meaning but conveying the listener's stance through phonetic form, prosodic
+shape and placement, which is precisely the property this design requires. Gravano et al.
+(2012) add that their functions are separated in spontaneous dialogue by prosodic
+realisation rather than by wording, and frame that ambiguity as a problem for spoken
+dialogue systems. Their account predicts the distribution reported in [B.5], where
+neutral stance concentrates almost entirely in these four words. The evaluative terms and
+challenge markers are grouped on functional grounds for this study rather than following
+an established classification.
 
-Candidates were first drawn by a stratified pull balanced across shows, then supplemented with
-targeted, construction- and sense-specific pulls to fill thin stance cells (for example, the
-"yeah right" sarcasm collocation and pause-isolated standalone tokens), because a purely random
-pull over-samples the dominant sense of each word. After annotation (below), the usable set is
-**873 clips across 32 shows and 753 distinct episodes**. Stance is close to balanced overall
-(364 affiliative, 147 neutral, 362 adversarial), and arousal is represented on both sides (345
-high, 528 low). Every phrase carries a well-powered binary stance contrast.
+Candidates were drawn by a stratified pull balanced across shows, then supplemented with
+construction- and sense-specific pulls to fill thin stance cells, since a purely random
+pull over-samples the dominant sense of each word. The usable set after annotation is
+**873 clips across 32 shows and 753 distinct episodes**, close to balanced on stance
+(364 affiliative, 147 neutral, 362 adversarial) with arousal represented on both sides.
+Every phrase carries a well-powered binary stance contrast.
 
-For each retained occurrence, three context windows were cut, all centred on the midpoint of
-the target word as located from the word-level timestamps. These are a **local** window of 6 s
-(plus or minus 3 s), a **segment** window of 10 s, and a **discourse** window of 16 s. The durations
-are set against the transcript segments they sit in, which have a median length of 5.4 s, so the
-three windows correspond approximately to the target segment alone, the target segment with one
-neighbour either side, and the target with roughly a full conversational turn either side. Windows
-are symmetric fixed durations rather than segment-boundary-aligned spans, which keeps the amount
-of acoustic context strictly comparable across clips. All clips are 16 kHz mono with EBU R128
-loudness normalisation, so that overall level cannot act as a trivial cue. Holding three nested
-windows allows the later context-window analysis to separate representations that recover a
-contrast from local delivery alone from those that require surrounding discourse [3.6, Ch.4].
+Three nested context windows were cut for each occurrence, centred on the target word
+midpoint as located from word-level timestamps, at 6, 10 and 16 s. Against a median
+transcript segment length of 5.4 s these correspond approximately to the target segment
+alone, the segment with one neighbour either side, and roughly a full conversational turn
+either side. Windows are symmetric fixed durations rather than boundary-aligned spans,
+which keeps acoustic context strictly comparable across clips, and all clips are 16 kHz
+mono with EBU R128 loudness normalisation so that overall level cannot act as a trivial
+cue. The primary window throughout is the 10 s segment window. Full cutting parameters
+are in Appendix [B].
 
 ## 3.3 Annotation scheme
 
@@ -100,185 +92,152 @@ carries pragmatic information beyond the words while discourse context alone is 
 which motivates splitting the text baseline into two roles (3.5) and treating audio's contribution
 as the increment over context.
 
-## 3.5 Representations and feature extraction
+## 3.5 Representations
 
-Seven representations are compared, with the text baseline supplying two conditions rather than one
-[below]. With one exception, noted below, the selection is determined by the research question rather
-than by availability.
+Eight representations are compared, with the text baseline supplying two conditions. The
+selection is determined by the research question rather than by availability, with one
+exception noted below.
 
-**Why these models.** Mimi is the object of study because it is the tokeniser a deployed full-duplex
-system actually consumes rather than a research codec [2.2], and it distils its first codebook from
-WavLM-Large, which produces 1024-dimensional embeddings at 50 Hz (Défossez et al., 2024). Measuring
-what that distillation transfers therefore requires probing WavLM at that size, so WavLM is not a
-free choice.
-HuBERT-large is its matched control, sharing architecture, depth and width and differing chiefly in
-WavLM's noise and overlapped-speech augmentation, so the pair isolates that augmentation rather than
-scale. The Whisper encoder is included to test whether a transcription objective strips paralinguistic
-content, so the objective rather than the scale is the variable under test. The small variant, at 13
-layers of 768 units against 25 of 1,024, is the one genuinely constrained choice here, and the
-constraint bears asymmetrically on the conclusion. A null result would have been uninterpretable,
-since a failure to recover stance could not be separated from insufficient capacity. The positive
-result reported in [4.3] is not, since capacity can only have worked against it. The Descript codec is used as the undistilled contrast
-because it sits on the reconstruction-only branch of the lineage in [2.1]. SpeechTokenizer would not
-serve, since it also distils from a self-supervised teacher and so does not contrast on the variable
-of interest, and DAC is preferred to EnCodec as the more recent reconstruction-only codec and one
-already benchmarked against Mimi elsewhere (Mousavi et al., 2026). MPNet is used for the text
-baseline because the argument requires a strong text competitor rather than a strawman, since the
-premise check shows discourse context recovers a substantial part of the contrast [4.1]. The seventh
-representation is not a model at all. eGeMAPS supplies a hand-crafted acoustic baseline, without
-which the study could report that a learned representation separates stance without establishing
-that this is more than pitch and energy would give. It also serves a second purpose, since its
-features are individually interpretable and can therefore be grouped by what they measure, which is
-what the cue analysis in [4.7] requires.
+**Why these.** Mimi is the object of study because it is the tokeniser a deployed
+full-duplex system consumes rather than a research codec [2.2], and it distils its first
+codebook from WavLM-Large (Défossez et al., 2024). Measuring what that distillation
+transfers therefore requires probing WavLM at that size, so WavLM is not a free choice.
+The Whisper encoder tests whether a transcription objective strips paralinguistic
+content, so objective rather than scale is the variable. Its small variant is the one
+genuinely constrained choice, and the constraint bears asymmetrically. A null result
+would have been uninterpretable, since failure to recover stance could not be separated
+from insufficient capacity. The positive result reported in [4.2] is not, since capacity
+can only have worked against it.
 
-Feature extraction was run once on a single A100 GPU and the resulting features frozen. No representation is fine-tuned,
-which is the defining property of a diagnostic probing study. Each clip is processed
-individually (batch size one), so there is no padding to pool over.
+Three codecs are compared rather than two, and the third is what makes the architectural
+comparison possible. DAC (Kumar et al., 2023) is the undistilled contrast, trained on
+reconstruction and adversarial objectives with no distillation term. EnCodec (Défossez et
+al., 2023) matches DAC's 75 Hz frame rate while differing in encoder architecture, which
+turns a two-point comparison into a three-point one in which frame rate can be held
+constant. MPNet supplies the text baseline, chosen because the argument requires a strong
+text competitor rather than a strawman. eGeMAPS supplies a hand-crafted acoustic
+baseline, without which the study could report that a learned representation separates
+stance without establishing that this is more than pitch and energy would give. Its
+features are individually interpretable and can be grouped by what they measure, which
+the cue analysis in [4.4] requires. HuBERT-large was probed throughout as a matched
+control for WavLM and is reported in Appendix [H].
 
-**Self-supervised continuous encoders.** WavLM-large and HuBERT-large are run with all hidden
-states exposed. For each transformer layer, the sequence of frame vectors is summarised by
-concatenating its per-dimension mean and standard deviation over time, giving a fixed
-2,048-dimensional vector per layer and a (layers x 2*hidden) matrix per clip. Retaining every
-layer rather than assuming a mid-layer optimum is a direct response to the finding that the
-strongest paralinguistic performance does not always sit in the final layers [Ch.2]. The
-layer-wise analysis in [Ch.4] uses this.
+**Architectural properties were read from the checkpoints**, not from published
+descriptions, since the comparison in [4.5] depends on them. DAC contains no attention
+and no recurrence. EnCodec contains an LSTM in the encoder and no attention. Mimi
+contains eight self-attention layers over a 250-frame window at 25 Hz. Convolutional
+receptive fields, computed over the encoder stack accounting for stride, are 221 ms for
+DAC, 113 ms for EnCodec and 178 ms for Mimi.
 
-**Supervised continuous encoder.** The Whisper-small encoder is treated the same way, with one
-correction. Whisper pads every input to 30 s internally, so pooling over the full output would
-average in silence. Only the valid frames corresponding to the actual clip duration are pooled,
-computed from the clip length at the encoder's frame rate.
+**Extraction.** No representation is fine-tuned, which is the defining property of a
+diagnostic probing study. Each clip is processed individually so there is no padding to
+pool over, and Whisper's internal padding to 30 s is handled by retaining only the frames
+corresponding to the actual clip duration. Every hidden state is retained rather than a
+layer selected in advance, since a transformer forward pass computes all of them and
+selecting one would fix a choice that [4.5] and Appendix [G] show is not stable. Codecs
+are probed immediately before and immediately after quantisation on identical forward
+passes, so the only difference between those two conditions is the rounding step.
 
-**Deployed discrete tokenizer.** Mimi, the tokenizer used by deployed speech-to-speech systems,
-is run at 24 kHz (clips are resampled in memory). Mimi emits residual code streams. Codebook 0
-is a WavLM-distilled stream and codebooks 1 to 7 carry acoustic refinement. All eight are
-retained. Each codebook's token sequence is summarised as a normalised unigram histogram over
-its codebook, and the eight histograms are concatenated into a single fixed vector per clip.
-Keeping the full stack matters because a model built on Mimi consumes every codebook, and because it
-allows the codebook-level analysis in [Ch.4] to probe each stream separately rather than assuming in
-advance where pragmatic information sits. The histogram is one summarisation among several and is
-adopted as the deployed condition because it preserves token identity, which no pooled readout does.
-Its cost relative to an embedding readout is measured rather than assumed, and turns out to be
-substantial [4.3, G.2].
+That comparison requires care about which vectors are commensurate. In all three codecs
+the residual quantiser operates in a projected space, applying an input projection before
+quantising and an output projection after summing the selected codebook vectors. Those
+projections do not map to a common space, so comparing the encoder latent against the
+quantiser's reconstructed output would compare vectors that are not comparable. Their
+cosine over all 873 clips is 0.004 and their mean norms differ by a factor of roughly 27.
+The comparable pair is the projected latent against the summed codebook vectors taken
+before output projection, whose cosine is 0.821 for Mimi and 0.773 for DAC. EnCodec
+requires no such correction, its pre and post vectors sharing a space directly at cosine
+0.982.
 
-Codebook-level analysis is ordinarily confounded, and the lexical control is what removes the
-confound. Shi et al. (2026) show that phonetic content in a Mimi code stream is not confined to the
-distilled first codebook, finding that "even without the first layer, as the acoustic codebook
-layers go deeper, the speech features from these layers also accumulate a substantial" amount of
-phonetic information. Because the target word is held constant, phonetic content is constant across
-every contrast, so no discriminative signal a probe recovers at codebook level can be phonetic in
-origin.
+Checkpoints, dimensionalities and frame rates are given in Appendix [B].
 
-**Undistilled discrete codec.** The Descript Audio Codec at 24 kHz (Kumar et al., 2023) is run as a
-contrast to Mimi. It is a purely acoustic codec trained on reconstruction and adversarial objectives
-with no distillation term, so it sits on the reconstruction-only branch of the lineage described in
-[2.1]. It differs from Mimi in frame rate, at 75 Hz against 12.5, and in codebook size, at 1,024
-entries against 2,048, so it is not a controlled ablation of the distillation objective and is not
-presented as one. Its frame rate follows from an encoder stride of 320 at 24 kHz. The checkpoint
-provides 32 residual codebooks against Mimi's 8, so the first eight are used, matching Mimi's
-deployed depth and making the two ladders comparable at equal quantiser count rather than at equal
-bitrate.
+## 3.6 Readouts
 
-**Isolating quantisation.** Comparing a continuous encoder against a token stream confounds
-quantisation with feature construction, frame rate, architecture and training objective. To separate
-them, both codecs are additionally probed immediately before and immediately after quantisation, on
-identical forward passes and with identical pooling, so the only difference between the two
-conditions is the rounding step.
+A representation is a sequence of frame vectors and a probe requires a fixed-length
+input, so a summarisation step stands between them. That step is a methodological choice
+and not a neutral one, because mean and standard deviation pooling is invariant to the
+order of frames. Shuffling the frames of a clip leaves such a summary unchanged, so any
+question about temporal structure is unanswerable against it by construction.
 
-This requires care about which vectors are comparable. In both codecs the residual quantiser
-operates in a projected space rather than on the encoder output directly, applying an input
-projection before quantising and an output projection after summing the selected codebook vectors.
-Those two projections do not map to a common space, so comparing the encoder latent against the
-quantiser's reconstructed output would compare vectors that are not commensurate. Measured over all
-873 clips their cosine is 0.004, and their mean norms differ by a factor of roughly 27, at 1.5
-against 39.9. The comparable pair is the projected latent against the summed codebook vectors taken
-before the output projection. Measured cosine between that pair is 0.821 for Mimi and 0.773 for the
-Descript codec, with per-clip minima of 0.766 and 0.717, confirming a shared space. These
-diagnostics are produced by `src/24_projection_cosines.py`. Both sides are then pooled by mean
-and standard deviation, so the embedding readout is held constant and the histogram readout used for
-the deployed condition plays no part in this comparison.
+Four readouts are therefore compared, with the representation held fixed so that only
+the summarisation varies.
 
-**Hand-crafted acoustic baseline.** The eGeMAPSv02 functionals are extracted with openSMILE, giving
-88 features per clip covering F0 statistics, loudness, spectral slope and balance, formants, voice
-quality through jitter, shimmer and harmonics-to-noise ratio, and rate proxies from voiced and
-unvoiced segment lengths. This is the standard minimal set for affective computing and is used here
-unmodified. For the cue analysis the 88 features are partitioned by what they measure into level,
-contour, voice quality, temporal and spectral groups, a partition fixed by the feature definitions
-rather than by inspecting results.
+- **meanstd**, the per-dimension mean and standard deviation over frames. This is the
+  primary readout, fixed in advance, and is what the pooled tables report.
+- **basis-K**, the projection of the sequence onto the first K orthonormal Legendre
+  polynomials over time normalised to each clip's own duration, giving coefficients that
+  read as level, trend and curvature. Contour parameterisation by polynomial
+  decomposition has precedent in prosody research, and Qian, Figueroa and Skantze (2025)
+  find third-order Legendre coefficients combined with voiced length outperform the
+  coefficients alone on perceived prosodic similarity. The first coefficient is the mean,
+  so basis-K strictly contains meanstd and any gain is attributable to the added terms.
+- **seg-K**, K equal segments each pooled, a coarser trajectory.
+- **delta**, meanstd of the sequence together with meanstd of its first differences.
 
-**Text baseline.** A sentence-transformer (MPNet) encodes two texts per clip, following the two
-roles the premise check established. The **target-only** embedding encodes the bare target word.
-Because the word is held constant within a phrase, this embedding is near-identical across that
-phrase's clips and is at chance *within* phrase by construction. Pooled across the eight phrases
-it is not at chance, because the phrases differ in their stance base rates, so a probe can score
-above chance from word identity alone. It therefore functions as a manipulation check for the
-within-word analyses rather than as a competitor, and the pooled figure must be read with that
-base-rate artefact in mind [Ch.4].
-The **discourse-context** embedding encodes the surrounding transcript and is the substantive
-text baseline, since pragmatic cues can leak into neighbouring words.
+Discrete streams take different readouts, since a temporal basis over code indices has no
+interpretation. Index 5 is not between 4 and 6. Their order-aware summaries are run-length
+statistics and change rates, against the unigram histogram that is the deployed condition.
 
-All features are stored with an aligned clip-identifier index so that labels, groups, and
-feature matrices can be joined unambiguously downstream.
+**The frame-shuffling control.** A time-aware readout has more dimensions than meanstd,
+so a gain over it could reflect the added parameters rather than the timing. Every
+order-aware readout is therefore also applied to clips whose frames have been randomly
+permuted, which destroys order while preserving dimensionality, every feature's marginal
+distribution and the clip's length. The difference between the two is what order
+contributes and nothing else. Verifying temporal order by comparing shuffled against
+unshuffled input is established practice for video representations (Misra et al., 2016),
+and the control is inert against meanstd for the reason above, which is why it appears
+here rather than in earlier work on these representations.
 
-## 3.6 Probing protocol and analyses
+## 3.7 Probing protocol
 
-**Probe and evaluation.** Each probe is an L2-regularised logistic regression on standardised
-features, with balanced class weights to offset the neutral minority. All reported scores are
-**out-of-fold under GroupKFold by episode**, so no episode's clips ever appear in both training and
-test, which prevents leakage through shared speaker, topic, or recording conditions. The primary
-metric is macro-F1 over the three stance classes.
+**Probe.** Each probe is an L2-regularised logistic regression on standardised features,
+with balanced class weights to offset the neutral minority.
 
-**Choice of readout.** Frame-level representations are summarised by concatenating the per-dimension
-mean and standard deviation over time, which is the convention in the probing literature and is
-applied identically to every representation. This readout is fixed as primary in advance of the
-analyses reported in [Ch.4]. Because it is order-free, alternatives that retain temporal structure
-are reported as a sensitivity analysis rather than as competing headline figures, and the choice of
-primary readout is not revisited in light of those results.
+**Evaluation.** All scores are out-of-fold with whole episodes assigned to folds, so no
+episode's clips appear in both training and test, which prevents leakage through shared
+speaker, topic or recording conditions.
 
-**Choice of chance level.** Macro-F1 has no fixed chance value, so the reference matters. A
-majority-class constant predictor scores only 0.196 here, because macro-F1 assigns zero to each
-of the two classes such a predictor never emits. That is not the right comparison for this probe,
-because balanced class weights mean it distributes predictions across all three classes, so its no-skill
-counterpart is not degenerate. The reference used throughout is therefore the **empirical
-permutation null**, obtained by refitting the entire pipeline on shuffled stance labels, which
-places chance near 0.33 (uniform and prior-matched random guessing give 0.322 and 0.333
-respectively, closely agreeing). The majority figure is reported alongside for completeness only.
-Using the permutation null rather than the majority score materially changes interpretation of
-the weaker representations, as Chapter 4 discusses.
+Every reported figure is the **mean over 25 independent episode-to-fold partitions**
+rather than a single partition, and the partitions are constructed within the analysis
+code rather than delegated to a library. Two considerations require this. Bengio and
+Grandvalet (2004) show there is no universal unbiased estimator of the variance of K-fold
+cross-validation, and that naive estimators underestimate it because training sets
+overlap between folds, so the uncertainty of a single run cannot be recovered from that
+run. Bouthillier et al. (2021) recommend randomising as many sources of variation as
+possible, on the grounds that averaging over an imperfect estimator approaches the ideal
+estimator far more cheaply than reducing any single source. Measured here, fold
+assignment alone contributes a standard deviation of 0.010 with a range up to 0.06, which
+is the same magnitude as several of the differences this study reports. Constructing the
+partitions explicitly also removes a dependency on library version, since the fold
+assignment produced by a standard grouped splitter changed between two releases and moved
+one representation by 0.020 on identical inputs.
 
-**Probe capacity.** A linear probe measures whether information is linearly accessible, which is not
-the same as whether it is present, a distinction developed at length by Belinkov (2022). The
-companion concern, that a probe may succeed by memorising rather than by reading structure, is
-addressed by Hewitt and Liang (2019) through control tasks with randomised labels, and the empirical
-permutation null used throughout is an instance of that idea. Accessibility is tested rather than
-argued around, by a small strongly regularised non-linear probe run on identical features and folds
-under six capacity settings, since the gain over a linear probe depends on the capacity chosen. The
-quantity carried forward is the bound across that sweep rather than the ordering at any one setting
-[G.3].
+Where two conditions are compared, such as a readout against its shuffled control or one
+rung of the ladder against the next, the comparison is **paired across the same
+partitions**, so partition noise is shared and cancels in the difference.
 
-**Uncertainty and significance.** Two procedures accompany every headline score. A 95%
-confidence interval is obtained by an **episode-cluster bootstrap** that resamples whole episodes
-rather than individual clips, respecting the non-independence of clips nested in episodes. A
-**permutation test** shuffles the stance labels and refits the probe many times. The p-value is
-the fraction of permutations reaching the observed macro-F1, establishing that decodability
-exceeds chance.
+**Chance.** Macro-F1 has no fixed chance value. A majority-class constant predictor
+scores 0.196 here, which is not the right comparison, because balanced class weights mean
+the probe distributes predictions across all three classes and its no-skill counterpart
+is not degenerate. The reference used throughout is the empirical permutation null,
+obtained by refitting on shuffled stance labels, which places chance near 0.33.
 
-**The analyses.** Chapter 4 reports six, each named by the section that carries it. Pooled three-way
-decodability at each model's best layer [4.2]. The per-phrase within-word contrast, which is the
-lexical control at the heart of the design and under which word identity carries no information
-[4.3]. Three controls, namely matched arousal, fold grouping by show and a context-window sweep
-[4.4]. A layer sweep and a codebook-level probe [4.5]. The quantisation ladder, comparing the
-continuous teacher against each codec's projected encoder latent and post-quantisation vectors under
-a shared embedding readout, on two codecs of different design [4.6]. And a cue-retention analysis
-[4.7], which asks not whether stance is decodable but whether the acoustic properties it is built
-from are recoverable, by ridge regression from each representation to each eGeMAPS feature,
-cross-validated on the same folds and reported as R-squared averaged within cue group. That last
-analysis is what separates a codec discarding acoustic detail from a codec retaining it in an
-unusable arrangement, and the two are otherwise indistinguishable from decoding scores alone.
+**Probe capacity.** A linear probe measures whether information is linearly accessible,
+which is not the same as whether it is present (Belinkov, 2022). The companion concern,
+that a probe may succeed by memorising rather than reading structure, is addressed by
+Hewitt and Liang (2019) through control tasks with randomised labels, of which the
+permutation null is an instance. Accessibility is tested rather than argued around, by a
+strongly regularised non-linear probe under six capacity settings, with the bound across
+that sweep carried forward rather than the ordering at any one setting [G.3].
 
-Four further checks bear on how these figures should be read rather than on what they say, and are
-reported in Appendix [G]. They are the model-against-human comparison on the premise subset, the
-readout decomposition, a probe-capacity sweep, and a training-free contrast-preservation measure.
+**The analyses.** Chapter 4 reports five. Pooled decodability and the per-phrase
+within-word contrast, which is the lexical control at the heart of the design [4.2]. The
+quantisation ladder across three codecs [4.3]. Cue retention by ridge regression from
+each representation to each eGeMAPS feature, grouped by what those features measure, and
+the order effect against the shuffled control [4.4]. The architectural comparison at
+matched frame rate [4.5]. And the controls, namely matched arousal, fold grouping by
+show, probe capacity and the codebook-level probe [4.6].
 
-Hyperparameters, exact dimensionalities, and the full per-phrase counts are given in Appendix
-[B]. All code and the analysis scripts are released so that, given a corpus and the label store,
-every number in [Ch.4] can be reproduced.
+Hyperparameters, exact dimensionalities and per-phrase counts are in Appendix [B]. All
+code is released so that, given a corpus and the label store, every number in [Ch.4] can
+be reproduced.
