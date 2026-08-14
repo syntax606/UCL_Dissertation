@@ -68,9 +68,10 @@ CLASSES = ("affiliative", "neutral", "adversarial")
 
 CKPT = {"wavlm": "microsoft/wavlm-large", "hubert": "facebook/hubert-large-ll60k",
         "whisper": "openai/whisper-small", "mimi": "kyutai/mimi",
-        "dac": "descript/dac_24khz", "dycast": "lucadellalib/dycast"}
+        "dac": "descript/dac_24khz", "dycast": "lucadellalib/dycast",
+        "encodec": "facebook/encodec_24khz"}
 N_CODEBOOKS = 8
-ALL = ["wavlm", "hubert", "whisper", "mimi", "dac", "sylber", "dycast"]
+ALL = ["wavlm", "hubert", "whisper", "mimi", "dac", "encodec", "sylber", "dycast"]
 
 # Fixed-rate models give the same frame count for every clip of the same duration,
 # so the array is allocated exactly. Sylber and DyCAST decide their own boundaries,
@@ -227,6 +228,22 @@ def frames_mimi(model, wav, device):
             codes[0].transpose(0, 1).cpu().numpy().astype(np.int16))
 
 
+def frames_encodec(model, wav, device):
+    """EnCodec sits between DAC and Mimi architecturally: no attention, but an LSTM
+    in the encoder, so it has bounded temporal memory where DAC has none. Its
+    pre and post vectors share a space directly, cosine 0.982, so unlike Mimi no
+    projection is needed to compare them."""
+    import torch
+    x = torch.tensor(wav)[None, None].to(device)
+    with torch.no_grad():
+        e = model.encoder(x)
+        codes = model.quantizer.encode(e, bandwidth=6.0)      # 8 codebooks
+        q = model.quantizer.decode(codes)
+    return (e[0].transpose(0, 1).float().cpu().numpy(),
+            q[0].transpose(0, 1).float().cpu().numpy(),
+            codes[:, 0].transpose(0, 1).cpu().numpy().astype(np.int16))
+
+
 def frames_dac(model, wav, device):
     import torch
     x = torch.tensor(wav)[None, None].to(device)
@@ -376,6 +393,16 @@ def main():
                 return {"dac_pre": a, "dac_post": b}
             run("dac", args.window, ids, paths, per_clip,
                 {"dac_pre": np.float16, "dac_post": np.float16}, args.force)
+
+        elif key == "encodec":
+            from transformers import EncodecModel
+            m = EncodecModel.from_pretrained(CKPT["encodec"]).to(device).eval()
+            def per_clip(p, m=m):
+                a, b, c = frames_encodec(m, read_wav(p, 24000), device)
+                return {"encodec_pre": a, "encodec_post": b, "encodec_codes": c}
+            run("encodec", args.window, ids, paths, per_clip,
+                {"encodec_pre": np.float16, "encodec_post": np.float16,
+                 "encodec_codes": np.int16}, args.force)
 
         elif key == "sylber":
             import torchaudio, soundfile as sf, torch as _t
