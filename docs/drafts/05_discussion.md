@@ -2,124 +2,147 @@
 
 *(Draft. Figures are the values reported in [Ch.4]. Cross-references marked [Ch.x].)*
 
-## 5.1 The loss is upstream of the tokens
+## 5.1 The loss is upstream, and the encoder is why
 
-The study was designed on the assumption that discretisation was the culprit. Decomposing the
-pipeline into controlled steps does not support that assumption. The step that converts continuous
-values into a finite set of symbols, and the only step capable of making two distinct inputs
-literally identical, is the smaller contributor by a factor of roughly three, and on a second codec
-of independent design it is marginally beneficial [4.6]. Two codecs with different objectives, frame
-rates and codebook geometries agree that the encoder is where the information goes.
+The study was designed on the assumption that discretisation was the culprit.
+Decomposing the pipeline into controlled steps does not support that assumption. The
+step that converts continuous values into a finite set of symbols, and the only step
+capable of making two distinct inputs literally identical, is the smaller contributor in
+all three codecs tested, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC, with EnCodec's
+quantiser costing nothing measurable [4.3]. Three designs differing in objective, frame
+rate and quantiser agree on where the loss falls.
 
-That the two costs behave differently is itself informative. The encoder cost holds across readouts
-while the quantisation cost ranges from +0.056 to −0.036, a swing large enough to change its sign
-[G.2]. Sun et al. (2026) observe the same signature from a different direction, finding continuous
-features stable across configurations while discrete ones fluctuate, and treating that instability as
-evidence of information loss in its own right. A representation whose measured content depends
-heavily on how it is read is one in which the signal is thin.
+What the codecs do not agree on is how much they lose, and that variation is
+informative. The gain a probe takes from frame order declines along the same ladder the
+stance decoding declines along, and reaches nothing in DAC [4.4]. Matching two codecs on
+sampling rate isolates why. DAC and EnCodec both run at 75 Hz, their convolutional
+receptive fields are comparable at 221 and 113 ms, and they differ by 0.040 in how much
+order contributes. What separates them is that EnCodec's encoder carries an LSTM and
+DAC's carries nothing. Mimi, at a sixth of the frame rate, carries eight self-attention
+layers over roughly ten seconds of context and retains the most.
 
-This bears directly on two recent proposals. ProsodyLM (Qian et al., 2025) introduces explicit
-word-level prosody tokens and Segmentation-Variant Codebooks (Sanders et al., 2025) quantises at
-multiple segmental units. Both are codebook-level interventions aimed at a prosody problem. If the
-majority of the loss precedes quantisation, a redesigned codebook operates on information the encoder
-has already declined to represent, and the ceiling on what it can recover is set upstream of the
-change. A second design family is better placed by the same reasoning, since X-Codec (Ye et al.,
-2024) injects teacher features before quantisation and one of the two emotion-preserving codecs
-published in 2026 modulates the latent before quantisation as well (Shi et al., 2026b). The
-measurements predict an ordering between the two families rather than a verdict on any single system,
-and that ordering is testable on a common corpus.
+The reading this supports is that temporal structure survives to the degree the encoder
+has an architectural mechanism for representing it, and that sampling density is not
+that mechanism. Gichamba and Busogi (2026) reach a compatible conclusion by a different
+route, finding no evidence that frame rate imposes a fundamental barrier to
+reconstruction quality once training is configured correctly, and attributing Mimi's
+performance at 12.5 Hz to its transformer bottleneck. Their DAC configuration
+reconstructs almost perfectly at 75 Hz while carrying no order information here, so
+reconstruction fidelity and temporal organisation come apart.
 
-## 5.2 What is lost is not the acoustics
+This bears directly on two recent proposals. ProsodyLM (Qian, Y. et al., 2025)
+introduces
+explicit word-level prosody tokens and Segmentation-Variant Codebooks (Sanders et al.,
+2025) quantises at multiple segmental units. Both are codebook-level interventions aimed
+at a prosody problem. If the majority of the loss precedes quantisation, a redesigned
+codebook operates on information the encoder has already declined to represent, and the
+ceiling on what it can recover is set upstream of the change. A second design family is
+better placed by the same reasoning, since X-Codec (Ye et al., 2024) injects teacher
+features before quantisation. The measurements predict an ordering between the two
+families rather than a verdict on any single system, and that ordering is testable on a
+common corpus.
 
-The natural reading of a codec losing pragmatic content is that it discards the acoustic detail that
-content is built from. That reading is wrong, and the measurement is unambiguous.
+## 5.2 What is lost is organisation, and the organisation is temporal
 
-Recovering hand-crafted acoustic cues from each rung of the pipeline, the codecs do **better** than
-WavLM on every group except one, reaching 153 per cent of WavLM on the contour features that stance
-is built from and 158 per cent on voice quality, using half the feature dimensions [4.7]. Mimi has
-not thrown the prosody away. It represents it more faithfully than the model that decodes stance best.
+The natural reading of a codec losing pragmatic content is that it discards the acoustic
+detail that content is built from. That reading is wrong. Recovering hand-crafted
+acoustic cues from each rung, the codecs do **better** than WavLM on every group except
+one, reaching 153 per cent on the contour features that stance is built from and 158 per
+cent on voice quality, using half the feature dimensions [4.4].
 
-Two further results point the same way. A supervised transcription objective is the most linguistic
-in the study and ought, on the account in [2.2], to strip paralinguistic content from its upper
-layers. Whisper shows no such decline, plateaus across its top third, and leads the within-word table
-at 0.672 [4.3, 4.5], which is consistent with prior findings that ASR encoders retain paralinguistic
-content (Gong et al., 2023; Ma et al., 2026). And 88 hand-crafted acoustic functionals outperform the
-deployed token stream, at +0.104 against +0.070 [4.2]. The representation with the most acoustic
-detail is among the worst at stance, and the two trained on linguistic objectives are the best.
+That result is weaker alone than it looks. A reconstruction objective is meant to retain
+waveform-recoverable descriptors, and eGeMAPS functionals are waveform descriptors, so a
+codec outperforming a masked-prediction model on them is close to what the training
+objectives predict. Its force comes from the pairing. The representation that stores the
+cues most faithfully reads stance off them worst, and the representation that stores them
+least faithfully reads stance best. Fidelity and readability are not the same quantity,
+and the deficit is in the second.
 
-So the binding constraint is not fidelity. It is whether the acoustics have been organised into a
-space in which an interpersonal category is linearly separable. That distinction is not a technicality,
-because it changes what a remedy has to do. Storing prosody more faithfully is what a redesigned
-codebook achieves, and the codec already stores it more faithfully than WavLM. The problem is not
-that the cues are absent but that nothing has arranged them into a form from which stance can be read.
+Two independent measurements say the missing organisation is temporal. Temporal is the
+one cue group the codecs fail to retain, falling to 78 per cent for the deployed
+histogram and 63 to 68 per cent for DAC while every other group holds at or above 97 per
+cent. And the order effect, measured against a frame-shuffled control at matched
+dimensionality, declines along the same ladder. Those two measurements share no
+machinery, so their agreement is not an artefact of either.
 
-## 5.3 The organisation that does survive is incidental
+The deployed condition loses a further 0.070 through summarisation alone [4.3]. Liu et
+al. (2024) supply a mechanism that is not simply dimensionality. Codec encoders
+integrate context, so acoustically identical segments receive different codes depending
+on what surrounds them, and consistency falls as codebook depth increases. Code identity
+is therefore unstable in a way the vector those codes decode to is not, since
+reconstruction would otherwise fail. A summary over code indices inherits that
+instability and a summary over decoded vectors does not. This reaches further than the
+present measurement, because a deployed system consumes indices rather than decoded
+vectors.
 
-If organisation is the constraint, the question becomes where any of it in Mimi came from. The answer
-is a component added for something else.
+One finding here sits against a near neighbour. Qian, Figueroa and Skantze (2025) study perceived
+prosodic similarity of conversational feedback under an independent lexical control, and
+report prosodic information concentrated in middle layers with Whisper the weakest of
+four models, attributing that to its ASR objective. Whisper is among the strongest
+representations here and peaks at its final encoder layer [4.2, G.6]. The tasks differ
+in a way that may account for it. They measure unsupervised cosine similarity against
+human judgements, which uses the representation space undifferentiated, while a trained
+probe locates a subspace. A representation can organise prosodic information so that it
+is linearly separable without it being metrically prominent. Their model is also
+whisper-medium at 24 encoder layers against whisper-small at 13 here, so a late layer is
+not the same position in the stack. Distinguishing these accounts would need the two
+measures run on one representation, which is worth doing and is not done here.
 
-The Moshi report states that Mimi "uses distillation to transfer non-causal, high-level semantic
-information into the tokens produced by a causal model", and explains folding this into a single
-tokeniser on the grounds that "generating acoustic and semantic tokens with separate encoders
-represents a non-negligible computational burden". The motivation is semantic content and
-computational cost. Prosody, affect and interpersonal meaning appear nowhere in it.
+## 5.3 What the negative results rule out
 
-The outcome diverges from the intention in both directions. Shi et al. (2026) show that what
-distillation from WavLM transfers is phonetic rather than semantic knowledge, so the stated target was
-not reached. And the distilled codebook is the strongest carrier of pragmatic stance inside Mimi at
-0.402, with the seven acoustic codebooks adding nothing to it and reaching only 0.352 alone [4.5], so
-a target nobody was aiming at was reached instead. A student trained to match a teacher's
-representations inherits how that teacher organises its inputs, and that is precisely the quantity
-[5.2] identifies as scarce.
+Three hypotheses were stated before testing and are not supported, and each removes a
+candidate explanation.
 
-An unintended benefit is an unprotected one. No loss term optimises for it, the Moshi ablations do not
-evaluate it, and the metrics routinely reported for codecs are not sensitive to it. Reconstruction
-quality, word error rate and perceptual scores would be unchanged if it vanished, so a successor
-system could substitute the teacher or drop the objective and every reported number would improve.
+Variable-frame-rate tokenisation does not recover the loss. Sylber at 0.446 and DyCAST
+at 0.40 sit below Mimi before quantisation at 0.468 [4.6]. This is consistent with what
+those systems set out to do rather than a failure of them. The syllabic lineage Sylber
+belongs to is built to extract coarse **semantic** units at low bitrate, and observes
+that existing tokenisations predominantly capture phonetic information (Baade et al.,
+2025). DyCAST aligns to characters, which is again a linguistic unit. A literature
+proposing dynamic frame rates to preserve timing and transient detail (FlexiCodec,
+CodecSlime) is therefore proposing the right diagnosis with a mechanism these results
+suggest is insufficient, since making the grid adaptive to linguistic units does not by
+itself produce a representation from which interpersonal meaning is readable.
 
-Affect under codecs has been measured, which qualifies that claim and then sharpens it. EMO-Codec
-(Ren et al., 2024) resynthesises speech through legacy and neural codecs and finds emotion recognition
-degraded afterwards. But it is an evaluation study rather than a figure reported during development,
-it works through resynthesis and downstream recognition rather than on the representation, and it
-measures categorical emotion on acted corpora. Stance and arousal are separable in this data, and Mimi
-retains roughly three quarters of the arousal signal against under a third of the stance signal
-[Ch.4], with arousal carried most by voice quality and stance by contour dynamics [4.7]. A measure
-supervised on categorical emotion labels, which are substantially arousal-loaded, would therefore
-register the axis that survives more readily than the axis that does not. The same concern applies to
-the emotion-preserving objectives now being proposed. Making affect a training target is the right
-move, and which affective quantity supervises it determines whether the interpersonal layer is among
-what improves.
+Timing features alone carry no stance. Token count, rate and duration moments reach
+0.316 and 0.338 against a null near 0.33. Whatever the temporal organisation consists
+of, it is not the coarse statistics of the segmentation, which rules out the simplest
+account of the order effect.
 
-This also reframes the problem usefully. Were the loss caused by discretisation it would be close to
-irreducible, since rounding is rounding. Because it is caused by a training objective, and objectives
-are chosen, the finding is a design observation rather than a limit.
+Order-aware summaries of the discrete streams score below the unigram histogram they
+were intended to improve on. Run lengths and change rates are meaningful operations on
+categorical codes, and they lose to counting. Taken with the instability Liu et al.
+describe, the reading is that code identity is too unstable a quantity to support
+temporal statistics over it.
 
 ## 5.4 What these results cannot say
 
-Three hypotheses were tested and not supported, and reporting them constrains the claims above.
+Decodability above chance is not decodability at a useful level. On the sixty clips
+human annotators judged, the best model condition reaches 0.533 against their 0.730, and
+a human reading only the transcript reaches 0.650, exceeding every model condition
+including the one given both modalities [4.1]. The claims here concern what these
+representations carry relative to one another, not what they carry relative to a
+listener.
 
-A training-free contrast-preservation measure does not discriminate, since every representation falls
-inside the interval between its two defensible baselines [G.5]. The proposal that these
-representations encode activation and are read downstream as intent does not hold, because stance
-survives at fixed arousal everywhere tested [4.4]. What the data supports is an asymmetry of
-availability rather than a confusion, which offers a candidate mechanism for the delivery-driven
-vulnerabilities documented by Qian and Li (2026) without demonstrating that any deployed system
-exhibits it. And an earlier account of why arousal survives and stance does not, resting on level cues
-being reconstructive, is refuted by [4.7], where the codec retains every cue group and the level cues
-turn out not to be the arousal carrier.
+The architectural account is the best supported of the available explanations and it is
+not the only one. Gichamba and Busogi (2026) show an apparent architectural limit in DAC
+resolving into a training misconfiguration once sequence length was matched. Frozen
+public checkpoints cannot separate what an architecture can represent from what a
+particular training run taught it to represent. Settling that needs codecs trained under
+matched conditions differing only in the temporal mechanism.
 
-Decodability above chance is also not decodability at a useful level. On the sixty clips human
-annotators judged, the best model condition reaches 0.533 against their 0.730, and a human reading
-only the transcript reaches 0.650, exceeding every model condition including the one given both
-modalities [4.1]. The claims here concern what these representations carry relative to one another
-and to chance, not what they carry relative to a listener.
+The distillation observation is a correlation. Mimi's codebook 0 carries the stance
+signal and codebook 0 is the one distilled from WavLM, but seven acoustic codebooks
+adding 0.002 to what codebook 0 achieves alone does not establish that distillation
+caused it. That requires a codec trained twice.
 
-More broadly, this study measures whether information is linearly decodable from a frozen
-representation. It does not measure whether a system uses that information, and it addresses
-comprehension rather than generation. The defensible bridge to deployment is a necessary condition. A
-system cannot act on what its input representation does not carry, so these probes bound what any
-downstream model built on these tokens could achieve, however capable that model is. That bound is
-worth knowing alongside VoxParadox (Pang et al., 2026), which documents audio language models failing
-to use paralinguistic information that is present. The two failure modes are distinct and the remedies
-differ. Better modelling can address information that is available and ignored. Nothing downstream can
-address information that was never organised into a usable form.
+Finally, this study measures whether information is linearly decodable from a frozen
+representation. It does not measure whether a system uses that information, and it
+addresses comprehension rather than generation. The defensible bridge to deployment is a
+necessary condition. A system cannot act on what its input representation does not
+carry, so these probes bound what any downstream model built on these tokens could
+achieve. That bound is worth knowing alongside work documenting audio language models
+failing to use paralinguistic information that is present, since the two failure modes
+are distinct and the remedies differ. Better modelling can address information that is
+available and ignored. Nothing downstream can address information that was never
+organised into a usable form.
