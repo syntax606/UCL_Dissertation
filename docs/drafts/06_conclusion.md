@@ -1,138 +1,117 @@
 # Chapter 6: Conclusion, Limitations and Future Work
 
-*(Draft. Target budget ~800 words, currently over. Limitations condensed from `docs/limitations.md`,
-which holds the full treatment and is the appendix source. Cross-references marked [Ch.x].)*
+*(Draft. Cross-references marked [Ch.x]. Full limitations treatment in Appendix [F].)*
 
 ## 6.1 Conclusions
 
-This study asked whether pragmatic contrast survives the representations that speech-to-speech
-systems actually consume, and if not, where it is lost. Three answers follow from the measurements.
+This study asked whether pragmatic contrast survives the representations that
+speech-to-speech systems consume, and if not, where it is lost. Three answers follow.
 
-Pragmatic stance is linearly decodable from continuous speech representations when the lexical item
-is held constant, and it survives every control applied to it [Ch.4]. The representation deployed
-systems consume retains a fraction of that, and under its deployed summarisation falls below a
-discourse-text baseline once the word is held constant. And the loss is not where this study expected to find it. The codec encoder costs
-roughly three times what quantisation does, the same ordering appears on an independently designed
-acoustic codec where quantisation is marginally beneficial, and what survives inside Mimi is carried
-mainly by the codebook distilled from WavLM, a component introduced for semantic transfer and
-computational economy rather than for anything paralinguistic [Ch.5].
+Pragmatic stance is linearly decodable from continuous speech representations when the
+lexical item is held constant, and it survives every control applied to it [4.2, 4.6].
+The representation deployed systems consume retains a fraction of that.
+
+The loss is not where this study expected to find it. Quantisation, the only step capable
+of making two distinct inputs literally identical, is the smaller contributor in all
+three codecs tested, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC, with EnCodec's quantiser
+costing nothing measurable [4.3]. Three designs differing in objective, frame rate and
+quantiser agree that the encoder is where the information goes.
+
+What the encoder fails to preserve is temporal organisation rather than acoustic
+detail. The codecs recover hand-crafted acoustic cues more faithfully than the model
+Mimi distils from, including the contour features stance is built from, while reading
+stance off them far worse [4.4]. Temporal is the one cue group they lose, and
+independently, the gain a probe takes from frame order declines along the same ladder
+the stance decoding declines along, reaching nothing in DAC. Matching two codecs at 75 Hz
+isolates the reason. DAC and EnCodec differ by 0.040 in that quantity while sharing a
+frame rate and a comparable convolutional receptive field, and what separates them is
+that EnCodec's encoder carries an LSTM where DAC's carries nothing [4.5]. Temporal
+structure appears to survive to the degree the encoder has a mechanism for representing
+it, and sampling density is not that mechanism.
 
 ## 6.2 Limitations
 
-Three hypotheses were tested and not supported, and reporting them is part of the result. The
-contrast-preservation score falls inside the interval between its two defensible baselines, 0.545 and
-0.670, in every representation, so it does not discriminate and is not corroboration [G.5]. The proposal
-that these representations encode activation and are read downstream as intent does not hold, because
-stance survives at fixed arousal everywhere tested. And an apparent dissociation between the two axes
-reversed once the readout was varied, so it was a property of the summary rather than of the
-representation.
+Three hypotheses were stated before testing and are not supported, and reporting them is
+part of the result. Variable-frame-rate tokenisation does not recover the loss, with
+Sylber and DyCAST both below Mimi before quantisation. Timing features alone sit at
+chance. Order-aware summaries of the discrete streams score below the unigram histogram
+they were intended to improve on [4.6].
 
-Five constraints bound the positive findings, and the reasoning behind each is in Appendix [F]. The
-0.112 attributed to the codec encoder is an upper bound, because WavLM contributes twice Mimi's
-pooled dimensionality, while the 0.034 for quantisation is clean. The attribution to distillation is
-associational rather than causal, and the decisive experiment would train one codec with and without
-the objective. Linear probing measures accessibility rather than presence, though across six probe
-capacities no configuration recovers more than +0.025 against a gap of roughly 0.14 [G.3], so accessibility
-bounds rather than explains the result. The identity control is held-out shows rather than unseen
-speakers, since the corpus carries show labels only.
+Four constraints bound the positive findings.
 
-The fifth concerns the account in [5.2]. An earlier version of this study proposed that codecs retain
-reconstructive cues and shed contour-shaped ones, which the cue analysis refutes in both halves,
-since voice quality rather than level is the arousal carrier and the codecs retain every cue group at
-or above what WavLM supports [4.7]. What replaces it, that the constraint is organisation rather than
-fidelity, is an inference from those same measurements rather than an independent test of them.
-Establishing it would require showing that a representation can be reorganised without adding
-acoustic information and that stance becomes readable as a result, which is what the contrastive
-objective below proposes and is not run here.
+The architectural account is the best supported explanation available and it is not the
+only one. Gichamba and Busogi (2026) show an apparent architectural limit in DAC
+resolving into a training misconfiguration once sequence length was matched. Frozen
+public checkpoints cannot separate what an architecture can represent from what a
+particular training run taught it to represent, and settling that needs codecs trained
+under matched conditions differing only in the temporal mechanism.
 
-## 6.3 Why the loss is worth repairing
+The attribution to distillation is associational. Mimi's codebook 0 carries the stance
+signal and codebook 0 is the distilled one, but the decisive experiment trains one codec
+with and without the objective.
 
-That deployed systems handle this information poorly is established in [1.1], across behavioural
-benchmarking, conflict resolution between words and voice, delivery-driven safety failures and
-human-robot interaction. This section states what the present findings add to it.
+Linear probing measures accessibility rather than presence (Belinkov, 2022), though
+across six probe capacities no configuration recovers more than +0.025 against a gap of
+roughly 0.14 [G.3], so accessibility bounds rather than explains the result. The identity
+control is held-out shows rather than unseen speakers, since the corpus carries show
+labels only.
 
-The headroom is measurable rather than assumed. On the sixty clips human annotators judged, the best
-model condition reaches 0.533 accuracy against their 0.730 [4.1], so these representations carry
-something closer to half of what a listener recovers from the same audio. A repair programme is worth
-proposing only if there is something to recover, and that is the quantity.
+Finally, the precision these figures can carry is lower than three decimal places
+suggests. Fold assignment alone contributes a standard deviation of 0.010 with a range up
+to 0.06 [3.7], so differences under roughly 0.03 are not robust. Every figure reported
+here is a mean over 25 partitions for that reason, and the practice is worth adopting
+more widely than this study, since it costs minutes and changes which comparisons survive.
 
-The findings add a specific constraint on how any of that can be addressed. A downstream model
-cannot act on what its input representation does not carry, so better modelling addresses information
-that is present and ignored and cannot address information that was never encoded. The distinction
-matters because the two failure modes look identical from the outside.
+## 6.3 A programme for repair
 
-The structural risk compounds it. Because the retention that does exist is incidental, no loss term
-optimises for it and the metrics routinely reported for codecs are not sensitive to it. Reconstruction
-quality, word error rate and perceptual scores would be unchanged if it vanished, so a successor
-system could substitute the teacher or drop the objective and every reported number would improve.
-Affect under codecs has been evaluated in its own right (Ren et al., 2024), but through categorical
-emotion on resynthesised audio, and [Ch.5] gives the reason that measure would be an imperfect guard
-for this particular quantity.
+Because the loss is caused by design choices rather than by rounding, and design choices
+are chosen, it is a tractable problem. Four steps follow, ordered so that each supplies
+what the next needs.
 
-## 6.4 A programme for repair
+**Give the encoder a mechanism for representing time.** This is the most direct
+implication and the one the measurements support most strongly. The comparison at matched
+frame rate says that raising sampling density does not help, which matters because the
+active response to prosody loss in codec design has been to make the frame rate dynamic.
+Those proposals diagnose the problem correctly and the mechanism they choose is one these
+results suggest is insufficient, since making the grid adaptive to linguistic units does
+not by itself produce a representation from which interpersonal meaning is readable. The
+prediction is stated so it can fail. A codec with attention should retain more order
+information than one with recurrence, which should retain more than one with neither, and
+the next codec added can falsify it.
 
-Because the loss is caused by a training objective rather than by rounding, and objectives are
-chosen, it is a design problem. Five steps follow from the measurements above, ordered so that each
-supplies what the next needs.
+**Establish causality for the distillation observation.** Train one codec with and
+without a distillation term, and across teachers differing in how much stance they
+encode. Every other step assumes its outcome.
 
-**Establish causality.** Train one codec with and without a distillation term, and across teachers
-that differ in how much stance they encode, converting the associational claim of [Ch.5] into a
-controlled one. This is the experiment the compute available here did not permit, and every other
-step assumes its outcome.
+**Test the organisation account directly.** Which cues a codec loses is now measured and
+the answer is essentially none of them, so the open question is not which acoustic
+properties survive but why surviving acoustics are not usable. The sharpest test holds a
+representation fixed in acoustic content and varies only how that content is arranged,
+for instance by reorganising a codec latent under a contrastive objective with no access
+to new signal. If stance becomes readable, organisation is the constraint. If it does
+not, something else is. A lexically controlled contrast supplies what categorical emotion
+labels do not, since same-word opposite-stance pairs make delivery the only separating
+signal, and the 873 clips assembled here are already in that form.
 
-**Test the organisation account directly.** This step has changed shape, because the question it was
-originally posed to answer has been answered. Which cues a codec loses is now measured, and the
-answer is none of them, since every group is retained at or above what WavLM supports [4.7]. So the
-open question is no longer which acoustic properties survive but why surviving acoustics are not
-usable. The sharpest test is a representation held fixed in its acoustic content and varied only in
-how that content is arranged, for instance by reorganising a codec latent under a contrastive
-objective without giving it access to any new signal. If stance becomes readable, organisation is the
-constraint. If it does not, something else is.
+**Build the diagnostic that would notice.** The retention that exists is not optimised
+for by any loss term, and the metrics routinely reported for codecs are not sensitive to
+it, so reconstruction quality, word error rate and perceptual scores would be unchanged
+if it vanished. A successor system could drop the objective and every reported number
+would improve. What is needed is a measure cheap enough to report during development. The
+minimal-pair ABX task is the natural template, since it fixes the comparison as a triplet
+and estimates no centroid, so it degrades gracefully at small samples (Schatz et al.,
+2013). A pragmatic-contrast analogue would present two clips of one word carrying
+opposing stance and a third matched to one of them, then score whether the representation
+places the third nearer its own class. Preservation that appears on a scorecard is
+preservation that can be defended.
 
-**Choose the teacher layer by measurement.** WavLM carries 0.573 at layer 20 and 0.490 at layer 24,
-so the choice of distillation target is consequential for this contrast. Semantic distillation
-conventionally takes a mid-stack layer or an average across layers, selected for alignment with
-linguistic content (Zhang et al., 2024a; Jo et al., 2025). The Moshi report does not state which
-WavLM layer Mimi distils from, which is itself informative, since a choice worth 0.083 on this
-contrast is not one the report treats as a variable. Where the optimum sits for prosodic
-properties is not settled either, since de la Fuente and Jurafsky (2024) locate suprasegmental
-categories in the middle third of a twelve-layer model while the peak observed here is at layer 20 of
-24. That disagreement is the reason to select a target from a probe curve on the property of interest
-rather than by convention, and it is an intervention requiring no architectural change.
+## 6.4 Closing
 
-**Supervise the encoder on the right quantity.** Making expressivity a training target is already an
-active line, pursued at the codec level through pre-quantisation latent modulation (Shi et al.,
-2026b) and structured projections inside the quantiser (Meng et al., 2026), and at the system level
-by Spirit-LM (Nguyen et al., 2024), which adds explicit pitch and style tokens to an interleaved
-speech-text model for this purpose. The available contribution is therefore in the supervision rather
-than in the mechanism, and the mechanisms that exist already act at or before the stage this study
-identifies as dominant. Those objectives are supervised on categorical emotion or on style, both
-substantially arousal-loaded, and the results here separate stance from arousal and find the
-surviving axis is the arousal one [Ch.5]. An auxiliary objective over lexically matched pairs, same
-word and opposite stance, supplies a signal that categorical labels do not, and the 873 clips
-assembled here are already in that form. The prediction is specific, namely that emotion-supervised
-and style-supervised objectives improve retention of the axis that was least damaged, and that a
-lexically controlled contrastive term is what reaches the other one.
+The finding this study set out to make was that discretisation destroys interpersonal
+meaning. What it reports is that discretisation is the smaller part, that the encoder is
+the larger part, and that what the encoder loses is not the acoustics but their
+arrangement in time. Whether that arrangement survives tracks whether the encoder has
+anything with which to represent it.
 
-**Build the diagnostic that would notice.** The uninformative result in [Ch.4] is a specification for
-its replacement, and the specification is now more precise than a call for more power, because the
-failure was structural rather than incidental. Estimating a class centroid inside a speaker-by-word
-cell makes the measure depend on cell size, which is why only 15 cells qualified and why the two
-defensible baselines diverge. The minimal-pair ABX task avoids this by fixing the comparison as a
-triplet, so no centroid is estimated and no cell need be large (Schatz et al., 2013). A
-pragmatic-contrast analogue would present two clips of one word carrying opposing stance and a third
-matched to one of them, then score whether the representation places the third nearer its own class.
-That is training-free, degrades gracefully at small samples, and is cheap enough to report during
-development, which is how ABX functions inside multi-level evaluation suites (Dunbar et al., 2021).
-The wider precedent is a small body of prosodic benchmarks built for speech-to-speech systems
-specifically, covering emphasis transfer (de Seyssel et al., 2023) and expressive resynthesis (Nguyen
-et al., 2023), and that is where such a measure would belong. Preservation that appears on a
-scorecard is preservation that can be defended.
-
-## 6.5 Closing
-
-The finding this study set out to make was that discretisation destroys interpersonal meaning. The
-finding it reports is that discretisation is the smaller part of the problem, that the codec encoder
-is the larger part, and that what survives does so because a component added for unrelated reasons
-happened to inherit it from a teacher that encodes stance. That is a less tidy result and a more
-actionable one. Rounding is irreducible and training objectives are chosen.
+That is a less tidy result and a more actionable one. Rounding is irreducible.
+Architectures are chosen.
