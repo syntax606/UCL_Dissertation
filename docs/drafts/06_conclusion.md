@@ -19,8 +19,9 @@ What the encoder fails to preserve is temporal organisation rather than acoustic
 detail. The codecs recover hand-crafted acoustic cues more faithfully than the model
 Mimi distils from, including the contour features stance is built from, while reading
 stance off them far worse [4.4]. Temporal is the one cue group they lose, and
-independently, the gain a probe takes from frame order declines along the same ladder
-the stance decoding declines along, reaching nothing in DAC. Matching two codecs at 75 Hz
+independently, the gain a probe takes from frame order declines across the encoder rungs
+along the same ladder the stance decoding declines along, reaching nothing in DAC. Two
+quantiser steps do not follow that pattern and are reported without an account [4.4]. Matching two codecs at 75 Hz
 isolates the reason. DAC and EnCodec differ by 0.040 in that quantity while sharing a
 frame rate and a comparable convolutional receptive field, and what separates them is
 that EnCodec's encoder carries an LSTM where DAC's carries nothing [4.5]. Temporal

@@ -12,7 +12,11 @@ rate and quantiser agree on where the loss falls.
 
 What the codecs do not agree on is how much they lose, and that variation is
 informative. The gain a probe takes from frame order declines along the same ladder the
-stance decoding declines along, and reaches nothing in DAC [4.4]. Matching two codecs on
+stance decoding declines along, and reaches nothing in DAC [4.4]. That decline is a property
+of the encoder rungs. Across the quantiser rungs it does not hold, since EnCodec gains order
+information at quantisation where Mimi loses it, and DAC's post-quantisation representation
+scores reliably better with order destroyed. Neither is accounted for here, and both are
+reported in [4.4]. Matching two codecs on
 sampling rate isolates why. DAC and EnCodec both run at 75 Hz, their convolutional
 receptive fields are comparable at 221 and 113 ms, and they differ by 0.040 in how much
 order contributes. What separates them is that EnCodec's encoder carries an LSTM and

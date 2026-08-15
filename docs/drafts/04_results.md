@@ -46,9 +46,9 @@ Table 4.1 reports the three-way stance probe on the primary window.
 | Mimi, after quantisation | 0.441 | 0.014 |
 | eGeMAPS, 88 functionals | 0.420 | 0.012 |
 | DAC, before quantisation | 0.404 | 0.015 |
+| EnCodec, after quantisation | 0.400 | 0.010 |
 | EnCodec, before quantisation | 0.396 | 0.012 |
 | Text, with discourse context | 0.394 | 0.013 |
-| EnCodec, after quantisation | 0.400 | 0.010 |
 | DAC, after quantisation | 0.381 | 0.013 |
 | Mimi, deployed tokens | 0.371 | 0.009 |
 
@@ -181,12 +181,23 @@ distribution while destroying order, paired on identical partitions.
 | DAC, after quantisation | **−0.018** | 0.018 | **−4.9** |
 
 The gain from frame order declines along the same ladder the stance decoding declines
-along, and reaches nothing in DAC. Two rows do not fit that pattern and are reported
-without an account. EnCodec's post-quantisation vectors carry more order information than
-its pre-quantisation ones, reversing the direction seen in Mimi. And DAC's
-post-quantisation representation scores **reliably better with frame order destroyed**, at
-−0.018 with t of −4.9. A shuffled control should act as a floor, so a representation
-beating its own floor is anomalous. No mechanism is offered here. Two independent measurements therefore point the same
+along, and reaches nothing in DAC. Two rows do not fit that pattern and are reported without an account, and both are
+quantiser steps rather than encoder steps.
+
+EnCodec's post-quantisation vectors carry more order information than its pre-quantisation
+ones, at +0.063 against +0.033, reversing the direction seen in Mimi. That is EnCodec's
+second reversal, since its quantiser also costs nothing measurable in the ladder at −0.005
+where both other codecs lose something [4.3]. Two anomalies in the same codec and the same
+step are more suggestive than one, and the obvious candidate is that quantisation interacts
+with recurrence differently than with attention or with convolution alone. That is a
+conjecture and is not tested here.
+
+And DAC's post-quantisation representation scores **reliably better with frame order
+destroyed**, at −0.018 with t of −4.9. A shuffled control should act as a floor, so a
+representation beating its own floor is anomalous. No mechanism is offered.
+
+The monotone decline therefore holds across the **encoder** rungs, which is where the claim
+in [4.5] is made, and does not hold across the quantiser rungs. Two independent measurements therefore point the same
 way, since temporal is also the one cue group the codecs fail to retain.
 
 One figure in that table is layer-sensitive and should be read with the sweep. Whisper is
@@ -243,8 +254,11 @@ rather than as established.
 
 The ordering follows the presence of a mechanism for integrating across time. Gichamba
 and Busogi (2026) reach a compatible conclusion from a different quantity, finding no
-evidence that frame rate imposes a fundamental barrier to reconstruction quality, and attribute Mimi's performance
-at 12.5 Hz to its transformer bottleneck. Their DAC configuration reconstructs almost
+evidence that frame rate imposes a fundamental barrier to reconstruction quality, and describe Mimi as engineered for low
+frame rate tokenisation through a transformer bottleneck and split-RVQ design. That
+description is their characterisation of the architecture rather than a finding of their
+ablation, so it is consistent with the account here rather than independent evidence for
+it. Their DAC configuration reconstructs almost
 perfectly at 75 Hz while carrying no order information here, so reconstruction fidelity
 and temporal organisation come apart.
 

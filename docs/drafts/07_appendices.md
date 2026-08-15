@@ -250,7 +250,8 @@ text condition [4.2].
 | Arousal distribution | low 528, high 345 |
 | Literal / non-literal | 510 / 363 |
 | Confidence | clear 864, borderline 9 |
-| Clip duration, seconds | mean 5.33, median 5.42, range 1.00 to 18.86 |
+| Target segment span, seconds | mean 5.33, median 5.42, range 1.00 to 18.86 |
+| Clip duration, W2 primary window | 10.00 exactly, all 873 |
 
 ---
 
@@ -546,8 +547,8 @@ differ from [4.2] by up to 0.008 for that reason, so this appendix is the refere
 ordering across readouts and [4.2] is the reference for absolute values.
 
 Mimi's deployed summarisation is a per-codebook unigram histogram of 16,384 sparse dimensions. The
-continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 58 to
-129 clips, so that asymmetry is far more punishing than it is pooled.
+continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 68 to
+127 clips [C.1], so that asymmetry is far more punishing than it is pooled.
 
 | Representation | Readout | mean within-word macro-F1 | degenerate cells |
 |---|---|---|---|
@@ -558,7 +559,7 @@ continuous encoders receive pooled embeddings of at most 2,048. Within a phrase 
 A degenerate cell is one where the probe emitted a single class and therefore scored exactly the
 within-phrase majority. All three are Mimi under the histogram, on `yeah`, `sure` and `come on`, and
 they are the only such cells in the study. Under an embedding readout none degenerates, so the failure
-is the sparse summary against small cells rather than an absence of content. The histogram costs 0.031
+is the sparse summary against small cells rather than an absence of content. The histogram costs, on this single partition, 0.031
 of margin pooled over all 873 clips and 0.128 within a phrase.
 
 Across three summarisations on identical forward passes, WavLM's margin moves by 0.009 and Mimi's by
