@@ -1,13 +1,15 @@
 # Chapter 4: Results
 
-*(Draft. All figures from `results/`. Every macro-F1 is the mean over 25 independent
-episode-to-fold partitions with its standard deviation, for the reasons in [3.7]. Fold
-assignment alone contributes sd 0.010, so differences under roughly 0.03 should not be
-read as ordering one representation above another. The primary window is W2 and the
-primary readout is mean and standard deviation pooling, both fixed in advance [3.5,
-3.6]. HuBERT-large was probed throughout and is reported in Appendix [H] rather than
-here, since it duplicates WavLM as a self-supervised control and its layer selection is
-not stable [3.5]. Methodological checks are in Appendix [G].)*
+Every macro-F1 reported here is the mean over 25 independent episode-to-fold partitions
+with its standard deviation, for the reasons given in [3.7]. Fold assignment alone
+contributes a standard deviation of 0.010, so **differences under roughly 0.03 should not
+be read as ordering one representation above another**. The primary window is the 10 s
+segment window and the primary readout is mean and standard deviation pooling, both fixed
+in advance [3.5, 3.6]. HuBERT-large was probed throughout on identical folds and features
+and is reported in Appendix [H] rather than here, since it duplicates WavLM as a
+self-supervised control and its layer selection is not stable [3.7]. Methodological checks
+that bear on how these figures should be read, rather than on what they say, are in
+Appendix [G].
 
 ## 4.1 The premise check and the ceiling
 
@@ -46,12 +48,23 @@ Table 4.1 reports the three-way stance probe on the primary window.
 | DAC, before quantisation | 0.404 | 0.015 |
 | EnCodec, before quantisation | 0.396 | 0.012 |
 | Text, with discourse context | 0.394 | 0.013 |
+| EnCodec, after quantisation | 0.400 | 0.010 |
 | DAC, after quantisation | 0.381 | 0.013 |
 | Mimi, deployed tokens | 0.371 | 0.009 |
 
-Every representation exceeds the empirical permutation null, which sits near 0.33 in
-every configuration tested [B.2]. The continuous encoders clear it by roughly 0.22,
-the deployed token stream by 0.04.
+Every representation exceeds its own empirical permutation null, obtained by refitting on
+shuffled labels under the same partitioning. **The null is not constant across
+configurations** and ranges from 0.311 to 0.333, falling lowest for the 16,384-dimensional
+histogram, so margins are given against each configuration's own null rather than against a
+single assumed value [B.2].
+
+| representation | macro-F1 | null | margin |
+|---|---:|---:|---:|
+| WavLM L20 | 0.557 | 0.330 | +0.226 |
+| Whisper encoder L9 | 0.548 | 0.333 | +0.215 |
+| Mimi, before quantisation | 0.468 | 0.329 | +0.139 |
+| eGeMAPS, 88 functionals | 0.420 | 0.324 | +0.096 |
+| Mimi, deployed tokens | 0.371 | 0.311 | +0.060 |
 
 Two entries need comment. **eGeMAPS** is the hand-crafted comparison, and it places the
 deployed Mimi condition below 88 classical acoustic functionals, so the deployed token
@@ -125,7 +138,9 @@ The decomposition locates the loss without saying what is lost. Two measurements
 answer that, and they disagree with the intuitive account.
 
 **The acoustic cues are retained.** Recovering hand-crafted cue groups from each rung by
-ridge regression, reported as a fraction of what WavLM supports:
+ridge regression, cross-validated by episode on a single partition, reported as a fraction
+of what WavLM supports. Ridge R-squared is less partition-sensitive than macro-F1, but
+these figures have not been recomputed under [3.7] and are reported as approximate.
 
 | Representation | contour | level | voice quality | temporal | spectral |
 |---|---:|---:|---:|---:|---:|
@@ -143,8 +158,11 @@ are waveform descriptors, so this is less surprising alone than it is in combina
 with the previous section. The codec stores the cues more faithfully and reads stance
 off them far worse.
 
-Only the temporal group falls below WavLM, and it falls furthest for DAC at 75 Hz rather
-than Mimi at 12.5, which is the wrong direction for a frame-rate account.
+Among the continuous rungs, temporal is the only group falling below WavLM, and it falls
+furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a
+frame-rate account. The deployed histogram is the exception to the pattern as a whole,
+dropping to 98 per cent on contour and 78 per cent on temporal, which is a property of that
+summarisation rather than of the token stream [4.3].
 
 **What is lost is temporal organisation.** Probing frame sequences rather than pooled
 summaries measures this directly. Each readout is compared against its own
@@ -157,12 +175,26 @@ distribution while destroying order, paired on identical partitions.
 | Mimi, before quantisation | +0.080 | 0.018 | 21.9 |
 | Whisper encoder L9 | +0.070 | 0.015 | 23.6 |
 | Mimi, after quantisation | +0.048 | 0.019 | 13.0 |
+| EnCodec, after quantisation | +0.063 | 0.021 | 15.0 |
 | EnCodec, before quantisation | +0.033 | 0.017 | 9.8 |
 | DAC, before quantisation | −0.007 | 0.019 | −1.9 |
+| DAC, after quantisation | **−0.018** | 0.018 | **−4.9** |
 
 The gain from frame order declines along the same ladder the stance decoding declines
-along, and reaches nothing in DAC. Two independent measurements therefore point the same
+along, and reaches nothing in DAC. Two rows do not fit that pattern and are reported
+without an account. EnCodec's post-quantisation vectors carry more order information than
+its pre-quantisation ones, reversing the direction seen in Mimi. And DAC's
+post-quantisation representation scores **reliably better with frame order destroyed**, at
+−0.018 with t of −4.9. A shuffled control should act as a floor, so a representation
+beating its own floor is anomalous. No mechanism is offered here. Two independent measurements therefore point the same
 way, since temporal is also the one cue group the codecs fail to retain.
+
+One figure in that table is layer-sensitive and should be read with the sweep. Whisper is
+reported at L9, the layer fixed in advance [3.7], where the order effect is +0.070. At L12
+it reaches +0.117, which would place it above WavLM [G.6]. The stance decoding barely moves
+between those layers, at 0.548 against 0.551, so the sensitivity is specific to the order
+measurement. Reporting L9 follows the pre-fixed rule rather than the larger figure, and the
+codec ladder is unaffected either way.
 
 The loss is not an artefact of the pooled readout. Time-aware readouts recover at most
 +0.031 at a fixed layer, and no representation moves past another on the strength of it
@@ -181,12 +213,37 @@ Frame rate does not explain the ordering, and a controlled comparison shows what
 **DAC and EnCodec run at the same 75 Hz and differ by 0.040**, above the threshold set
 by partition noise, so sampling density is excluded by a matched comparison rather than
 by inference. Convolutional receptive fields are comparable and DAC's is the larger, 221
-ms against 178 ms, so convolutional depth is excluded too. Architectures were read from
+ms against EnCodec's 113 ms, so convolutional depth is excluded too, since the codec with
+the wider convolutional context is the one carrying no order information. Architectures were read from
 the loaded checkpoints rather than from published descriptions [3.5].
 
+Three properties of the comparison are worth separating, because the claim rests on all of
+them holding together.
+
+**Frame rate is held constant, not controlled for statistically.** DAC and EnCodec are both
+75 Hz by construction, so the comparison does not depend on modelling rate as a covariate
+or on assuming its effect is linear. It is the same clock, twice.
+
+**The remaining convolutional difference runs against the result.** If convolutional context
+were the operative variable, DAC should carry more order information than EnCodec, since its
+receptive field is roughly twice as wide. It carries less, and by a margin above the noise
+threshold. The variable that does covary with the ordering is whether anything above the
+convolutional stack integrates across frames.
+
+**The ordering is monotone across three points rather than a single contrast.** None,
+recurrence and attention give −0.007, +0.033 and +0.080. Two points would be a difference.
+Three points in the predicted order, with the third supplied by a codec added after the
+prediction was made [1.4], is a weaker claim than a controlled ablation and a stronger one
+than an observation.
+
+What the comparison cannot do is separate architecture from training history, since these
+are three independently trained public checkpoints. That limitation is stated in [6.2] and
+is the reason the account is offered as the best supported of the available explanations
+rather than as established.
+
 The ordering follows the presence of a mechanism for integrating across time. Gichamba
-and Busogi (2026) reach a compatible conclusion from reconstruction quality, finding no
-evidence that frame rate imposes a fundamental barrier, and attribute Mimi's performance
+and Busogi (2026) reach a compatible conclusion from a different quantity, finding no
+evidence that frame rate imposes a fundamental barrier to reconstruction quality, and attribute Mimi's performance
 at 12.5 Hz to its transformer bottleneck. Their DAC configuration reconstructs almost
 perfectly at 75 Hz while carrying no order information here, so reconstruction fidelity
 and temporal organisation come apart.
@@ -197,13 +254,28 @@ frozen checkpoints cannot separate architecture from training history.
 
 ## 4.6 Controls, and what does not hold
 
-**Arousal.** Stance was decoded within each arousal level separately. WavLM reaches
-0.531 on low-arousal clips and 0.549 on high, Whisper 0.526 and 0.514, and Mimi remains
-significant at both levels. Margins fall in most cells but stance is not reducible to
-arousal in any representation tested.
+Both controls were rerun under the partitioning in [3.7], so their baselines match Table
+4.1 rather than the single-partition figures they were first computed against
+[`controls_repeated.txt`].
 
-**Speaker.** Regrouping folds by show moves WavLM from 0.573 to 0.530, Whisper from
-0.564 to 0.536 and Mimi from 0.381 to 0.362. Because the corpus carries show names
+**Arousal.** Stance decoded within each arousal level separately, against the pooled
+figure.
+
+| representation | pooled | low arousal | high arousal |
+|---|---:|---:|---:|
+| WavLM L20 | 0.557 | 0.517 | 0.519 |
+| Whisper encoder L9 | 0.548 | 0.542 | 0.518 |
+| Mimi, before quantisation | 0.468 | 0.421 | 0.446 |
+| Mimi, deployed tokens | 0.371 | 0.363 | 0.361 |
+
+Decoding falls when energy is held constant, by 0.038 for WavLM and 0.009 for Mimi, so the
+two axes are partly entangled. It does not fall to the null in any representation, so
+stance is not reducible to arousal.
+
+**Speaker.** Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534,
+Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to
+0.391. The cost is between 0.019 and 0.034 and is similar across representations, so the
+probe is not principally recovering speaker identity. Because the corpus carries show names
 rather than speaker labels, this is properly described as held-out shows.
 
 **Probe capacity.** A non-linear probe under six capacity settings recovers at most
@@ -218,7 +290,7 @@ codec trained twice.
 
 **Three hypotheses are not supported**, and all three were stated before the run.
 Variable-frame-rate tokenisation does not preserve more, with Sylber at 0.446 and DyCAST
-at 0.40 sitting below Mimi before quantisation at 0.468. Timing features alone sit at
+at 0.40 sitting below Mimi before quantisation at 0.468, all three measured under [3.7]. Timing features alone sit at
 chance, with token count, rate and duration moments reaching 0.316 and 0.338. And
 order-aware summaries of the discrete streams score below the unigram histogram they
 were intended to improve on.

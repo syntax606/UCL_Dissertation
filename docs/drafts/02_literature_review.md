@@ -1,8 +1,5 @@
 # Chapter 2: Literature Review
 
-*(Draft. Two tables carry the per-item detail so the prose characterises families rather
-than individual papers. Quoted material has been checked against the source papers.)*
-
 ## 2.1 Discrete speech tokens
 
 Discrete audio tokens have become a general-purpose interface for speech modelling,
@@ -102,7 +99,7 @@ recoverable only with deliberate intervention, and that deployed systems consume
 defaults.
 
 **The remedies currently proposed, and where they intervene.** One family intervenes at
-the codebook, through explicit word-level prosody tokens (Qian, Y. et al., 2025) or
+the codebook, through explicit word-level prosody tokens (Qian, Y. et al., 2025a) or
 quantisation at multiple segmental units (Sanders et al., 2025). A second and larger
 family intervenes on the frame rate. FlexiCodec (Li et al., 2026) and CodecSlime allocate
 frames dynamically on the grounds that natural speech units are inherently dynamic in
@@ -160,7 +157,7 @@ dialogue systems, which is what this dissertation measures one stage earlier.
 (2026) vocoder speech to remove lexical content while preserving prosody and find
 turn-taking prediction retaining 87 to 91 per cent of clean-speech accuracy, concluding
 that prosodic and lexical cues are encoded in self-supervised representations with limited
-interdependence. Qian, Figueroa and Skantze (2025) reach the same design decision
+interdependence. Qian, Figueroa and Skantze (2025b) reach the same design decision
 independently, grouping stimuli by lexical form to eliminate the effects of lexical
 semantics.
 
@@ -189,7 +186,7 @@ means the pipeline is decomposed rather than compared end to end.
 | Mousavi et al. (2026) | mixed | no | yes | no | multi-task |
 | Ren et al. (2024) | acted | no | yes | no | emotion, categorical |
 | Sun et al. (2026) | spontaneous podcast | no | yes | no | emotion, categorical |
-| Qian, Figueroa and Skantze (2025) | spontaneous feedback | **yes, lexical form** | no | no | perceived similarity |
+| Qian, Figueroa and Skantze (2025b) | spontaneous feedback | **yes, lexical form** | no | no | perceived similarity |
 | O'Connor Russell et al. (2026) | spontaneous dyads | by vocoding | no | no | turn-taking |
 | Gichamba and Busogi (2026) | read speech | n/a | yes | by frame rate | reconstruction |
 | Yang et al. (2026) | synthesised and acted | yes, system level | n/a | no | behavioural |

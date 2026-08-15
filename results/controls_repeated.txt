@@ -1,0 +1,34 @@
+CONTROLS AND NULLS UNDER REPEATED PARTITIONS
+Mean over 25 partitions with sd, as [3.7]. Replaces the single-partition
+figures carried into [4.6] from src/18.
+========================================================================================
+
+A. SPEAKER CONTROL, folds grouped by show rather than by episode
+representation            by episode     sd   by show     sd   change
+WavLM L20                      0.557  0.009     0.534  0.015   -0.023
+Whisper enc L9                 0.548  0.013     0.530  0.016   -0.019
+Mimi, deployed tokens          0.371  0.009     0.343  0.012   -0.028
+Mimi, pre-quantisation         0.468  0.014     0.434  0.017   -0.034
+eGeMAPS                        0.420  0.012     0.391  0.009   -0.029
+
+B. AROUSAL CONTROL, stance decoded within each arousal level
+representation             pooled      low     sd     high     sd
+WavLM L20                   0.557    0.517  0.018    0.519  0.020
+Whisper enc L9              0.548    0.542  0.010    0.518  0.027
+Mimi, deployed tokens       0.371    0.363  0.012    0.361  0.014
+Mimi, pre-quantisation      0.468    0.421  0.013    0.446  0.026
+eGeMAPS                     0.420    0.389  0.014    0.409  0.016
+
+C. EMPIRICAL PERMUTATION NULL, 50 label shuffles per configuration,
+   each scored on one partition, so the null is measured the same way the
+   score is. Chapter 4 asserts 'near 0.33 in every configuration'.
+representation             dims    score    null   margin
+WavLM L20                  2048    0.557   0.330   +0.226
+Whisper enc L9             1536    0.548   0.333   +0.215
+Mimi, deployed tokens     16384    0.371   0.311   +0.060
+Mimi, pre-quantisation     1024    0.468   0.329   +0.139
+eGeMAPS                      88    0.420   0.324   +0.096
+
+   Read: if the null varies materially by configuration, the claim that it
+   sits near 0.33 everywhere is too strong, and margins reported against a
+   single assumed null do not reconcile with margins reported per config.

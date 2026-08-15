@@ -1,7 +1,5 @@
 # Chapter 3: Data and Methods
 
-*(Draft. Target budget ~2,600 words. Placeholders for cross-references are marked [Ch.x].)*
-
 ## 3.1 Overview
 
 This chapter describes the corpus, the annotation scheme, the human validation step, the
@@ -94,7 +92,9 @@ as the increment over context.
 
 ## 3.5 Representations
 
-Eight representations are compared, with the text baseline supplying two conditions. The
+Eight representations are compared in the main analyses, with the text baseline supplying
+two conditions, and two variable-frame-rate tokenisers are added for the comparison in
+[4.6], giving ten in total. The
 selection is determined by the research question rather than by availability, with one
 exception noted below.
 
@@ -112,7 +112,7 @@ can only have worked against it.
 Three codecs are compared rather than two, and the third is what makes the architectural
 comparison possible. DAC (Kumar et al., 2023) is the undistilled contrast, trained on
 reconstruction and adversarial objectives with no distillation term. EnCodec (Défossez et
-al., 2023) matches DAC's 75 Hz frame rate while differing in encoder architecture, which
+al., 2022) matches DAC's 75 Hz frame rate while differing in encoder architecture, which
 turns a two-point comparison into a three-point one in which frame rate can be held
 constant. MPNet supplies the text baseline, chosen because the argument requires a strong
 text competitor rather than a strawman. eGeMAPS supplies a hand-crafted acoustic
@@ -125,7 +125,9 @@ control for WavLM and is reported in Appendix [H].
 **Architectural properties were read from the checkpoints**, not from published
 descriptions, since the comparison in [4.5] depends on them. DAC contains no attention
 and no recurrence. EnCodec contains an LSTM in the encoder and no attention. Mimi
-contains eight self-attention layers over a 250-frame window at 25 Hz. Convolutional
+contains eight self-attention layers over a 250-frame window, operating on the 25 Hz output
+of its convolutional stack before a further downsampling step brings the token stream to
+12.5 Hz, so the attention spans roughly ten seconds of audio. Convolutional
 receptive fields, computed over the encoder stack accounting for stride, are 221 ms for
 DAC, 113 ms for EnCodec and 178 ms for Mimi.
 
@@ -167,7 +169,7 @@ the summarisation varies.
 - **basis-K**, the projection of the sequence onto the first K orthonormal Legendre
   polynomials over time normalised to each clip's own duration, giving coefficients that
   read as level, trend and curvature. Contour parameterisation by polynomial
-  decomposition has precedent in prosody research, and Qian, Figueroa and Skantze (2025)
+  decomposition has precedent in prosody research, and Qian, Figueroa and Skantze (2025b)
   find third-order Legendre coefficients combined with voiced length outperform the
   coefficients alone on perceived prosodic similarity. The first coefficient is the mean,
   so basis-K strictly contains meanstd and any gain is attributable to the added terms.
@@ -216,11 +218,25 @@ Where two conditions are compared, such as a readout against its shuffled contro
 rung of the ladder against the next, the comparison is **paired across the same
 partitions**, so partition noise is shared and cancels in the difference.
 
+**Layer selection.** For the continuous encoders a single layer is carried into the main
+analyses, fixed in advance of the timing measurements by taking the maximum of the pooled
+mean-and-standard-deviation curve reported by the initial probe battery. This gives L20 for
+WavLM, L9 for Whisper and L23 for HuBERT. Two properties of that rule are measured rather
+than assumed. Choosing a layer by maximising over the same data that reports its score is
+optimistic, by 0.003 for WavLM, 0.015 for Whisper and 0.029 for HuBERT when compared
+against selection nested inside each training split [H, G.6]. And the choice is not stable
+across folds for HuBERT, which is why it is reported separately. The layers were fixed
+before the readout comparisons existed, so they are not selected to favour any result in
+[4.4], and the full sweep across all 63 layers is reported in [G.6] so that a reader can see
+what a different choice would have given.
+
 **Chance.** Macro-F1 has no fixed chance value. A majority-class constant predictor
 scores 0.196 here, which is not the right comparison, because balanced class weights mean
 the probe distributes predictions across all three classes and its no-skill counterpart
 is not degenerate. The reference used throughout is the empirical permutation null,
-obtained by refitting on shuffled stance labels, which places chance near 0.33.
+obtained by refitting on shuffled stance labels under the same partitioning. It is computed
+per configuration rather than assumed, because it is not constant, ranging from 0.311 for
+the 16,384-dimensional histogram to 0.333 for the continuous encoders [4.2].
 
 **Probe capacity.** A linear probe measures whether information is linearly accessible,
 which is not the same as whether it is present (Belinkov, 2022). The companion concern,

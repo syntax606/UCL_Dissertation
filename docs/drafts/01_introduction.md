@@ -1,8 +1,5 @@
 # Chapter 1: Introduction
 
-*(Draft. Hypotheses are stated as formed, in two rounds, with the second formed after H4
-was falsified. Cross-references marked [Ch.x].)*
-
 ## 1.1 The same word, three different moves
 
 A warm *yeah*, a grudging *yeah* and a mocking *yeah* are the same transcript and three
@@ -147,8 +144,9 @@ temporal organisation, shown by two measurements that share no machinery.
 architecture differ in how much frame order contributes, which excludes sampling density
 as the mechanism and yields a prediction that the next codec added can falsify.
 
-**Reporting of four unsupported hypotheses**, and of a measurement problem found in the
-study's own pipeline, namely that fold assignment alone moves scores by as much as several
+**Reporting of four unsupported hypotheses.** H4 from the first round and H6 to H8 from the
+second, which is why later chapters describing only the second round refer to three. And of
+a measurement problem found in the study's own pipeline, namely that fold assignment alone moves scores by as much as several
 of the differences reported in this literature [3.7].
 
 ## 1.6 Structure

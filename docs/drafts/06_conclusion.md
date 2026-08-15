@@ -1,7 +1,5 @@
 # Chapter 6: Conclusion, Limitations and Future Work
 
-*(Draft. Cross-references marked [Ch.x]. Full limitations treatment in Appendix [F].)*
-
 ## 6.1 Conclusions
 
 This study asked whether pragmatic contrast survives the representations that
@@ -30,6 +28,8 @@ structure appears to survive to the degree the encoder has a mechanism for repre
 it, and sampling density is not that mechanism.
 
 ## 6.2 Limitations
+
+The full treatment of each constraint below is in Appendix [F].
 
 Three hypotheses were stated before testing and are not supported, and reporting them is
 part of the result. Variable-frame-rate tokenisation does not recover the loss, with

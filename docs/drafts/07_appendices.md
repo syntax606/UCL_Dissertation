@@ -232,7 +232,7 @@ All 873 kept clips. Columns are stance by arousal.
 | **Total** | **222** | **142** | **121** | **26** | **185** | **177** | **873** |
 
 Three features of this table bear on the analyses. Neutral stance is concentrated in the agreement
-particles, with `okay`, `right` and `yeah` holding 138 of the 147 neutral clips and four phrases
+particles, with `okay`, `right` and `yeah` holding 145 of the 147 neutral clips and three phrases
 holding none, which is why the within-word contrast in [4.2] is the dominant binary contrast per
 phrase rather than a uniform three-way task. High-arousal neutral has only 26 clips, so any analysis
 crossing both axes at that cell is thin. And the phrases differ in their stance base rates, which is
@@ -541,6 +541,10 @@ roughly 2.3 standard errors at sixty items.
 
 Sources: `src/26_within_word_readout.py`, `results/within_word_readout.txt`, `results/ladder_by_readout.txt`.
 
+**All figures in this appendix are single-partition**, predating the scheme in [3.7]. They
+differ from [4.2] by up to 0.008 for that reason, so this appendix is the reference for the
+ordering across readouts and [4.2] is the reference for absolute values.
+
 Mimi's deployed summarisation is a per-codebook unigram histogram of 16,384 sparse dimensions. The
 continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 58 to
 129 clips, so that asymmetry is far more punishing than it is pooled.
@@ -611,7 +615,10 @@ reach +0.071. In reverse, the seven acoustic codebooks without codebook 0 reach 
 takes them to +0.071. The intermediate blocks are non-monotonic across a 0.040 band, which is most of
 the margin itself and is not the shape of accumulating signal. It tracks accumulated dimensionality,
 since each codebook adds 2,048 sparse dimensions to an 873-clip problem, and it is the same effect
-measured at 0.031 pooled and 0.128 within a phrase [G.2].
+measured at 0.031 pooled and 0.128 within a phrase on a single partition [G.2]. The
+equivalent cost under the partitioning in [3.7] is 0.070 pooled, from 0.441 to 0.371 [4.3].
+The two are not comparable and the second supersedes the first, since the older run
+compared against a differently constructed baseline.
 
 ## G.5 The contrast-preservation score
 
@@ -664,7 +671,30 @@ carry more than smooth contour shape does, and this is reported against expectat
 time-aware readout, Whisper reaches 0.606 and WavLM 0.592. That 0.014 is well inside the
 partition noise of 0.010, so the two are level rather than ordered. Whisper also peaks at
 its final encoder layer, which does not sit comfortably with accounts placing
-paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025).
+paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025b).
+
+### G.6.1 The disagreement over Whisper
+
+Qian, Figueroa and Skantze (2025b) study perceived prosodic similarity of conversational
+feedback under an independent lexical control, and report prosodic information concentrated
+in the middle layers of four foundation models with Whisper the weakest of them, which they
+attribute to its ASR training objective. Whisper is among the strongest representations
+here and peaks at its final encoder layer [4.2].
+
+Two differences may account for it, and neither is settled by the present data.
+
+They measure unsupervised cosine similarity against human similarity judgements, which uses
+the representation space undifferentiated, while a trained probe locates a subspace within
+it. A representation can organise prosodic information so that it is linearly separable
+without that information being metrically prominent, and the two measures would then
+disagree by construction. Their model is also whisper-medium at 24 encoder layers against
+whisper-small at 13 here, so a final layer is not the same position in the stack.
+
+That direction is not without support. Work adapting Whisper for speech emotion recognition
+finds affective information available in its encoder (Ma et al., 2026), and models built on
+ASR encoders support joint audio and speech understanding (Gong et al., 2023).
+Distinguishing the accounts would need both measures run on one representation, which is
+worth doing and is not done here.
 
 ---
 
