@@ -157,11 +157,9 @@ The remaining convolutional difference runs against the result. If convolutional
 
 The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 72 for EnCodec and 68 for DAC [4.4]. Two quantities that share no machinery rank the three codecs identically.
 
-What the comparison cannot do is separate architecture from training history, since these are three independently trained public checkpoints. That limitation is stated in [6.2] and is the reason the account is offered as the best supported of the available explanations rather than as established.
-
 The ordering follows the presence of a mechanism for integrating across time. Gichamba and Busogi (2026) reach a compatible conclusion from a different quantity, finding no evidence that frame rate imposes a fundamental barrier to reconstruction quality, and describe Mimi as engineered for low frame rate tokenisation through a transformer bottleneck and split-RVQ design. That description is their characterisation of the architecture rather than a finding of their ablation, so it is consistent with the account here rather than independent evidence for it. Their DAC configuration reconstructs almost perfectly at 75 Hz while carrying no order information here, so reconstruction fidelity and temporal organisation come apart.
 
-One alternative account cannot be excluded. Gichamba and Busogi also show that an apparent architectural limit in DAC turned out to be a training misconfiguration, and frozen checkpoints cannot separate architecture from training history.
+One alternative account cannot be excluded. These are three independently trained public checkpoints, and Gichamba and Busogi also show that an apparent architectural limit in DAC turned out to be a training misconfiguration, so frozen checkpoints cannot separate what an architecture can represent from what a particular training run taught it to represent. The account is therefore offered as the best supported of the available explanations rather than as established, and the limitation is stated in full in [6.2].
 
 ## 4.6 Controls, and what does not hold
 
