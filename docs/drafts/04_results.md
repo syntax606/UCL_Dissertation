@@ -35,9 +35,9 @@ Table 4.1. Three-way stance decoding on the primary window. Mean macro-F1 over 2
 | EnCodec, before quantisation | 0.396 | 0.012 |
 | Text, with discourse context | 0.394 | 0.013 |
 | DAC, after quantisation | 0.381 | 0.013 |
-| Mimi, deployed tokens | 0.371 | 0.009 |
+| Mimi, deployed histogram | 0.371 | 0.009 |
 
-Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.337, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to Mimi's 16,384-dimensional histogram at 0.311 and the 768-dimensional target-only text at 0.313, one sparse and one near-constant within a phrase by construction, while a 1,024-dimensional representation carries the highest at 0.337. A shuffled-label probe has least to work with where the representation has least effective structure, which is why the null has to be measured per configuration rather than assumed from dimensionality. One consequence is visible in the table. Mimi's deployed tokens score lower than DAC after quantisation, at 0.371 against 0.381, but clear a lower null and so carry the larger margin, at +0.060 against +0.050.
+Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.337, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to Mimi's 16,384-dimensional histogram at 0.311 and the 768-dimensional target-only text at 0.313, one sparse and one near-constant within a phrase by construction, while a 1,024-dimensional representation carries the highest at 0.337. A shuffled-label probe has least to work with where the representation has least effective structure, which is why the null has to be measured per configuration rather than assumed from dimensionality. One consequence is visible in the table. Mimi's deployed histogram scores lower than DAC after quantisation, at 0.371 against 0.381, but clear a lower null and so carry the larger margin, at +0.060 against +0.050.
 
 Table 4.2. Each representation against its own permutation null, ordered by margin. The null is refitted on shuffled labels under the same partitioning.
 
@@ -56,7 +56,7 @@ Table 4.2. Each representation against its own permutation null, ordered by marg
 | EnCodec, before quantisation | 0.396 | 0.326 | +0.070 |
 | DAC, before quantisation | 0.404 | 0.336 | +0.068 |
 | Text, with discourse context | 0.394 | 0.333 | +0.061 |
-| Mimi, deployed tokens | 0.371 | 0.311 | +0.060 |
+| Mimi, deployed histogram | 0.371 | 0.311 | +0.060 |
 | DAC, after quantisation | 0.381 | 0.331 | +0.050 |
 
 Two entries need comment. eGeMAPS is the hand-crafted comparison, and it places the deployed Mimi condition below 88 classical acoustic functionals, so the deployed token stream is not recovering something a standard feature set already captures. And the target-only text condition at 0.493 should not be read as text recovering stance, since the eight phrases differ in their stance base rates and a probe can score from word identity alone.
@@ -189,7 +189,7 @@ Table 4.8. Stance decoded within each arousal level separately, against the pool
 | Whisper encoder L9 | 0.548 | 0.542 | 0.518 |
 | Mimi, before quantisation | 0.468 | 0.421 | 0.446 |
 | eGeMAPS, 88 functionals | 0.420 | 0.389 | 0.409 |
-| Mimi, deployed tokens | 0.371 | 0.363 | 0.361 |
+| Mimi, deployed histogram | 0.371 | 0.363 | 0.361 |
 
 Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
 

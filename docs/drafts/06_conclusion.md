@@ -23,7 +23,7 @@ Of the five hypotheses formed before the analyses, H1, H2, H3 and H5 are support
 
 The full treatment of each constraint below is in Appendix [D].
 
-Three hypotheses were stated before testing and are not supported, and reporting them is part of the result. Variable-frame-rate tokenisation does not recover the loss. Timing features alone sit at chance. Order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on [4.6]. A training-free contrast-preservation measure was also attempted and does not discriminate, and its failure is structural rather than a matter of power [E.5].
+Three hypotheses were stated before testing and are not supported, and reporting them is part of the result. Variable-frame-rate tokenisation does not recover the loss. Timing features alone sit at chance. Run-length and change-rate summaries of the discrete streams lose to counting [4.6, 5.3]. A training-free contrast-preservation measure was also attempted and does not discriminate, and its failure is structural rather than a matter of power [E.5].
 
 Four constraints bound the positive findings, and a fifth concerns the identity control.
 

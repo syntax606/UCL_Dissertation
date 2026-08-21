@@ -623,6 +623,12 @@ For WavLM and Whisper the two coincide, so the layer chosen under an order-free 
 not the wrong one for a time-aware one. HuBERT dissociates by eight layers, which is
 consistent with its being the model whose layer selection is unstable [F].
 
+**What a time-aware readout buys at the fixed layer.** Holding each model at the layer fixed
+in advance [3.7] and taking the best of the three readouts, WavLM gains +0.031 with `seg4`
+over `meanstd`, Whisper +0.029 and HuBERT +0.021. The ordering of the three is unchanged by
+the switch, at 0.588, 0.577 and 0.526 against 0.557, 0.548 and 0.505. That +0.031 is the
+figure [4.4] quotes as the bound on what the pooled readout costs.
+
 **`seg4` is the strongest readout, not the polynomial basis.** It takes 17 of the top 30
 cells and all of the top ten, against 7 for `meanstd` and 6 for `basis8`. Four equal
 segments each pooled beats both the order-free summary and the smooth Legendre basis,
