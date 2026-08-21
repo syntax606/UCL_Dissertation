@@ -14,19 +14,31 @@ source files.
 | Dunbar et al. (2021) added alongside Schatz et al. (2013) | `ABX.pdf` is the ZeroSpeech **website**, not a paper. Dunbar et al. 2021 is on file, discusses ABX sixteen times, and supports the claim about multi-level evaluation suites |
 | §6.2's opening rewritten | it repeated §5.4 near-verbatim. It now points back rather than restating |
 
-## Sources still to obtain
+## Sources obtained, checked 2026-08-21
 
-None of these has a PDF anywhere in the folders. All four citations are correct as
-written, verified against reference lists in papers that are on file, but the sources
-themselves are absent.
+All five arrived in the Aug 6 folder and every entry was written from memory before the
+PDF existed. Each is now checked against its own title page. All five were correct as
+written; three gain a detail the source supplies and one is worth a note.
 
-| citation | full reference | why it matters |
+| citation | verified from | outcome |
 |---|---|---|
-| **Chen et al. (2022)** | WavLM: Large-Scale Self-Supervised Pre-Training for Full Stack Speech Processing. *IEEE JSTSP* 16(6), 1505–1518 | the distillation teacher, characterised in Table 2.1 |
-| **Radford et al. (2023)** | Robust Speech Recognition via Large-Scale Weak Supervision. *ICML*, PMLR, 28492–28518 | Whisper, characterised in Table 2.1 |
-| **Cho et al. (2025)** | Sylber: Syllabic Embedding Representation of Speech from Raw Audio. arXiv 2410.07168, ICLR 2025 | a system tested in [4.6] |
-| **Schegloff (1982)** | Discourse as an interactional achievement. In Tannen (ed.), *Analyzing Discourse*, Georgetown UP, 71–93 | the continuer claim in [2.4], documented in `literature_references_verified.md` |
-| **Schatz et al. (2013)** | Evaluating speech features with the minimal-pair ABX task. *Interspeech* | origin of the ABX design in [6.3]. Dunbar now carries the claim, so this is optional |
+| **Chen et al. (2022)** | arXiv 2110.13900v5, 17 Jun 2022 | all nineteen authors match in order. Preprint, so the JSTSP volume and pagination remain from the published version |
+| **Radford et al. (2023)** | arXiv 2212.04356v1, 6 Dec 2022 | six authors match. Preprint, so the ICML year and PMLR pagination remain from the published version |
+| **Cho et al. (2025)** | arXiv 2410.07168v2, 2 Mar 2025 | the title page carries its own venue line, *Published as a conference paper at ICLR 2025*, so nothing is inferred. Its abstract gives 4.27 tokens per second, which is the source of Table 2.1's rate for Sylber |
+| **Schatz et al. (2013)** | Interspeech 2013, Lyon | fully verified. First page 1781, last page 1785, so the range is read rather than assumed. Gains the ISCA imprint and DOI `10.21437/Interspeech.2013-441` |
+| **Schegloff (1982)** | GURT 1981 volume | fully verified. Copyright page gives 1982, contents page puts the chapter at 71 with the next at 94. See the note below |
+
+**Schegloff's year has a defensible alternative.** The volume's own Bibliographic Notice
+prescribes citing the series by Round Table year rather than by copyright year, and gives a
+worked example that would make this **Schegloff (1981)**. The copyright page says 1982 and
+the conversation-analytic literature cites 1982 throughout, so 1982 stands, but an examiner
+who opens the front matter will find the instruction. The entry now names the GURT volume
+alongside the cover title so both are visible.
+
+Two entries carry a caveat that is not about this study's diligence. Chen and Radford are
+preprints, and preprints do not state the venue of the version they became. Their volume and
+pagination are the one class of detail in the bibliography not read off a title page, which
+is also true of Belinkov below.
 
 ## Resolved, checked against the title pages
 

@@ -47,13 +47,19 @@ ENTRIES = [
 ("Busso, C., Lotfian, R., Sridhar, K., Salman, A.N., Lin, W.-C., Goncalves, L., Parthasarathy, S., "
  "Naini, A.R., Leem, S.-G., Martinez-Lucas, L., Chou, H.-C. and Mote, P. (2025) 'The MSP-Podcast "
  "corpus'. arXiv:2509.09791.", ""),
+# All nineteen authors read off the title page of arXiv 2110.13900v5, 17 June 2022, and they
+# match. The JSTSP volume and pagination are from the published version, since the copy on
+# file is the preprint and states no venue.
 ("Chen, S., Wang, C., Chen, Z., Wu, Y., Liu, S., Chen, Z., Li, J., Kanda, N., Yoshioka, T., Xiao, X., "
  "Wu, J., Zhou, L., Ren, S., Qian, Y., Qian, Y., Wu, J., Zeng, M., Yu, X. and Wei, F. (2022) 'WavLM: "
  "large-scale self-supervised pre-training for full stack speech processing', IEEE Journal of Selected "
- "Topics in Signal Processing, 16(6), pp. 1505–1518.", "!"),
+ "Topics in Signal Processing, 16(6), pp. 1505–1518. arXiv:2110.13900.", ""),
+# The title page carries its own venue line, "Published as a conference paper at ICLR 2025",
+# so nothing here is inferred. Its abstract also gives 4.27 tokens per second, which is where
+# Table 2.1's variable rate for Sylber comes from.
 ("Cho, C.J., Lee, N., Gupta, A., Agarwal, D., Chen, E., Black, A.W. and Anumanchipalli, G.K. (2025) "
  "'Sylber: syllabic embedding representation of speech from raw audio', in Proceedings of the "
- "International Conference on Learning Representations (ICLR 2025). arXiv:2410.07168.", "!"),
+ "International Conference on Learning Representations (ICLR 2025). arXiv:2410.07168.", ""),
 ("Défossez, A., Copet, J., Synnaeve, G. and Adi, Y. (2022) 'High fidelity neural audio compression'. "
  "arXiv:2210.13438.", ""),
 ("Défossez, A., Mazaré, L., Orsini, M., Royer, A., Pérez, P., Jégou, H., Grave, E. and Zeghidour, N. "
@@ -114,9 +120,11 @@ ENTRIES = [
  "Proceedings of the Conference on Language Modeling (COLM 2025).", ""),
 ("Qian, L., Figueroa, C. and Skantze, G. (2025b) 'Representation of perceived prosodic similarity of "
  "conversational feedback'. KTH Royal Institute of Technology. arXiv:2505.13268.", ""),
+# Authors read off the title page of arXiv 2212.04356v1, 6 December 2022. The ICML year and
+# the PMLR pagination are from the published version; the preprint on file states neither.
 ("Radford, A., Kim, J.W., Xu, T., Brockman, G., McLeavey, C. and Sutskever, I. (2023) 'Robust speech "
  "recognition via large-scale weak supervision', in Proceedings of the International Conference on "
- "Machine Learning (ICML). PMLR, pp. 28492–28518.", "!"),
+ "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356.", ""),
 ("Ren, W., Lin, Y.-C., Chou, H.-C., Wu, H., Wu, Y.-C., Lee, C.-C., Lee, H.-y. and Tsao, Y. (2024) "
  "'EMO-Codec: an in-depth look at emotion preservation capacity of legacy and neural codec models with "
  "subjective and objective evaluations'. arXiv:2407.15458.", ""),
@@ -125,12 +133,20 @@ ENTRIES = [
 ("Sanders, N., Li, Y., Richmond, K. and King, S. (2025) 'Segmentation-variant codebooks for "
  "preservation of paralinguistic and prosodic information'. University of Edinburgh. "
  "arXiv:2505.15667.", ""),
+# Fully verified. The first page carries the venue, the ISCA copyright and the DOI; the last
+# page is numbered 1785, so the range is read rather than assumed.
 ("Schatz, T., Peddinti, V., Bach, F., Jansen, A., Hermansky, H. and Dupoux, E. (2013) 'Evaluating "
  "speech features with the minimal-pair ABX task: analysis of the classical MFC/PLP pipeline', in "
- "Proceedings of Interspeech 2013, pp. 1781–1785.", "!"),
+ "Proceedings of Interspeech 2013. Lyon: ISCA, pp. 1781–1785. "
+ "doi: 10.21437/Interspeech.2013-441.", ""),
+# Verified from the volume itself. Copyright page gives 1982, contents page puts the chapter at
+# 71 with the next at 94. Note that the volume's own bibliographic notice prescribes citing the
+# series by Round Table year, which would make this 1981. The conversation-analytic literature
+# cites 1982 throughout, and the copyright page supports it, so 1982 stands.
 ("Schegloff, E.A. (1982) 'Discourse as an interactional achievement: some uses of ‘uh huh’ and other "
- "things that come between sentences', in Tannen, D. (ed.) Analyzing Discourse: Text and Talk. "
- "Washington, DC: Georgetown University Press, pp. 71–93.", "!"),
+ "things that come between sentences', in Tannen, D. (ed.) Analyzing Discourse: Text and Talk "
+ "(Georgetown University Round Table on Languages and Linguistics 1981). "
+ "Washington, DC: Georgetown University Press, pp. 71–93.", ""),
 ("Scherer, K.R. (2003) 'Vocal communication of emotion: a review of research paradigms', Speech "
  "Communication, 40(1–2), pp. 227–256.", "?"),
 ("Shi, X., Zeng, C., Feng, T., Wang, S.-H., Ma, J. and Narayanan, S. (2026) 'Speech codec probing from "
