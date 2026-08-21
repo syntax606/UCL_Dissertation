@@ -99,7 +99,7 @@ was linguistics. Read directly from each PDF's first page, not from memory.
 | Du Bois, 2007 | John W. Du Bois. *The stance triangle.* In *Stancetaking in Discourse: Subjectivity, evaluation, interaction* | Benjamins. **Verify the editor attribution**, the PDF header runs Du Bois and Englebretson together. |
 | Biber and Finegan, 1988 | Douglas Biber, Edward Finegan. *Adverbial stance types in English.* | Discourse Processes 11(1), 1-34 |
 | Stivers, 2008 | Tanya Stivers. *Stance, Alignment, and Affiliation During Storytelling: When Nodding Is a Token of Affiliation.* | Research on Language and Social Interaction 41(1), 31-57 |
-| Steensig, 2019 | Jakob Steensig. *Conversation Analysis and Affiliation and Alignment.* | The Encyclopedia of Applied Linguistics |
+| Steensig, 2026 | Jakob Steensig. *Conversation Analysis and Affiliation and Alignment.* | The Encyclopedia of Applied Linguistics, ed. Chapelle, Wiley 2026, DOI suffix `.pub2`. Corrected from 2019 on 2026-08-21 against the title page. |
 
 ### Response tokens
 

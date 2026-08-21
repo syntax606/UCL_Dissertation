@@ -28,18 +28,29 @@ themselves are absent.
 | **Schegloff (1982)** | Discourse as an interactional achievement. In Tannen (ed.), *Analyzing Discourse*, Georgetown UP, 71–93 | the continuer claim in [2.4], documented in `literature_references_verified.md` |
 | **Schatz et al. (2013)** | Evaluating speech features with the minimal-pair ABX task. *Interspeech* | origin of the ABX design in [6.3]. Dunbar now carries the claim, so this is optional |
 
-## To verify before submission
+## Resolved, checked against the title pages
 
-**Steensig (2019).** The PDF is a handbook chapter, *Conversation Analysis and
-Affiliation and Alignment*, whose internal references stop around 2011. The year needs
-checking against the volume.
+**Steensig, corrected from 2019 to 2026.** The year was wrong and matched no edition. The
+copy on file states its own provenance in the footer of its first page, *The Encyclopedia of
+Applied Linguistics*, edited by Carol A. Chapelle, © 2026 John Wiley & Sons, DOI
+`10.1002/9781405198431.wbeal0196.pub2`. The `pub2` suffix marks it a revision of the
+original entry, which is why the internal references stop around 2011 while the publication
+year does not. 2026 is the version read here and is what both the draft and the bibliography
+now cite. Corrected at one site in [2.4].
 
-**Busso et al. (2025).** The year is taken from the filename. No date appears in the
-first two pages of the PDF, so the venue and year need confirming.
+**Busso et al. (2025), year confirmed, venue corrected.** The title page gives
+arXiv:2509.09791v1, 11 September 2025, manuscript received 10 September 2025. The year taken
+from the filename was right. The venue was not. The bibliography had *IEEE Transactions on
+Affective Computing*, but no venue is stated on the paper and its revision line is still
+blank, so it is cited as a preprint. The authors carry IEEE affiliations and the paper is
+formatted for an IEEE journal, which is presumably where the entry came from.
 
-**Belinkov (2022).** Your PDF is arXiv 2102.12452v4 dated September 2021. The journal
-version is *Computational Linguistics* 2022. Citing 2022 is right for the published
-version, so cite the journal rather than the preprint.
+**Belinkov (2022), confirmed.** The PDF is arXiv 2102.12452v4, and its own front matter
+gives the venue rather than leaving it to inference: a *Computational Linguistics* squib,
+ACL copyright, accepted for publication 8 September 2021. That places the published version
+in 48(1) of 2022, which is what the draft cites at both sites and what the bibliography
+already carried. The volume and pagination are from the published version, not from the
+preprint on file, which is the one detail here not read off a title page.
 
 ## Checked and correct, despite appearances
 

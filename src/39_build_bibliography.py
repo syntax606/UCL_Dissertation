@@ -21,8 +21,12 @@ ENTRIES = [
 ("Baade, A., Peng, P. and Harwath, D. (2025) 'SyllableLM: learning coarse semantic units for speech "
  "language models', in Proceedings of the International Conference on Learning Representations "
  "(ICLR 2025).", ""),
+# The PDF on file is arXiv 2102.12452v4, which states the venue in its own front matter:
+# a Computational Linguistics squib, accepted 8 September 2021, ACL copyright. That places
+# the published version in the 48(1) issue of 2022, which is what the draft cites. The
+# volume and pagination are from the published version rather than from the preprint.
 ("Belinkov, Y. (2022) 'Probing classifiers: promises, shortcomings, and advances', Computational "
- "Linguistics, 48(1), pp. 207–219.", "?"),
+ "Linguistics, 48(1), pp. 207–219.", ""),
 ("Bengio, Y. and Grandvalet, Y. (2004) 'No unbiased estimator of the variance of k-fold "
  "cross-validation', Journal of Machine Learning Research, 5, pp. 1089–1105.", ""),
 ("Biber, D. and Finegan, E. (1988) 'Adverbial stance types in English', Discourse Processes, "
@@ -36,9 +40,13 @@ ENTRIES = [
  "Proceedings of Machine Learning and Systems (MLSys), 3.", "?"),
 ("Bryant, G.A. and Fox Tree, J.E. (2005) 'Is there an ironic tone of voice?', Language and Speech, "
  "48(3), pp. 257–277.", "?"),
+# Year confirmed from the title page: arXiv 2509.09791v1, 11 September 2025, manuscript
+# received 10 September 2025. The authors carry IEEE affiliations and the paper is formatted
+# for an IEEE journal, but no venue is stated and the revision line is still blank, so this
+# is a preprint and citing a journal would overstate it.
 ("Busso, C., Lotfian, R., Sridhar, K., Salman, A.N., Lin, W.-C., Goncalves, L., Parthasarathy, S., "
  "Naini, A.R., Leem, S.-G., Martinez-Lucas, L., Chou, H.-C. and Mote, P. (2025) 'The MSP-Podcast "
- "corpus', IEEE Transactions on Affective Computing.", "?"),
+ "corpus'. arXiv:2509.09791.", ""),
 ("Chen, S., Wang, C., Chen, Z., Wu, Y., Liu, S., Chen, Z., Li, J., Kanda, N., Yoshioka, T., Xiao, X., "
  "Wu, J., Zhou, L., Ren, S., Qian, Y., Qian, Y., Wu, J., Zeng, M., Yu, X. and Wei, F. (2022) 'WavLM: "
  "large-scale self-supervised pre-training for full stack speech processing', IEEE Journal of Selected "
@@ -130,8 +138,12 @@ ENTRIES = [
  "arXiv:2603.10371.", ""),
 ("Sicherman, A. and Adi, Y. (2023) 'Analysing discrete self-supervised speech representation for "
  "spoken language modeling', in Proceedings of ICASSP 2023. arXiv:2301.00591.", "?"),
-("Steensig, J. (2019) 'Conversation analysis and affiliation and alignment', in The Encyclopedia of "
- "Applied Linguistics. Oxford: Wiley-Blackwell.", "?"),
+# The draft cited 2019, which matched nothing. The copy on file states its own year in the
+# footer: Encyclopedia of Applied Linguistics, ed. Chapelle, (c) 2026 Wiley, DOI suffix .pub2.
+# The pub2 marks it as a revision of the original entry, so 2026 is the version read here.
+("Steensig, J. (2026) 'Conversation analysis and affiliation and alignment', in Chapelle, C.A. (ed.) "
+ "The Encyclopedia of Applied Linguistics. Hoboken, NJ: Wiley. "
+ "doi: 10.1002/9781405198431.wbeal0196.pub2.", ""),
 ("Stivers, T. (2008) 'Stance, alignment, and affiliation during storytelling: when nodding is a token "
  "of affiliation', Research on Language and Social Interaction, 41(1), pp. 31–57.", "?"),
 ("Sun, E., Naini, A.R. and Busso, C. (2026) 'Recovering performance in speech emotion recognition from "
