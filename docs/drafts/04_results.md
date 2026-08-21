@@ -3,7 +3,7 @@
 
 # Chapter 4: Results
 
-Every macro-F1 reported here is the mean over 25 independent episode-to-fold partitions with its standard deviation, for the reasons given in [3.7]. Fold assignment alone contributes a standard deviation of 0.010, so differences under roughly 0.03 should not be read as ordering one representation above another. The primary window is the 10 s segment window and the primary readout is mean and standard deviation pooling, both fixed in advance [3.5, 3.6]. HuBERT-large was probed throughout on identical folds and features and is reported in Appendix [H] rather than here, since it duplicates WavLM as a self-supervised control and its layer selection is not stable [3.7]. Methodological checks that bear on how these figures should be read, rather than on what they say, are in Appendix [G].
+Every macro-F1 reported here is the mean over 25 independent episode-to-fold partitions with its standard deviation, for the reasons given in [3.7]. Fold assignment alone contributes a standard deviation of 0.010, so differences under roughly 0.03 should not be read as ordering one representation above another. The primary window is the 10 s segment window and the primary readout is mean and standard deviation pooling, both fixed in advance [3.5, 3.6]. HuBERT-large was probed throughout on identical folds and features and is reported in Appendix [F] rather than here, since it duplicates WavLM as a self-supervised control and its layer selection is not stable [3.7]. Methodological checks that bear on how these figures should be read, rather than on what they say, are in Appendix [E].
 
 ## 4.1 The premise check and the ceiling
 
@@ -11,7 +11,7 @@ Two auxiliary annotators judged a counterbalanced 60-clip subset against a hidde
 
 The absolute level is what the prior literature predicts rather than a shortfall. Rockwell (2000) found listeners unable to discriminate spontaneous sarcasm from non-sarcasm at all, and Bryant and Fox Tree (2005) argue against a single dedicated ironic marker in favour of a family of cues recognised in context. Both predict a real audio increment on spontaneous delivery with context contributing substantially.
 
-Scoring the models on those same sixty clips, the only like-for-like comparison available, places the best model condition at 0.533 against the human 0.730 [G.1]. The representations examined below carry something closer to half of what a listener recovers from the same audio. Everything that follows is a comparison between representations and not a claim about approaching human performance.
+Scoring the models on those same sixty clips, the only like-for-like comparison available, places the best model condition at 0.533 against the human 0.730 [E.1]. The representations examined below carry something closer to half of what a listener recovers from the same audio. Everything that follows is a comparison between representations and not a claim about approaching human performance.
 
 ## 4.2 Decodability, and the lexical control
 
@@ -75,9 +75,9 @@ Table 4.3. The within-word contrast. Within each phrase the probe attempts that 
 | eGeMAPS, 88 functionals | 0.551 | 0.010 | 0.033 |
 | Mimi, deployed histogram | 0.464 | 0.010 | 0.022 |
 
-The ordering survives the control, which is the result the rest of the chapter depends on. Whatever the codecs are losing, they are not losing it because the probe was reading the word. Mimi appears twice because the difference between those two rows is the readout rather than the representation, decomposed in [G.2].
+The ordering survives the control, which is the result the rest of the chapter depends on. Whatever the codecs are losing, they are not losing it because the probe was reading the word. Mimi appears twice because the difference between those two rows is the readout rather than the representation, decomposed in [E.2].
 
-Two things follow from the third column. Individual phrase cells hold 68 to 127 clips and move by roughly 0.030 with the partition alone, three times as much as the averaged figure, so per-phrase results are reported in Appendix [C] and are not read as orderings. And WavLM and Whisper are separated by 0.002 against an sd of 0.010, so they are not distinguishable here. The layer sweep reaches the same conclusion from a different direction [G.6].
+Two things follow from the third column. Individual phrase cells hold 68 to 127 clips and move by roughly 0.030 with the partition alone, three times as much as the averaged figure, so per-phrase results are reported in Appendix [B] and are not read as orderings. And WavLM and Whisper are separated by 0.002 against an sd of 0.010, so they are not distinguishable here. The layer sweep reaches the same conclusion from a different direction [E.6].
 
 ## 4.3 Where the loss is
 
@@ -141,13 +141,13 @@ Table 4.6. The gain from frame order. Each readout against its own frame-shuffle
 | DAC, before quantisation | −0.007 | 0.019 | −1.9 |
 | DAC, after quantisation | −0.018 | 0.018 | −4.9 |
 
-The gain from frame order declines along the same ladder the stance decoding declines along, and reaches nothing in DAC. Two rows do not fit that pattern, both of them quantiser steps rather than encoder steps, and neither is accounted for here. EnCodec gains order information at quantisation where Mimi loses it, and DAC's post-quantisation representation scores reliably better with frame order destroyed. Both are set out in [G.7].
+The gain from frame order declines along the same ladder the stance decoding declines along, and reaches nothing in DAC. Two rows do not fit that pattern, both of them quantiser steps rather than encoder steps, and neither is accounted for here. EnCodec gains order information at quantisation where Mimi loses it, and DAC's post-quantisation representation scores reliably better with frame order destroyed. Both are set out in [E.7].
 
 The monotone decline therefore holds across the encoder rungs, where the claim in [4.5] is made, and not across the quantiser rungs. Two independent measurements point the same way, since temporal is also the one cue group the codecs fail to retain.
 
-Whisper's figure is layer-sensitive in a way the others are not, and the sweep in [G.6] should be read alongside it.
+Whisper's figure is layer-sensitive in a way the others are not, and the sweep in [E.6] should be read alongside it.
 
-The loss is not an artefact of the pooled readout. Time-aware readouts recover at most +0.031 at a fixed layer, and no representation moves past another on the strength of it [G.6].
+The loss is not an artefact of the pooled readout. Time-aware readouts recover at most +0.031 at a fixed layer, and no representation moves past another on the strength of it [E.6].
 
 ## 4.5 Why
 
@@ -195,8 +195,8 @@ Decoding falls when energy is held constant, against the mean of the two levels 
 
 Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
-Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of roughly 0.14, so linear accessibility is not the limiting factor [G.3].
+Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of roughly 0.14, so linear accessibility is not the limiting factor [E.3].
 
-Codebooks. Probed cumulatively, Mimi's distilled codebook 0 alone reaches +0.069 and all eight together reach +0.071, so seven further codebooks and 14,336 further dimensions buy 0.002 [G.4]. Codebook 0 is the one distilled from WavLM. This is a correlation and not evidence that distillation causes the retention, which would need a codec trained twice.
+Codebooks. Probed cumulatively, Mimi's distilled codebook 0 alone reaches +0.069 and all eight together reach +0.071, so seven further codebooks and 14,336 further dimensions buy 0.002 [E.4]. Codebook 0 is the one distilled from WavLM. This is a correlation and not evidence that distillation causes the retention, which would need a codec trained twice.
 
 Three hypotheses are not supported, and all three were stated before the run. Variable-frame-rate tokenisation does not preserve more. Against each configuration's own null, Mimi before quantisation reaches a margin of +0.139, Sylber +0.118 and DyCAST +0.081 before quantisation and +0.086 after. DyCAST is clearly below. Sylber is separated from Mimi by 0.021, which is inside the threshold set by partition noise, so it is level rather than below. Neither exceeds Mimi, which is what H7 predicted, so the hypothesis is unsupported either way. Timing features alone sit at chance, with token count, rate and duration moments reaching 0.316 and 0.338. And order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on.

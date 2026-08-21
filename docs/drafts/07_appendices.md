@@ -5,11 +5,12 @@ restated from the chapters. Sources are named per appendix so each can be regene
 
 ---
 
-# Appendix A. Annotation codebook and annotator instructions
+# Appendix A. Annotation, codebook and human validation
 
 Source: `src/codebook.json` (scheme version 1.0). Counts from
 `data/annotations/annotation_sheet_labeled.csv`.
 
+The premise check in A.6 is grouped here because it is also a judgement made by annotators rather than by a model.
 ## A.1 Structure of the scheme
 
 Labelling is two-tier. The annotator makes one judgement about pragmatic function and one
@@ -102,10 +103,66 @@ marked borderline.
 
 ---
 
-# Appendix B. Probe hyperparameters, dimensionalities and counts
+## A.6 Premise-check design
+
+Sources: `src/14_build_premise_check.py`, `src/15_score_premise.py`, `src/16_premise_targetonly.py`.
+
+### A.6.1 Purpose
+
+The study rests on a premise that human listeners recover stance from delivery that the transcript
+does not convey. If that premise fails, the probing results have nothing to be about. The check was
+therefore run as a go/no-go gate before any GPU time was spent, with the decision rule fixed in
+advance [3.4].
+
+### A.6.2 Construction
+
+Approximately 60 kept clips were sampled, balanced across stance and spread across phrases, with
+every clip drawn from a distinct episode. The sample was split into Set X and Set Y and issued to two
+auxiliary annotators in counterbalanced conditions.
+
+| | Set X | Set Y |
+|---|---|---|
+| Annotator 1 | transcript only | audio with transcript |
+| Annotator 2 | audio with transcript | transcript only |
+
+Every clip therefore receives one transcript-only judgement and one audio judgement, from different
+people, and neither condition is tied to a single annotator. Each package is a self-contained HTML
+file with audio embedded directly, so annotators need no software and no access to the corpus.
+
+Annotators make a three-way stance call with an explicit unsure option. The study's own stance labels
+are the hidden reference and are written to `data/annotations/premise_key.csv`, which is not
+distributed with the packages and is excluded from the repository.
+
+### A.6.3 Decision rule, fixed before scoring
+
+| Outcome | Reading |
+|---|---|
+| Audio agrees well and transcript-only is near chance | Contrast is speech-borne. Proceed. |
+| Both agree well | Meaning is text-recoverable. Revise the framing before proceeding. |
+| Audio does not agree well | Labels or contrast are weak. Investigate before spending compute. |
+
+### A.6.4 Outcome
+
+The second row obtained. Transcript with discourse context reached 0.65 accuracy against the hidden
+reference and audio with transcript reached 0.73, against a three-way chance level of 0.33 [4.1].
+Audio adds a real increment over the words, and discourse context recovers a substantial part of the
+contrast on its own.
+
+The framing was revised accordingly, as the rule required. The quantity of interest throughout the
+dissertation is what audio adds over text rather than whether text fails, and the text baseline is
+reported as a substantive competitor rather than as a floor. Reporting both conditions separately
+also motivates the distinction between the target-only and discourse-context text embeddings in
+[3.5].
+
+Scoring reports accuracy against the reference, Cohen's kappa and the unsure rate per condition.
+
+---
+
+---
+
+# Appendix B. Configuration, counts and provenance
 
 Sources: `src/17_extract_features.py`, `src/18_probe.py`, `src/22_nonlinear_probe.py`.
-
 ## B.1 Probe and cross-validation
 
 | Setting | Value |
@@ -255,7 +312,7 @@ text condition [4.2].
 
 ---
 
-# Appendix C. Full results tables
+## B.7 Results files
 
 Source: `results/probe_results.txt` and the six companion files in `results/`. The chapter reports
 selected rows. This appendix names where each complete table lives so nothing reported is unsourced.
@@ -273,7 +330,7 @@ selected rows. This appendix names where each complete table lives so nothing re
 | `cps_baseline.txt` | The two candidate no-skill baselines for the contrast-preservation score, computed from labels alone |
 | `projection_cosines.txt` | Evidence that the two sides of each ladder rung share a space |
 
-## C.0 Provenance of figures outside the probe outputs
+## B.8 Provenance of figures outside the probe outputs
 
 **Projection cosines.** The ladder compares the projected encoder latent against the summed codebook
 vectors, and that pairing has to be justified rather than assumed. Over all 873 clips the correct
@@ -298,7 +355,7 @@ material analysed end to end, and was cut for that reason. It is recorded here s
 meets it in an earlier version knows what it counted. The quantities that carry the analyses, 873
 clips across 32 shows and 753 episodes, are computed from the label store and given in B.6.
 
-## C.1 Per-phrase within-word contrast, full detail
+## B.9 Per-phrase within-word contrast, full detail
 
 The chapter reports means over the eight phrases [4.2]. Per-phrase figures are given here
 rather than in the body because they are not stable enough to be read as orderings. Each
@@ -341,67 +398,12 @@ and the deployed histogram is present in every one of the eight cells, which is 
 the averaged difference in [4.2] a property of the representations rather than of one or
 two phrases.
 
-# Appendix D. Premise-check design
-
-Sources: `src/14_build_premise_check.py`, `src/15_score_premise.py`, `src/16_premise_targetonly.py`.
-
-## D.1 Purpose
-
-The study rests on a premise that human listeners recover stance from delivery that the transcript
-does not convey. If that premise fails, the probing results have nothing to be about. The check was
-therefore run as a go/no-go gate before any GPU time was spent, with the decision rule fixed in
-advance [3.4].
-
-## D.2 Construction
-
-Approximately 60 kept clips were sampled, balanced across stance and spread across phrases, with
-every clip drawn from a distinct episode. The sample was split into Set X and Set Y and issued to two
-auxiliary annotators in counterbalanced conditions.
-
-| | Set X | Set Y |
-|---|---|---|
-| Annotator 1 | transcript only | audio with transcript |
-| Annotator 2 | audio with transcript | transcript only |
-
-Every clip therefore receives one transcript-only judgement and one audio judgement, from different
-people, and neither condition is tied to a single annotator. Each package is a self-contained HTML
-file with audio embedded directly, so annotators need no software and no access to the corpus.
-
-Annotators make a three-way stance call with an explicit unsure option. The study's own stance labels
-are the hidden reference and are written to `data/annotations/premise_key.csv`, which is not
-distributed with the packages and is excluded from the repository.
-
-## D.3 Decision rule, fixed before scoring
-
-| Outcome | Reading |
-|---|---|
-| Audio agrees well and transcript-only is near chance | Contrast is speech-borne. Proceed. |
-| Both agree well | Meaning is text-recoverable. Revise the framing before proceeding. |
-| Audio does not agree well | Labels or contrast are weak. Investigate before spending compute. |
-
-## D.4 Outcome
-
-The second row obtained. Transcript with discourse context reached 0.65 accuracy against the hidden
-reference and audio with transcript reached 0.73, against a three-way chance level of 0.33 [4.1].
-Audio adds a real increment over the words, and discourse context recovers a substantial part of the
-contrast on its own.
-
-The framing was revised accordingly, as the rule required. The quantity of interest throughout the
-dissertation is what audio adds over text rather than whether text fails, and the text baseline is
-reported as a substantive competitor rather than as a floor. Reporting both conditions separately
-also motivates the distinction between the target-only and discourse-context text embeddings in
-[3.5].
-
-Scoring reports accuracy against the reference, Cohen's kappa and the unsure rate per condition.
-
 ---
 
-# Appendix E. The acoustic correlates of ironic and sarcastic delivery
+# Appendix C. The acoustic correlates of ironic and sarcastic delivery
 
-Source material for [2.4]. The chapter states the conclusion. This appendix gives the inventory and
-the disagreement, because both bear on how the results are read.
-
-## E.1 What the literature reports
+Source material for [2.4], which states the conclusion. The inventory is here because the
+disagreement in the last row bears on how [4.1] is read.
 
 | Study | Language | Cues reported |
 |---|---|---|
@@ -409,106 +411,54 @@ the disagreement, because both bear on how the results are read.
 | Lan et al. (2019) | Cantonese | Six measured features, namely speech rate, mean F0, F0 range, mean amplitude, amplitude range and harmonics-to-noise ratio, with reductions across several |
 | Bryant and Fox Tree (2002, 2005) | English | Examine whether such cues constitute a dedicated ironic tone of voice, and conclude against a single dedicated marker in favour of a family of cues recognised in context |
 
-## E.2 Two consequences for this study
-
-**The premise check is a replication, not a shortfall.** Rockwell (2000) reports that listeners
-discriminated posed sarcasm from non-sarcasm but did not discriminate spontaneous sarcasm from
-non-sarcasm at all. This corpus is spontaneous. An audio condition reaching 0.73 against a three-way
-chance of 0.33, with discourse context alone reaching 0.65, is what a family-of-cues account with
-contextual support predicts [4.1]. Read against acted-corpus results it would look modest. Read
-against Rockwell it does not.
-
-**The cue inventory is not uniform with respect to reconstruction.** Amplitude and mean F0 are
-directly reconstructive, in the sense that a codec cannot degrade them without a reconstruction
-penalty, and they are also most of what an arousal judgement rests on. Speech rate, F0 range and
-harmonics-to-noise ratio are contour-shaped or timing-dependent, and degrading them costs little on
-any reconstruction criterion. A pipeline optimised for reconstruction would therefore be expected to
-retain the first group and shed the second.
-
-That is the asymmetry measured in [Ch.4], where Mimi retains roughly three quarters of the arousal
-signal against under a third of the stance signal. The inference is an interpretation rather than a
-measurement, since no cue-level analysis was run on this corpus, and [Ch.6] names that analysis as
-the second step of the repair programme precisely because it would settle the question cheaply.
-
-## E.3 Why cue-level attribution was not attempted here
-
-Measuring which cues survive requires extracting each cue from each clip and probing them
-individually, which is a different study from the one reported. It also requires a position on the
-Bryant and Fox Tree dispute, since if there is no dedicated marker then cue-level attribution must be
-conditioned on context and the design becomes considerably larger. The present study measures whether
-the pragmatic category is recoverable, which is the prior question and the one that bears on
-tokenisation directly.
+Two readings follow. Rockwell reports listeners discriminating posed sarcasm but not
+spontaneous sarcasm, and this corpus is spontaneous, so the premise check reaching 0.73 from
+audio against 0.65 from context is what a family-of-cues account predicts rather than a
+shortfall [4.1]. And the inventory is not uniform with respect to reconstruction. Amplitude
+and mean F0 cannot be degraded without a reconstruction penalty, while speech rate, F0 range
+and harmonics-to-noise ratio are contour-shaped or timing-dependent and cost little to shed.
+A pipeline optimised for reconstruction would retain the first group and lose the second,
+which is the shape of what [4.4] measures.
 
 ---
 
-# Appendix F. The reasoning behind the constraints in [6.2]
+# Appendix D. The reasoning behind the constraints in [6.2]
 
-Source: `docs/limitations.md`, which holds the full treatment. Section [6.2] states the constraints and
-this appendix gives the reasoning each rests on.
+Source: `docs/limitations.md`. [6.2] states the constraints and the full treatment is in that
+file. What follows is only the reasoning [6.2] has no room for.
 
-**Why the encoder figure is an upper bound and the quantisation figure is not.** In the ladder,
-WavLM contributes 2,048 pooled features against Mimi's 1,024, so part of the 0.089 attributed to
-distillation and the codec encoder could be dimensionality rather than information loss. The
-quantisation estimate does not carry that risk, because the pre-quantisation and post-quantisation
-representations have identical dimensionality, identical pooling and an identical source [B.4]. Trust
-the 0.027 and treat the 0.089 as a ceiling.
+**The dimensionality behind the upper bound.** WavLM contributes 2,048 pooled features
+against a codec latent's 1,024, so part of the 0.089 attributed to the encoder could be
+width rather than information [B.4]. The quantiser figure carries no such risk, since both
+sides of that comparison have identical dimensionality, pooling and source. That asymmetry
+is why the ratio between the two is stated as a ratio and the 0.089 as a ceiling.
 
-**Why the distillation attribution is associational.** Two comparisons support it, one across codecs
-and one within Mimi, and the internal one holds architecture, frame rate, training data and audio
-constant, so the only systematic difference is the distillation objective. Neither is the decisive
-experiment, which would train the same codec with and without the term. The cross-codec half carries
-a further confound worth naming, since DAC runs at 75 Hz with 1,024-entry codebooks against Mimi's
-12.5 Hz and 2,048, so frame rate and codebook geometry vary alongside the objective.
+**A confound specific to the cross-codec half of the distillation comparison.** DAC runs at
+75 Hz with 1,024-entry codebooks against Mimi's 12.5 Hz and 2,048, so frame rate and codebook
+geometry vary alongside the distillation objective. The within-Mimi comparison holds
+architecture, frame rate, training data and audio constant, which is why it carries more of
+the weight, and neither is the decisive experiment.
 
-**Why linear probing bounds rather than explains.** A linear probe reports whether information is
-linearly accessible rather than whether it is present, and that ambiguity would bear most heavily on
-the continuous-against-discrete comparison. It was tested rather than argued around. Across six probe
-capacities the largest gain anywhere is +0.025 against a gap of roughly 0.14, and the gains that
-occur track headroom rather than representation type, with the largest falling on the continuous text
-embedding [4.6]. Two residual points remain. The probe was kept deliberately small and strongly
-regularised, since a sufficiently powerful probe learns the task from almost any representation and
-reports on itself, so this rules out modest non-linear encoding rather than any conceivable encoding.
-And accessibility to a probe is not usability by a downstream model, which is why the claims in
-[Ch.5] are framed as a ceiling rather than as a prediction about system behaviour.
+**Why the probe was kept small.** A sufficiently powerful probe learns the task from almost
+any representation and reports on itself. The capacity sweep therefore rules out modest
+non-linear encoding rather than any conceivable encoding, and accessibility to a probe is
+not usability by a downstream model, which is why [Ch.5] frames its claims as a ceiling.
 
-**Why the identity control is held-out shows.** The corpus carries show names rather than speaker
-labels, and guests recur across shows, so grouping folds by show does not guarantee that training and
-test share no speaker.
+**Why held-out shows is weaker than held-out speakers.** Guests recur across shows, so
+grouping folds by show does not guarantee that training and test share no speaker.
 
-**Why cue-level attribution was not attempted.** See Appendix [E].
-
-**Why architecture cannot be separated from training history.** The comparison in [4.5] holds frame
-rate constant and varies encoder architecture, but it does so across three publicly released
-checkpoints that also differ in their training data, schedules and objectives. Gichamba and Busogi
-(2026) provide the concrete reason for caution rather than a general one, having shown an apparent
-architectural limit in DAC at low frame rates resolving into a training misconfiguration once
-sequence length was matched. Separating the two requires codecs trained under matched conditions
-differing only in the temporal mechanism, which no public checkpoint set supplies.
-
-**Why the precision limit is stated as a constraint rather than a finding.** Fold assignment alone
-contributes a standard deviation of 0.010 with a range up to 0.06, and the assignment produced by a
-standard grouped splitter changed between two library releases, moving WavLM L20 from 0.553 to 0.573
-on identical inputs. Every figure reported is therefore a mean over 25 partitions defined in the
-analysis code [3.7]. This bounds what the study can claim, since differences under roughly 0.03 are
-not robust, and it also bounds what can be read from the wider literature, most of which reports
-single-partition figures to three decimals. It is treated here as a limitation on this study rather
-than as a result about others, because establishing the latter would require re-running work that is
-not reproduced here.
-
-**Other constraints.** Target-only text is at chance only within a phrase, not pooled across phrases,
-because the eight phrases differ in their stance base rates and a probe can score above chance from
-word identity alone, so the pooled figure of 0.487 must be read with that artefact in mind. Neutral
-stance is concentrated in the agreement particles, and high-arousal neutral is represented by only 26
-clips, so any analysis crossing both axes at that cell is thin [B.5].
+**Two thin cells.** Target-only text is at chance only within a phrase and not pooled across
+phrases, since the eight differ in their stance base rates, so the pooled 0.493 carries that
+artefact. High-arousal neutral holds 26 clips, so any analysis crossing both axes at that
+cell is thin [B.5].
 
 ---
 
-# Appendix G. Methodological checks
+# Appendix E. Methodological checks
 
 These bear on how the figures in Chapter 4 should be read rather than on what they say. Each was run
 because the corresponding claim would otherwise rest on an untested assumption.
-
-## G.1 Models and humans on the same sixty clips
+## E.1 Models and humans on the same sixty clips
 
 Source: `src/29_premise_ceiling.py`, `results/premise_ceiling.txt`.
 
@@ -539,7 +489,7 @@ WavLM, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60 out-of
 the held-out-episode split. On the most generous reading of the model side the gap is about 0.18,
 roughly 2.3 standard errors at sixty items.
 
-## G.2 Readout, and why Mimi appears twice in the within-word table
+## E.2 Readout, and why Mimi appears twice in the within-word table
 
 Sources: `src/26_within_word_readout.py`, `results/within_word_readout.txt`, `results/ladder_by_readout.txt`.
 
@@ -549,7 +499,7 @@ ordering across readouts and [4.2] is the reference for absolute values.
 
 Mimi's deployed summarisation is a per-codebook unigram histogram of 16,384 sparse dimensions. The
 continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 68 to
-127 clips [C.1], so that asymmetry is far more punishing than it is pooled.
+127 clips [B.9], so that asymmetry is far more punishing than it is pooled.
 
 | Representation | Readout | mean within-word macro-F1 | degenerate cells |
 |---|---|---|---|
@@ -573,7 +523,7 @@ partitions. The gap is therefore a difference of measurement scheme rather than 
 this appendix is retained for the ordering it shows across readouts rather than for its absolute
 values.
 
-## G.3 Probe capacity
+## E.3 Probe capacity
 
 Sources: `src/22_nonlinear_probe.py`, `results/linear_vs_nonlinear_probe.txt`.
 
@@ -595,7 +545,7 @@ WavLM and +0.129 on Mimi at p 0.032. It was kept deliberately small and strongly
 sufficiently powerful probe learns the task from almost any representation and reports on itself, so
 this rules out modest non-linear encoding rather than any conceivable encoding.
 
-## G.4 The cumulative codebook ladder
+## E.4 The cumulative codebook ladder
 
 Source: `src/28_codebook_ladder.py`, `results/codebook_cumulative.txt`.
 
@@ -617,12 +567,12 @@ reach +0.071. In reverse, the seven acoustic codebooks without codebook 0 reach 
 takes them to +0.071. The intermediate blocks are non-monotonic across a 0.040 band, which is most of
 the margin itself and is not the shape of accumulating signal. It tracks accumulated dimensionality,
 since each codebook adds 2,048 sparse dimensions to an 873-clip problem, and it is the same effect
-measured at 0.031 pooled and 0.128 within a phrase on a single partition [G.2]. The
+measured at 0.031 pooled and 0.128 within a phrase on a single partition [E.2]. The
 equivalent cost under the partitioning in [3.7] is 0.070 pooled, from 0.441 to 0.371 [4.3].
 The two are not comparable and the second supersedes the first, since the older run
 compared against a differently constructed baseline.
 
-## G.5 The contrast-preservation score
+## E.5 The contrast-preservation score
 
 Sources: `src/23_cps_baseline.py`, `results/cps_baseline.txt`.
 
@@ -646,7 +596,7 @@ minimal-pair ABX task avoids this by fixing the comparison as a triplet, so no c
 and no cell need be large (Schatz et al., 2013), which is how it functions inside multi-level
 evaluation suites (Dunbar et al., 2021). [Ch.6] takes that up as the specification for a replacement.
 
-## G.6 The layer sweep
+## E.6 The layer sweep
 
 All 63 encoder layers of the three continuous models, three readouts each, 25 partitions
 per cell, 189 cells. Source `results/timing_layers.*`, `src/34 --reps layers`.
@@ -661,7 +611,7 @@ per cell, 189 cells. Source `results/timing_layers.*`, `src/34 --reps layers`.
 
 For WavLM and Whisper the two coincide, so the layer chosen under an order-free readout is
 not the wrong one for a time-aware one. HuBERT dissociates by eight layers, which is
-consistent with its being the model whose layer selection is unstable [H].
+consistent with its being the model whose layer selection is unstable [F].
 
 **`seg4` is the strongest readout, not the polynomial basis.** It takes 17 of the top 30
 cells and all of the top ten, against 7 for `meanstd` and 6 for `basis8`. Four equal
@@ -675,7 +625,7 @@ partition noise of 0.010, so the two are level rather than ordered. Whisper also
 its final encoder layer, which does not sit comfortably with accounts placing
 paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025b).
 
-### G.6.1 The disagreement over Whisper
+### E.6.1 The disagreement over Whisper
 
 Qian, Figueroa and Skantze (2025b) study perceived prosodic similarity of conversational
 feedback under an independent lexical control, and report prosodic information concentrated
@@ -698,7 +648,7 @@ ASR encoders support joint audio and speech understanding (Gong et al., 2023).
 Distinguishing the accounts would need both measures run on one representation, which is
 worth doing and is not done here.
 
-## G.7 Two unexplained results at the quantiser step
+## E.7 Two unexplained results at the quantiser step
 
 The order effect declines monotonically across the encoder rungs [4.4]. Two rows do not
 follow that pattern, both of them quantiser steps, and neither is accounted for here.
@@ -730,46 +680,7 @@ its pattern is not one a reader can calibrate.
 
 ---
 
-# Appendix H. HuBERT-large
-
-HuBERT-large (Hsu et al., 2021) was probed throughout on identical folds, readouts and
-features as every other representation. It is reported here rather than in the body
-because it duplicates WavLM as a masked-prediction self-supervised control, sharing
-architecture, depth and width and differing chiefly in WavLM's noise and overlapped-speech
-augmentation, and because its layer selection is not stable. It is reported rather than
-omitted because removing a condition after seeing its results would be selective
-reporting.
-
-**Pooled decodability**, mean over 25 partitions at L23.
-
-| readout | macro-F1 | sd | order effect | sd | t |
-|---|---:|---:|---:|---:|---:|
-| meanstd | 0.505 | 0.013 | — | | |
-| basis8 | 0.490 | 0.012 | +0.086 | 0.020 | 21.3 |
-| seg4 | 0.526 | 0.014 | +0.034 | 0.018 | 9.4 |
-| delta | 0.485 | 0.009 | +0.001 | 0.017 | 0.4 |
-
-HuBERT sits below WavLM at 0.557 and Whisper at 0.548, and its order effect of +0.086 sits
-between them, so including it would not have changed any claim in [Ch.4].
-
-**Why its layer choice is not stable.** Selecting the layer inside each training split and
-scoring on held-out episodes gives 0.491 against the 0.520 obtained by taking the argmax
-over all data, an optimism of **+0.029**, the largest of the three models. The layer chosen
-varies across folds, at L20, L23, L10, L21 and L23, and one of those is fifteen layers from
-the others. Its layer curve is correspondingly flat, moving 0.027 across its top four
-layers. WavLM and Whisper carry optimism of +0.003 and +0.015 by the same measure [G.6].
-
-**Where its order effect lives.** Stance decoding peaks at L23 while the order effect peaks
-at L15, the only dissociation of the three models [G.6]. Given the instability above, the
-more cautious reading is that L23 is not a reliable peak rather than that the two
-quantities genuinely separate in this model.
-
-**Within-word figures** are the single-partition values from the original run, 0.616 mean
-across the eight phrases, and were not recomputed under the partition scheme in [3.7].
-
----
-
-## G.8 Cue retention, recomputed
+## E.8 Cue retention, recomputed
 
 Source `results/cue_retention_repeated.txt`, `src/48`, 25 partitions. This supersedes
 `results/cue_retention.txt` and `results/encodec_cue_retention.txt`, which remain in the
@@ -821,3 +732,38 @@ spread was not enough to say. Paired across the 25 partitions it is:
 The ordering survives, and the narrowest of the three contrasts is the one the
 architectural claim needs. Had it not survived, [4.5] would have had one measurement
 behind it rather than two.
+
+---
+
+# Appendix F. HuBERT-large
+
+HuBERT-large (Hsu et al., 2021) was probed throughout on identical folds, readouts and
+features as every other representation, and is reported here rather than in the body for two
+reasons. It duplicates WavLM as a masked-prediction self-supervised control, sharing
+architecture, depth and width and differing chiefly in WavLM's noise and overlapped-speech
+augmentation. And its layer selection is not stable. It is reported rather than dropped
+because removing a condition after seeing its results would be selective reporting.
+
+**Pooled decodability**, mean over 25 partitions at L23.
+
+| readout | macro-F1 | sd | order effect | sd | t |
+|---|---:|---:|---:|---:|---:|
+| meanstd | 0.505 | 0.013 | — | | |
+| basis8 | 0.490 | 0.012 | +0.086 | 0.020 | 21.3 |
+| seg4 | 0.526 | 0.014 | +0.034 | 0.018 | 9.4 |
+| delta | 0.485 | 0.009 | +0.001 | 0.017 | 0.4 |
+
+HuBERT sits below WavLM at 0.557 and Whisper at 0.548, and its order effect of +0.086 sits
+between them, so including it would not have changed any claim in [Ch.4].
+
+**Why its layer choice is not stable.** Selecting the layer inside each training split and
+scoring on held-out episodes gives 0.491 against the 0.520 obtained by taking the argmax over
+all data, an optimism of +0.029, the largest of the three models. The layer chosen varies
+across folds, at L20, L23, L10, L21 and L23, and its layer curve moves only 0.027 across its
+top four layers. WavLM and Whisper carry optimism of +0.003 and +0.015 [E.6]. Stance decoding
+peaks at L23 while the order effect peaks at L15, the only such dissociation of the three
+models, and given the instability the cautious reading is that L23 is not a reliable peak
+rather than that the two quantities genuinely separate here.
+
+Its within-word figures are the single-partition values from the original run, 0.616 mean
+across the eight phrases, and were not recomputed under [3.7].

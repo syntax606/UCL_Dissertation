@@ -21,19 +21,19 @@ Of the five hypotheses formed before the analyses, H1, H2, H3 and H5 are support
 
 ## 6.2 Limitations
 
-The full treatment of each constraint below is in Appendix [F].
+The full treatment of each constraint below is in Appendix [D].
 
-Three hypotheses were stated before testing and are not supported, and reporting them is part of the result. Variable-frame-rate tokenisation does not recover the loss. Timing features alone sit at chance. Order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on [4.6]. A training-free contrast-preservation measure was also attempted and does not discriminate, and its failure is structural rather than a matter of power [G.5].
+Three hypotheses were stated before testing and are not supported, and reporting them is part of the result. Variable-frame-rate tokenisation does not recover the loss. Timing features alone sit at chance. Order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on [4.6]. A training-free contrast-preservation measure was also attempted and does not discriminate, and its failure is structural rather than a matter of power [E.5].
 
 Four constraints bound the positive findings, and a fifth concerns the identity control.
 
 The architectural account cannot be separated from training history. Frozen public checkpoints cannot distinguish what an architecture can represent from what a particular training run taught it to represent, and an apparent architectural limit in DAC has already been shown to resolve into a training misconfiguration (Gichamba and Busogi, 2026).
 
-The encoder figure is an upper bound while the quantisation figure is not, since WavLM contributes twice the pooled dimensionality of a codec latent while the quantiser step compares a representation against itself at equal width. That matters because the ratio between the two is the claim [F].
+The encoder figure is an upper bound while the quantisation figure is not, since WavLM contributes twice the pooled dimensionality of a codec latent while the quantiser step compares a representation against itself at equal width. That matters because the ratio between the two is the claim [D].
 
 The attribution to distillation is associational. Mimi's codebook 0 carries the stance signal and codebook 0 is the distilled one, but the decisive experiment trains one codec with and without the objective.
 
-Linear probing measures accessibility rather than presence (Belinkov, 2022), though across six probe capacities no configuration recovers more than +0.025 against a gap of roughly 0.14 [G.3], so accessibility bounds rather than explains the result. The identity control is held-out shows rather than unseen speakers, since the corpus carries show labels only.
+Linear probing measures accessibility rather than presence (Belinkov, 2022), though across six probe capacities no configuration recovers more than +0.025 against a gap of roughly 0.14 [E.3], so accessibility bounds rather than explains the result. The identity control is held-out shows rather than unseen speakers, since the corpus carries show labels only.
 
 ## 6.3 A programme for repair
 

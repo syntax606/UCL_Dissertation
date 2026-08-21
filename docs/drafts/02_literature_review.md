@@ -31,7 +31,7 @@ Table 2.1. Representations under test. Frame rate in Hz. Specifications read fro
 | Sylber (Cho et al., 2025) | 16 kHz | ~4, variable |  |  | syllabic, signal-derived units | conv + transformer, HuBERT-based |
 | DyCAST (Della Libera et al., 2026) | 16 kHz | 6–24, variable |  | 4^32 | character-aligned, variable rate | conv + transformer, WavLM-based |
 
-HuBERT-large (Hsu et al., 2021) was probed throughout as a matched self-supervised control for WavLM and is reported in Appendix [H].
+HuBERT-large (Hsu et al., 2021) was probed throughout as a matched self-supervised control for WavLM and is reported in Appendix [F].
 
 Continuous encoders. WavLM and HuBERT share a masked-prediction architecture and a documented layer-wise division of labour, with lower layers encoding local acoustic detail, middle layers integrating prosodic and contextual information, and upper layers abstracting toward linguistic content (Pasad et al., 2021). Qian, Figueroa and Skantze (2025b) locate prosodic information primarily in middle layers across four foundation models. That the optimum is not absolute is why the full stack is probed here rather than a layer assumed. The Whisper encoder is the theoretically interesting case, since a transcription objective predicts a lexical bias the self-supervised encoders do not share.
 
@@ -59,7 +59,7 @@ Response tokens. Yeah, okay, right and sure are response tokens. Schegloff (1982
 
 That delivery is separable from wording is not assumed here. O'Connor Russell et al. (2026) vocoder speech to remove lexical content while preserving prosody and find turn-taking prediction retaining 87 to 91 per cent of clean-speech accuracy, concluding that prosodic and lexical cues are encoded in self-supervised representations with limited interdependence. Qian, Figueroa and Skantze (2025b) reach the same design decision independently, grouping stimuli by lexical form to eliminate the effects of lexical semantics.
 
-The acoustic signature. An experimental literature converges on a small set of correlates for ironic delivery, namely slower tempo, greater intensity, lowered pitch, reduced F0 range and altered voice quality (Rockwell, 2000; Lan et al., 2019), while disputing whether these amount to a dedicated ironic tone or a family of cues recognised in context (Bryant and Fox Tree, 2005). That dispute bears on the premise check in [4.1], where context alone recovers much of the contrast. Appendix [E] gives the inventory.
+The acoustic signature. An experimental literature converges on a small set of correlates for ironic delivery, namely slower tempo, greater intensity, lowered pitch, reduced F0 range and altered voice quality (Rockwell, 2000; Lan et al., 2019), while disputing whether these amount to a dedicated ironic tone or a family of cues recognised in context (Bryant and Fox Tree, 2005). That dispute bears on the premise check in [4.1], where context alone recovers much of the contrast. Appendix [C] gives the inventory.
 
 Spontaneous against acted delivery. Rockwell (2000) found listeners able to discriminate posed sarcasm and unable to discriminate spontaneous sarcasm, so the two are not interchangeable stimuli. Scherer (2003) sets that problem out for vocal emotion research generally, and it is why naturalistic podcast-derived corpora were built (Busso et al., 2025).
 
