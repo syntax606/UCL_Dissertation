@@ -201,8 +201,9 @@ def main():
         f"{n_ok} entries are fully verified against the source. "
         f"{n_q} are marked with a question mark, meaning the work is on file but one detail, usually "
         f"volume, issue, page range or venue, was not printed on the title page and needs confirming. "
-        f"{n_x} are marked with an exclamation mark, meaning no copy of the source is held and the "
-        f"reference was reconstructed from citations of it in papers that are on file."
+        + (f"{n_x} are marked with an exclamation mark, meaning no copy of the source is held and "
+           f"the reference was reconstructed from citations of it in papers that are on file."
+           if n_x else "Every work cited is held on file.")
     )
     r.font.size = Pt(9)
     r.italic = True
@@ -222,9 +223,12 @@ def main():
 
     d.add_paragraph()
     k = d.add_paragraph()
+    # Only describe a mark that something actually carries. A legend listing a category with
+    # no members reads as though entries might be in it.
     kr = k.add_run(
-        "[?] on file, one bibliographic detail needs confirming.    "
-        "[!] no copy held, reference reconstructed from other papers' citations of it."
+        ("[?] on file, one bibliographic detail needs confirming." if n_q else "")
+        + ("    [!] no copy held, reference reconstructed from other papers' citations of it."
+           if n_x else "")
     )
     kr.font.size = Pt(9)
     kr.italic = True
