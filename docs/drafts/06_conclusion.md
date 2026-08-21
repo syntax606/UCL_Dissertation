@@ -5,17 +5,19 @@
 
 ## 6.1 Conclusions
 
-This study asked whether pragmatic contrast survives the representations that speech-to-speech systems consume, and if not, where it is lost. Of the five hypotheses formed before the analyses, H1, H2, H3 and H5 are supported and H4 is not. Of the four formed after the falsification of H4 redirected the study, H9 is supported and H6 to H8 are not. As [1.3] states, H9 was formed after an anomalous result and then tested on a codec not previously included, which is not the same kind of claim as one registered in advance.
+This study asked whether pragmatic contrast survives the representations that speech-to-speech systems consume, and if not, where it is lost and why. The four research questions in [1.3] are answered as follows.
 
-Stance is linearly decodable under lexical control. WavLM reaches 0.557 macro-F1 against its own null of 0.330, and the ordering survives the within-word contrast, matched arousal, held-out shows and six probe capacities [4.2, 4.6]. This is decodability relative to other representations rather than to a listener, since the best model condition reaches 0.533 where annotators reach 0.730 [4.1].
+RQ1. Stance is linearly decodable under lexical control. WavLM reaches 0.557 macro-F1 against its own null of 0.330, and the ordering survives the within-word contrast, matched arousal, held-out shows and six probe capacities [4.2, 4.6]. This is decodability relative to other representations rather than to a listener, since the best model condition reaches 0.533 where annotators reach 0.730 [4.1].
 
-The representation deployed systems consume retains little of it. Mimi’s token histogram reaches 0.371, a margin of 0.060 over its null against WavLM’s 0.226, and sits below 88 hand-crafted acoustic functionals at 0.420 [4.2]. Whatever the deployed stream carries, a standard feature set carries more.
+RQ2. The representation deployed systems consume retains little of it. Mimi’s token histogram reaches 0.371, a margin of 0.060 over its null against WavLM’s 0.226, and sits below 88 hand-crafted acoustic functionals at 0.420 [4.2]. Whatever the deployed stream carries, a standard feature set carries more.
 
-The loss is not where this study expected to find it. Quantisation, the only step capable of making two distinct inputs literally identical, is the smaller contributor in all three codecs, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC [4.3]. The falsification of H4 is what redirected the study toward the encoder.
+RQ3. The loss is not where this study expected to find it. Quantisation, the only step capable of making two distinct inputs literally identical, is the smaller contributor in all three codecs, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC [4.3]. The falsification of H4 is what redirected the study toward the encoder.
 
-What the encoder fails to preserve is temporal organisation rather than acoustic detail. The codecs recover hand-crafted cues more faithfully than the model Mimi distils from, including the contour features stance is built from, while reading stance off them far worse [4.4]. Temporal is the one cue group they lose, and independently the gain from frame order declines across the encoder rungs. Matching DAC and EnCodec at 75 Hz isolates the reason [4.5].
+RQ4, and the remainder of RQ3. What the encoder fails to preserve is temporal organisation rather than acoustic detail. The codecs recover hand-crafted cues more faithfully than the model Mimi distils from, including the contour features stance is built from, while reading stance off them far worse [4.4]. Temporal is the one cue group they lose, and independently the gain from frame order declines across the encoder rungs. Matching DAC and EnCodec at 75 Hz isolates the reason [4.5].
 
 A fifth result bears on the literature rather than on codecs. Fold assignment alone contributes a standard deviation of 0.010 with a range up to 0.06, the magnitude of several differences reported in this area [3.7], so differences under roughly 0.03 are not read as orderings here.
+
+Of the five hypotheses formed before the analyses, H1, H2, H3 and H5 are supported and H4 is not. Of the four formed after the falsification of H4 redirected the study, H9 is supported and H6 to H8 are not. As [1.3] states, H9 was formed after an anomalous result and then tested on a codec not previously included, which is not the same kind of claim as one registered in advance.
 
 ## 6.2 Limitations
 
@@ -48,7 +50,5 @@ Build the diagnostic that would notice. The retention that exists is optimised f
 ## 6.4 Closing
 
 The finding this study set out to make was that discretisation destroys interpersonal meaning. What it reports is that discretisation is the smaller part, that the encoder is the larger part, and that what the encoder loses is not the acoustics but their arrangement in time. Whether that arrangement survives tracks whether the encoder has anything with which to represent it.
-
-Interventions at the encoder-LLM interface rather than at the codebook are consistent with this account. Pang et al. (2026) combine multiple audio encoder layers adaptively and apply preference optimisation to favour acoustically supported responses, raising one system from 17.40 to 65.20 per cent on their benchmark. That such gains are available without modifying the tokeniser supports the present conclusion that leverage sits upstream of the quantiser, though it addresses utilisation rather than the encoder loss measured here.
 
 That is a less tidy result and a more actionable one. Rounding is irreducible. Architectures are chosen.

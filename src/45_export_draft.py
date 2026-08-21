@@ -85,7 +85,12 @@ def main():
         txt = clean(b.text)
         if not txt:
             continue
-        key = next((k for k in FILES if txt.startswith(k)), None)
+        # A chapter starts only at "Chapter N:", never at prose beginning "Chapter N".
+        # Without the colon, section 1.5's "Chapter 2 situates the study..." was read
+        # as a file boundary and its body was dropped from the export.
+        key = next((k for k in FILES
+                    if txt.startswith(k) and (k == "Abstract" or txt[len(k):len(k) + 1] == ":")),
+                   None)
         if key:
             flush()
             current, buf = key, [f"# {txt}"]

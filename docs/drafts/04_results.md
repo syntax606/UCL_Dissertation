@@ -15,7 +15,7 @@ Scoring the models on those same sixty clips, the only like-for-like comparison 
 
 ## 4.2 Decodability, and the lexical control
 
-Table 4.1 reports the three-way stance probe on the primary window.
+Table 4.1 reports the three-way stance probe on the primary window. Sylber and DyCAST are the two variable-frame-rate tokenisers, included for the comparison in [4.6] and discussed there rather than here.
 
 | Representation | macro-F1 | sd |
 |---|---|---|
