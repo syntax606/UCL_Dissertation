@@ -197,6 +197,8 @@ reasons in [3.7]. The majority-class figure of 0.196 is reported alongside for c
 
 ## B.3 Non-linear probe
 
+Sources: `src/49_nonlinear_repeated.py`, `results/nonlinear_repeated.txt`.
+
 Primary configuration.
 
 | Setting | Value |
@@ -231,26 +233,33 @@ found something the linear probe missed.
 
 | Representation | linear | `h32/a1` | `h64/a0.1` | `h64/a1` | `h64/a10` | `h64/a1/noES` | `h128/a1` |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| WavLM | 0.576 | −0.053 | −0.026 | −0.024 | +0.003 | +0.003 | −0.037 |
-| Whisper encoder | 0.565 | −0.030 | −0.070 | −0.075 | −0.084 | −0.011 | −0.029 |
-| HuBERT | 0.522 | −0.046 | −0.020 | −0.027 | −0.041 | −0.012 | −0.013 |
-| Mimi pre-quant | 0.464 | −0.023 | −0.025 | −0.034 | −0.034 | +0.015 | −0.043 |
-| Mimi post-quant | 0.434 | −0.003 | +0.023 | +0.019 | +0.021 | +0.023 | +0.007 |
-| DAC post-quant | 0.417 | −0.018 | −0.016 | −0.027 | −0.017 | −0.024 | +0.010 |
-| Mimi histogram | 0.381 | −0.007 | −0.002 | +0.004 | −0.004 | +0.021 | +0.022 |
-| Text, context | 0.376 | +0.005 | −0.012 | −0.006 | −0.012 | +0.013 | +0.025 |
+| WavLM | 0.557 | −0.032 | −0.009 | −0.010 | −0.002 | +0.018 | −0.004 |
+| Whisper encoder | 0.548 | −0.039 | −0.050 | −0.049 | −0.041 | +0.006 | −0.024 |
+| HuBERT | 0.505 | −0.033 | −0.048 | −0.049 | −0.039 | +0.000 | −0.022 |
+| Mimi pre-quant | 0.468 | −0.040 | −0.038 | −0.041 | −0.038 | −0.001 | −0.035 |
+| Mimi post-quant | 0.441 | −0.015 | −0.016 | −0.019 | −0.018 | +0.008 | −0.022 |
+| Text, context | 0.394 | +0.006 | −0.008 | −0.008 | −0.006 | +0.005 | −0.001 |
+| DAC post-quant | 0.381 | +0.015 | +0.001 | 0.000 | +0.001 | +0.004 | +0.009 |
+| Mimi histogram | 0.371 | +0.010 | +0.011 | +0.015 | +0.025 | +0.025 | +0.018 |
 
-Rows are ordered by linear score, which makes the pattern visible. The four representations above
-0.500 have a maximum gain of +0.003 anywhere in the sweep. The four below have maxima between +0.010
-and +0.025. The largest gain of all falls on the continuous text embedding rather than on a discrete
-representation, and Mimi before quantisation gains less than Mimi after it, so the pattern tracks
-remaining headroom rather than discreteness [4.6].
+Rows are ordered by linear score. Under every setting that stops early, the non-linear probe is
+worse than the linear one on all three continuous encoders, by as much as 0.050 on Whisper, which is
+the small strongly regularised network behaving as intended. The three above 0.500 reach at most
++0.018 anywhere in the sweep, and the five below range from −0.001 to +0.025.
 
-The linear column here is produced by `src/22_nonlinear_probe.py` and is single-partition,
-predating the scheme in [3.7]. It differs from Table 4.1 by up to 0.036, most of that on DAC after
-quantisation, so Table 4.1 is the reference for absolute figures and this section is the reference
-for gains. The gains are unaffected, since each is a difference taken within this run on identical
-folds and features, which is why [4.6] is written in terms of gains throughout.
+The largest gain falls on Mimi's deployed histogram, at +0.025 under two settings. That is the most
+heavily quantised representation in the study, and it is the direction the linear-accessibility worry
+predicts, so it should be read as support for that concern rather than against it. What it is not is
+large enough to matter. Adding it to the histogram's 0.371 reaches 0.396, against WavLM's 0.557, so
+the gap is bounded rather than closed [4.6]. Mimi before quantisation still gains less than Mimi
+after it, which is the ordering a linear-accessibility account predicts within a codec.
+
+Recomputed by `src/49_nonlinear_repeated.py` over the same 25 partitions as the rest of the study,
+with each gain formed inside a partition before averaging. The linear column now reproduces Table 4.1
+exactly on all eight representations, and HuBERT's 0.505 matches Appendix [F], so the two halves of
+the comparison rest on the same footing. The single-partition figures this replaces are in
+`results/linear_vs_nonlinear_probe.txt`, where the linear column drifted from Table 4.1 by up to
+0.036.
 
 ## B.4 Feature dimensionalities
 
@@ -526,7 +535,7 @@ values.
 
 ## E.3 Probe capacity
 
-Sources: `src/22_nonlinear_probe.py`, `results/linear_vs_nonlinear_probe.txt`.
+Sources: `src/49_nonlinear_repeated.py`, `results/nonlinear_repeated.txt`, 25 partitions. The permutation-null check below is from the original single-partition run, `src/22`.
 
 A linear probe reports whether information is linearly accessible rather than whether it is present
 (Belinkov, 2022), and that ambiguity would bear most heavily on the continuous-against-discrete
@@ -534,12 +543,15 @@ comparison. A non-linear probe was run on identical features and folds under six
 since gains under any single setting move by up to 0.06 and some change sign.
 
 The largest gain observed anywhere across the six settings is +0.025, against a continuous-to-discrete
-gap of roughly 0.14, so any non-linear reserve is bounded at about a sixth of the quantity being
-interpreted. The gains that occur track headroom rather than representation type. Every representation
-scoring above 0.500 gains at most +0.003 anywhere, every representation below it gains between +0.010
-and +0.025, the largest single gain falls on the continuous text embedding rather than on any discrete
-representation, and Mimi before quantisation gains less than Mimi after it. This does not rule out a
-mild penalty on quantised vectors. It bounds one.
+gap of 0.139, so any non-linear reserve is bounded at about a sixth of the quantity being interpreted.
+Where it falls is worth stating plainly. It falls on Mimi's deployed histogram, the most heavily
+quantised representation here, which is where a linear-accessibility penalty would be expected. The
+three representations scoring above 0.500 reach at most +0.018, and under every setting that stops
+early the non-linear probe is worse than the linear one on all three. Mimi before quantisation gains
+less than Mimi after it. So the evidence is consistent with a mild penalty on quantised vectors rather
+than against one, and the claim carried into the chapters is only that the penalty is too small to
+account for the gap. Adding the largest gain to the histogram's 0.371 reaches 0.396 against WavLM's
+0.557. This does not rule out a penalty. It bounds one.
 
 The probe is functioning rather than failing to train, clearing its own permutation null by +0.229 on
 WavLM and +0.129 on Mimi at p 0.032. It was kept deliberately small and strongly regularised, since a
