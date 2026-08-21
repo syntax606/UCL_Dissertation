@@ -1,0 +1,4 @@
+representation                         contour           level   voice quality        temporal        spectral
+WavLM, ceiling, absolute R2              0.283           0.607           0.225           0.557           0.345
+EnCodec, before quantisation             129%            145%            140%             72%            164% 
+EnCodec, after quantisation              130%            144%            134%             71%            162% 
