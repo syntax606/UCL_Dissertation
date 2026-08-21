@@ -292,10 +292,11 @@ repository, because they contain clip audio and the hidden reference key. The sc
 the figures regenerate from it given those inputs. This is the one quantity in the dissertation that
 a reader cannot recompute from the repository alone.
 
-**Corpus scale.** The 7,310 hours in [1.3] describes the indexed collection sampled from rather than
-material analysed end to end, and derives from the ingest stage rather than from any analysis script.
-The quantities that carry the analyses, 873 clips across 32 shows and 753 episodes, are computed from
-the label store and given in B.6.
+**Corpus scale.** An earlier draft reported 7,310 indexed hours in [1.3]. The figure came from the
+ingest stage rather than from any analysis script, described the collection sampled from rather than
+material analysed end to end, and was cut for that reason. It is recorded here so that a reader who
+meets it in an earlier version knows what it counted. The quantities that carry the analyses, 873
+clips across 32 shows and 753 episodes, are computed from the label store and given in B.6.
 
 ## C.1 Per-phrase within-word contrast, full detail
 

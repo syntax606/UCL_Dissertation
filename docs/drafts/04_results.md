@@ -15,7 +15,9 @@ Scoring the models on those same sixty clips, the only like-for-like comparison 
 
 ## 4.2 Decodability, and the lexical control
 
-Table 4.1 reports the three-way stance probe on the primary window. Sylber and DyCAST are the two variable-frame-rate tokenisers, included for the comparison in [4.6] and discussed there rather than here.
+Sylber and DyCAST are the two variable-frame-rate tokenisers, included for the comparison in [4.6] and discussed there rather than here.
+
+Table 4.1. Three-way stance decoding on the primary window. Mean macro-F1 over 25 partitions with its standard deviation.
 
 | Representation | macro-F1 | sd |
 |---|---|---|
@@ -36,6 +38,8 @@ Table 4.1 reports the three-way stance probe on the primary window. Sylber and D
 | Mimi, deployed tokens | 0.371 | 0.009 |
 
 Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.337, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to Mimi's 16,384-dimensional histogram at 0.311 and the 768-dimensional target-only text at 0.313, one sparse and one near-constant within a phrase by construction, while a 1,024-dimensional representation carries the highest at 0.337. A shuffled-label probe has least to work with where the representation has least effective structure, which is why the null has to be measured per configuration rather than assumed from dimensionality. One consequence is visible in the table. Mimi's deployed tokens score lower than DAC after quantisation, at 0.371 against 0.381, but clear a lower null and so carry the larger margin, at +0.060 against +0.050.
+
+Table 4.2. Each representation against its own permutation null, ordered by margin. The null is refitted on shuffled labels under the same partitioning.
 
 | representation | macro-F1 | null | margin |
 |---|---|---|---|
@@ -59,6 +63,8 @@ Two entries need comment. eGeMAPS is the hand-crafted comparison, and it places 
 
 That confound is what the lexical control removes. Within each phrase the probe attempts that phrase's dominant binary contrast, so word identity carries no information.
 
+Table 4.3. The within-word contrast. Within each phrase the probe attempts that phrase's dominant binary contrast, averaged over the eight phrases.
+
 | Representation | mean within-word macro-F1 | sd | mean per-phrase sd |
 |---|---|---|---|
 | Whisper encoder L9 | 0.658 | 0.010 | 0.030 |
@@ -79,6 +85,8 @@ Table 4.1 confounds quantisation with feature construction, frame rate, architec
 
 Costs are paired across the same 25 partitions, so partition noise cancels.
 
+Table 4.4. Cost of each pipeline stage in macro-F1, paired across the same 25 partitions so that partition noise cancels in the difference.
+
 | Step | cost | sd | t |
 |---|---|---|---|
 | encoder, WavLM to Mimi | +0.089 | 0.014 | 30.8 |
@@ -98,6 +106,8 @@ The decomposition locates the loss without saying what is lost. Two measurements
 
 The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
 
+Table 4.5. Recovery of hand-crafted cue groups from each rung by ridge regression, as a fraction of what WavLM supports. Mean over 25 partitions, no cell above three points of standard deviation.
+
 | Representation | contour | level | voice quality | temporal | spectral |
 |---|---|---|---|---|---|
 | WavLM, ceiling, absolute R² | 0.289 | 0.610 | 0.219 | 0.558 | 0.345 |
@@ -114,6 +124,8 @@ The codecs recover the acoustic cues better than WavLM does, with half the featu
 Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. Adding EnCodec to that column orders it by encoder architecture rather than by frame rate. Temporal retention runs 106 and 96 per cent for Mimi, which carries attention, 71 and 69 per cent for EnCodec, which carries recurrence, and 67 and 61 per cent for DAC, which carries neither, while DAC and EnCodec share a frame rate. That is the same ordering the order effect gives in [4.5], produced by a different measurement on different machinery, and it was not available when this analysis was first run.
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
+
+Table 4.6. The gain from frame order. Each readout against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution.
 
 | Representation | order effect | sd | t |
 |---|---|---|---|
@@ -141,6 +153,8 @@ The loss is not an artefact of the pooled readout. Time-aware readouts recover a
 
 Frame rate does not explain the ordering, and a controlled comparison shows what does.
 
+Table 4.7. Temporal mechanism against frame rate. The first two rows are matched at 75 Hz.
+
 | Codec | temporal mechanism | frame rate | order effect |
 |---|---|---|---|
 | DAC | none, pure convolution | 75 Hz | −0.007 |
@@ -163,9 +177,11 @@ One alternative account cannot be excluded. These are three independently traine
 
 ## 4.6 Controls, and what does not hold
 
-Both controls were rerun under the partitioning in [3.7], so their baselines match Table 4.1 rather than the single-partition figures they were first computed against [controls_repeated.txt].
+Both controls were rerun under the partitioning in [3.7], so their baselines match Table 4.1 rather than the single-partition figures they were first computed against.
 
 Arousal. Stance decoded within each arousal level separately, against the pooled figure.
+
+Table 4.8. Stance decoded within each arousal level separately, against the pooled figure.
 
 | representation | pooled | low arousal | high arousal |
 |---|---|---|---|
@@ -175,9 +191,9 @@ Arousal. Stance decoded within each arousal level separately, against the pooled
 | eGeMAPS, 88 functionals | 0.420 | 0.389 | 0.409 |
 | Mimi, deployed tokens | 0.371 | 0.363 | 0.361 |
 
-Decoding falls when energy is held constant, by 0.038 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
+Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
 
-Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.019 and 0.034 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
+Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
 Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of roughly 0.14, so linear accessibility is not the limiting factor [G.3].
 

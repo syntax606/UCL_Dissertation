@@ -15,7 +15,7 @@ A second axis, less often discussed. These systems also differ in how their enco
 
 ## 2.2 The representations under test
 
-Eight representations are compared on a single task, recovering the pragmatic force of a phrase whose lexical content is held constant.
+Ten conditions are compared on a single task, recovering the pragmatic force of a phrase whose lexical content is held constant. Eight carry the main analyses, with the text baseline supplying two of them, and the two variable-frame-rate tokenisers at the foot of the table are added for the comparison in [4.6].
 
 Table 2.1. Representations under test. Frame rate in Hz. Specifications read from the checkpoints and the primary papers.
 
