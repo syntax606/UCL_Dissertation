@@ -257,8 +257,29 @@ analysis-not-redistribution ethics approval. See
 Included: all code, the annotation codebook, the label store (`annotations.db`), and a
 sanitised labels table (`labels/labels.csv`) with no transcript text.
 
+### Where the draft lives
+
+**The Word document is authoritative.** `Dissert Draft 7.docx`, in the iCloud
+`UCL Compling/Dissertation/Aug 6` folder, is where the dissertation is written and
+edited. `docs/drafts/0[0-6]*.md` are **generated** from it by `src/45_export_draft.py`
+and carry a banner saying so. Editing them accomplishes nothing, since the next
+export overwrites them. They exist so that `git diff` shows what changed between
+exports, and so the text is greppable and checkable from the repo.
+
+Two files in `docs/drafts/` are not generated and are repo-only.
+`07_appendices.md` has no counterpart in the Word document, although the chapters
+reference it throughout, so it must be pasted in or exported before submission.
+`00_argument.md` is a working reference for the rewrite, not part of the
+dissertation.
+
+Re-export after editing the draft:
+
+```bash
+python3 src/45_export_draft.py
 ```
-src/                      pipeline scripts 00 to 32, numbered in dependency order
+
+```
+src/                      pipeline scripts 00 to 45, numbered in dependency order
   codebook.json           the annotation scheme
   config.py               machine-specific paths, via env var or gitignored YAML
 labels/labels.csv         one row per clip: ids, timing, stance, arousal

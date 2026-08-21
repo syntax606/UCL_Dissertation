@@ -1,259 +1,84 @@
+<!-- GENERATED from the Word draft by src/45_export_draft.py.
+     The .docx is authoritative. Edits made here will be overwritten. -->
+
 # Chapter 3: Data and Methods
 
 ## 3.1 Overview
 
-This chapter describes the corpus, the annotation scheme, the human validation step, the
-feature-extraction pipeline, and the probing protocol. The design follows directly from the
-commitments the literature forces onto the study [Ch.2]. The pragmatic contrast must be shown
-to be speech-borne before any modelling. The transcript baseline must be split into a
-manipulation check and a substantive baseline. The speaker confound must be controlled at both
-the classifier and the distance-measure level, and the arousal confound must be addressed by
-labelling arousal independently of stance. Each of these is realised concretely below.
+This chapter describes the corpus, the annotation scheme, the human validation step, the feature-extraction pipeline, and the probing protocol. The design follows directly from the commitments the literature forces onto the study [Ch.2]. The pragmatic contrast must be shown to be speech-borne before any modelling. The transcript baseline must be split into a manipulation check and a substantive baseline. The speaker confound must be controlled at both the classifier and the distance-measure level, and the arousal confound must be addressed by labelling arousal independently of stance. Each of these is realised concretely below.
 
 ## 3.2 Corpus and target phrases
 
-The material is naturalistic speech from political podcasts and broadcast programmes,
-chosen over acted emotion corpora because the claim concerns spontaneous delivery, and
-because acted and spontaneous renditions of the same category are not interchangeable
-stimuli. Scherer (2003) sets that problem out for vocal emotion research generally and
-Rockwell (2000) demonstrates it for sarcasm, finding listeners able to discriminate posed
-sarcasm but not spontaneous sarcasm. Naturalistic podcast-derived corpora were built in
-response to exactly this (Lotfian and Busso, 2019), and this corpus follows that
-precedent at a finer grain, since the unit of analysis is a single phrase rather than a
-speaking turn.
+The material is naturalistic speech from political podcasts and broadcast programmes, chosen over acted emotion corpora because the claim concerns spontaneous delivery, and because acted and spontaneous renditions of the same category are not interchangeable stimuli. Scherer (2003) sets that problem out for vocal emotion research generally and Rockwell (2000) demonstrates it for sarcasm, finding listeners able to discriminate posed sarcasm but not spontaneous sarcasm. Naturalistic podcast-derived corpora were built in response to exactly this (Busso et al., 2025), and this corpus follows that precedent at a finer grain, since the unit of analysis is a single phrase rather than a speaking turn.
 
-The study targets eight short high-frequency phrases whose pragmatic force varies by
-delivery while their lexical content is fixed, namely *yeah, okay, right, sure, great,
-fine, really* and *come on*. The four agreement particles are response tokens in the
-conversation-analytic sense, a class Gardner (2001) characterises as carrying no
-dictionary meaning but conveying the listener's stance through phonetic form, prosodic
-shape and placement, which is precisely the property this design requires. Gravano et al.
-(2012) add that their functions are separated in spontaneous dialogue by prosodic
-realisation rather than by wording, and frame that ambiguity as a problem for spoken
-dialogue systems. Their account predicts the distribution reported in [B.5], where
-neutral stance concentrates almost entirely in these four words. The evaluative terms and
-challenge markers are grouped on functional grounds for this study rather than following
-an established classification.
+The study targets eight short high-frequency phrases whose pragmatic force varies by delivery while their lexical content is fixed, namely yeah, okay, right, sure, great, fine, really and come on. The four agreement particles are response tokens in the conversation-analytic sense, a class Gardner (2001) characterises as carrying no dictionary meaning but conveying the listener's stance through phonetic form, prosodic shape and placement, which is precisely the property this design requires. Gravano et al. (2012) add that their functions are separated in spontaneous dialogue by prosodic realisation rather than by wording, and frame that ambiguity as a problem for spoken dialogue systems. Their account predicts the distribution reported in [B.5], where neutral stance concentrates almost entirely in these four words. The evaluative terms and challenge markers are grouped on functional grounds for this study rather than following an established classification.
 
-Candidates were drawn by a stratified pull balanced across shows, then supplemented with
-construction- and sense-specific pulls to fill thin stance cells, since a purely random
-pull over-samples the dominant sense of each word. The usable set after annotation is
-**873 clips across 32 shows and 753 distinct episodes**, close to balanced on stance
-(364 affiliative, 147 neutral, 362 adversarial) with arousal represented on both sides.
-Every phrase carries a well-powered binary stance contrast.
+Candidates were drawn by a stratified pull balanced across shows, then supplemented with construction- and sense-specific pulls to fill thin stance cells, since a purely random pull over-samples the dominant sense of each word. The usable set after annotation is 873 clips across 32 shows and 753 distinct episodes, close to balanced on stance (364 affiliative, 147 neutral, 362 adversarial) with arousal represented on both sides. Every phrase carries a well-powered binary stance contrast.
 
-Three nested context windows were cut for each occurrence, centred on the target word
-midpoint as located from word-level timestamps, at 6, 10 and 16 s. Against a median
-transcript segment length of 5.4 s these correspond approximately to the target segment
-alone, the segment with one neighbour either side, and roughly a full conversational turn
-either side. Windows are symmetric fixed durations rather than boundary-aligned spans,
-which keeps acoustic context strictly comparable across clips, and all clips are 16 kHz
-mono with EBU R128 loudness normalisation so that overall level cannot act as a trivial
-cue. The primary window throughout is the 10 s segment window. Full cutting parameters
-are in Appendix [B].
+Three nested context windows were cut for each occurrence, centred on the target word midpoint as located from word-level timestamps, at 6, 10 and 16 s. Against a median transcript segment length of 5.4 s these correspond approximately to the target segment alone, the segment with one neighbour either side, and roughly a full conversational turn either side. Windows are symmetric fixed durations rather than boundary-aligned spans, which keeps acoustic context strictly comparable across clips, and all clips are 16 kHz mono with EBU R128 loudness normalisation so that overall level cannot act as a trivial cue. The primary window throughout is the 10 s segment window. Full cutting parameters are in Appendix [B].
 
 ## 3.3 Annotation scheme
 
-Labelling uses a two-tier scheme (full codebook in Appendix [A]). At **Tier 1** the annotator
-assigns one of fourteen fine pragmatic-function tags, such as sincere agreement, emphatic
-agreement, neutral backchannel, topic closure, reluctant or concessive, skeptical, sarcastic,
-dismissive, genuine approval, resigned, genuine surprise, confrontational, or encouraging. These
-tags are the natural categories an annotator can hear, and they keep the judgement close to the
-data rather than forcing an abstract choice at label time.
+Labelling uses a two-tier scheme (full codebook in Appendix [A]). At Tier 1 the annotator assigns one of fourteen fine pragmatic-function tags, such as sincere agreement, emphatic agreement, neutral backchannel, topic closure, reluctant or concessive, skeptical, sarcastic, dismissive, genuine approval, resigned, genuine surprise, confrontational, or encouraging. These tags are the natural categories an annotator can hear, and they keep the judgement close to the data rather than forcing an abstract choice at label time.
 
-At **Tier 2**, each Tier-1 tag maps to two independently judged analysis axes. **Stance** takes three
-values, affiliative, neutral, and adversarial, and is derived from the function tag but
-overridable. **Arousal** takes two values, low and high, and is judged independently of stance.
-Keeping arousal separate is a deliberate defence against a known confound. The binary
-literal-versus-nonliteral distinction collapses sarcasm, disbelief, dismissal, and reluctance
-into one class, and these differ substantially in arousal, so a probe that appears to separate
-stance might only be re-deriving that these encoders represent loudness or excitation. Because
-arousal is labelled separately, the headline test can be posed as stance separability *at
-matched arousal*, since an enthusiastic "great!" and a contemptuous "great" carry the same energy and
-opposite stance, and only a representation reading pragmatic force, not arousal, will separate
-them [3.6, Ch.4].
+At Tier 2, each Tier-1 tag maps to two independently judged analysis axes. Stance takes three values, affiliative, neutral, and adversarial, and is derived from the function tag but overridable. Arousal takes two values, low and high, and is judged independently of stance. Keeping arousal separate is a deliberate defence against a known confound. The binary literal-versus-nonliteral distinction collapses sarcasm, disbelief, dismissal, and reluctance into one class, and these differ substantially in arousal, so a probe that appears to separate stance might only be re-deriving that these encoders represent loudness or excitation. Because arousal is labelled separately, the headline test can be posed as stance separability at matched arousal, since an enthusiastic "great!" and a contemptuous "great" carry the same energy and opposite stance, and only a representation reading pragmatic force, not arousal, will separate them [3.6, Ch.4].
 
-Clips that could not be judged were discarded against a fixed reason list rather than
-force-labelled, and a confidence flag records the rest, of which only nine of the 873 keepers are
-marked borderline. Discard reasons, the optional secondary-function field and the annotation
-instrument are described in Appendix [A].
+Clips that could not be judged were discarded against a fixed reason list rather than force-labelled, and a confidence flag records the rest, of which only nine of the 873 keepers are marked borderline. Discard reasons, the optional secondary-function field and the annotation instrument are described in Appendix [A].
 
 ## 3.4 Premise check
 
-Before any modelling, the premise that the contrast is speech-borne was validated at the human
-level, because if annotators can recover the pragmatic label from the transcript alone, the
-probing exercise has no target. A 60-clip subset, balanced across stance, was judged by two
-auxiliary annotators in two conditions, counterbalanced so that each annotator saw one half of
-the clips as transcript only and the other half with audio, against a hidden reference. The decision rule was
-fixed before scoring and is given in Appendix [D]. The outcome, reported in [4.1], is that audio
-carries pragmatic information beyond the words while discourse context alone is a strong baseline,
-which motivates splitting the text baseline into two roles (3.5) and treating audio's contribution
-as the increment over context.
+Before any modelling, the premise that the contrast is speech-borne was validated at the human level, because if annotators can recover the pragmatic label from the transcript alone, the probing exercise has no target. A 60-clip subset, balanced across stance, was judged by two auxiliary annotators in two conditions, counterbalanced so that each annotator saw one half of the clips as transcript only and the other half with audio, against a hidden reference. The decision rule was fixed before scoring and is given in Appendix [D]. The outcome, reported in [4.1], is that audio carries pragmatic information beyond the words while discourse context alone is a strong baseline, which motivates splitting the text baseline into two roles (3.5) and treating audio's contribution as the increment over context.
 
 ## 3.5 Representations
 
-Eight representations are compared in the main analyses, with the text baseline supplying
-two conditions, and two variable-frame-rate tokenisers are added for the comparison in
-[4.6], giving ten in total. The
-selection is determined by the research question rather than by availability, with one
-exception noted below.
+Eight representations are compared in the main analyses, with the text baseline supplying two conditions, and two variable-frame-rate tokenisers are added for the comparison in [4.6], giving ten in total. The selection is determined by the research question rather than by availability, with one exception noted below.
 
-**Why these.** Mimi is the object of study because it is the tokeniser a deployed
-full-duplex system consumes rather than a research codec [2.2], and it distils its first
-codebook from WavLM-Large (Défossez et al., 2024). Measuring what that distillation
-transfers therefore requires probing WavLM at that size, so WavLM is not a free choice.
-The Whisper encoder tests whether a transcription objective strips paralinguistic
-content, so objective rather than scale is the variable. Its small variant is the one
-genuinely constrained choice, and the constraint bears asymmetrically. A null result
-would have been uninterpretable, since failure to recover stance could not be separated
-from insufficient capacity. The positive result reported in [4.2] is not, since capacity
-can only have worked against it.
+Why these. Mimi is the object of study because it is the tokeniser a deployed full-duplex system consumes rather than a research codec [2.2], and it distils its first codebook from WavLM-Large (Défossez et al., 2024). Measuring what that distillation transfers therefore requires probing WavLM at that size, so WavLM is not a free choice. The Whisper encoder tests whether a transcription objective strips paralinguistic content, so objective rather than scale is the variable. Its small variant is the one genuinely constrained choice, and the constraint bears asymmetrically. A null result would have been uninterpretable, since failure to recover stance could not be separated from insufficient capacity. The positive result reported in [4.2] is not, since capacity can only have worked against it.
 
-Three codecs are compared rather than two, and the third is what makes the architectural
-comparison possible. DAC (Kumar et al., 2023) is the undistilled contrast, trained on
-reconstruction and adversarial objectives with no distillation term. EnCodec (Défossez et
-al., 2022) matches DAC's 75 Hz frame rate while differing in encoder architecture, which
-turns a two-point comparison into a three-point one in which frame rate can be held
-constant. MPNet supplies the text baseline, chosen because the argument requires a strong
-text competitor rather than a strawman. eGeMAPS supplies a hand-crafted acoustic
-baseline, without which the study could report that a learned representation separates
-stance without establishing that this is more than pitch and energy would give. Its
-features are individually interpretable and can be grouped by what they measure, which
-the cue analysis in [4.4] requires. HuBERT-large was probed throughout as a matched
-control for WavLM and is reported in Appendix [H].
+Three codecs are compared rather than two, and the third is what makes the architectural comparison possible. DAC (Kumar et al., 2023) is the undistilled contrast, trained on reconstruction and adversarial objectives with no distillation term. EnCodec (Défossez et al., 2022) matches DAC's 75 Hz frame rate while differing in encoder architecture, which turns a two-point comparison into a three-point one in which frame rate can be held constant. MPNet supplies the text baseline, chosen because the argument requires a strong text competitor rather than a strawman. eGeMAPS supplies a hand-crafted acoustic baseline, without which the study could report that a learned representation separates stance without establishing that this is more than pitch and energy would give. Its features are individually interpretable and can be grouped by what they measure, which the cue analysis in [4.4] requires. HuBERT-large was probed throughout as a matched control for WavLM and is reported in Appendix [H].
 
-**Architectural properties were read from the checkpoints**, not from published
-descriptions, since the comparison in [4.5] depends on them. DAC contains no attention
-and no recurrence. EnCodec contains an LSTM in the encoder and no attention. Mimi
-contains eight self-attention layers over a 250-frame window, operating on the 25 Hz output
-of its convolutional stack before a further downsampling step brings the token stream to
-12.5 Hz, so the attention spans roughly ten seconds of audio. Convolutional
-receptive fields, computed over the encoder stack accounting for stride, are 221 ms for
-DAC, 113 ms for EnCodec and 178 ms for Mimi.
+Architectural properties were read from the checkpoints, not from published descriptions, since the comparison in [4.5] depends on them. DAC contains no attention and no recurrence. EnCodec contains an LSTM in the encoder and no attention. Mimi contains eight self-attention layers over a 250-frame window, operating on the 25 Hz output of its convolutional stack before a further downsampling step brings the token stream to 12.5 Hz, so the attention spans roughly ten seconds of audio. Convolutional receptive fields, computed over the encoder stack accounting for stride, are 221 ms for DAC, 113 ms for EnCodec and 178 ms for Mimi.
 
-**Extraction.** No representation is fine-tuned, which is the defining property of a
-diagnostic probing study. Each clip is processed individually so there is no padding to
-pool over, and Whisper's internal padding to 30 s is handled by retaining only the frames
-corresponding to the actual clip duration. Every hidden state is retained rather than a
-layer selected in advance, since a transformer forward pass computes all of them and
-selecting one would fix a choice that [4.5] and Appendix [G] show is not stable. Codecs
-are probed immediately before and immediately after quantisation on identical forward
-passes, so the only difference between those two conditions is the rounding step.
+Extraction. No representation is fine-tuned, which is the defining property of a diagnostic probing study. Each clip is processed individually so there is no padding to pool over, and Whisper's internal padding to 30 s is handled by retaining only the frames corresponding to the actual clip duration. Every hidden state is retained rather than a layer selected in advance, since a transformer forward pass computes all of them and selecting one would fix a choice that [4.5] and Appendix [G] show is not stable. Codecs are probed immediately before and immediately after quantisation on identical forward passes, so the only difference between those two conditions is the rounding step.
 
-That comparison requires care about which vectors are commensurate. In all three codecs
-the residual quantiser operates in a projected space, applying an input projection before
-quantising and an output projection after summing the selected codebook vectors. Those
-projections do not map to a common space, so comparing the encoder latent against the
-quantiser's reconstructed output would compare vectors that are not comparable. Their
-cosine over all 873 clips is 0.004 and their mean norms differ by a factor of roughly 27.
-The comparable pair is the projected latent against the summed codebook vectors taken
-before output projection, whose cosine is 0.821 for Mimi and 0.773 for DAC. EnCodec
-requires no such correction, its pre and post vectors sharing a space directly at cosine
-0.982.
+That comparison requires care about which vectors are commensurate. In all three codecs the residual quantiser operates in a projected space, applying an input projection before quantising and an output projection after summing the selected codebook vectors. Those projections do not map to a common space, so comparing the encoder latent against the quantiser's reconstructed output would compare vectors that are not comparable. Their cosine over all 873 clips is 0.004 and their mean norms differ by a factor of roughly 27. The comparable pair is the projected latent against the summed codebook vectors taken before output projection, whose cosine is 0.821 for Mimi and 0.773 for DAC. EnCodec requires no such correction, its pre and post vectors sharing a space directly at cosine 0.982.
 
 Checkpoints, dimensionalities and frame rates are given in Appendix [B].
 
 ## 3.6 Readouts
 
-A representation is a sequence of frame vectors and a probe requires a fixed-length
-input, so a summarisation step stands between them. That step is a methodological choice
-and not a neutral one, because mean and standard deviation pooling is invariant to the
-order of frames. Shuffling the frames of a clip leaves such a summary unchanged, so any
-question about temporal structure is unanswerable against it by construction.
+A representation is a sequence of frame vectors and a probe requires a fixed-length input, so a summarisation step stands between them. That step is a methodological choice and not a neutral one, because mean and standard deviation pooling is invariant to the order of frames. Shuffling the frames of a clip leaves such a summary unchanged, so any question about temporal structure is unanswerable against it by construction.
 
-Four readouts are therefore compared, with the representation held fixed so that only
-the summarisation varies.
+Four readouts are therefore compared, with the representation held fixed so that only the summarisation varies.
 
-- **meanstd**, the per-dimension mean and standard deviation over frames. This is the
-  primary readout, fixed in advance, and is what the pooled tables report.
-- **basis-K**, the projection of the sequence onto the first K orthonormal Legendre
-  polynomials over time normalised to each clip's own duration, giving coefficients that
-  read as level, trend and curvature. Contour parameterisation by polynomial
-  decomposition has precedent in prosody research, and Qian, Figueroa and Skantze (2025b)
-  find third-order Legendre coefficients combined with voiced length outperform the
-  coefficients alone on perceived prosodic similarity. The first coefficient is the mean,
-  so basis-K strictly contains meanstd and any gain is attributable to the added terms.
-- **seg-K**, K equal segments each pooled, a coarser trajectory.
-- **delta**, meanstd of the sequence together with meanstd of its first differences.
+meanstd, the per-dimension mean and standard deviation over frames. This is the primary readout, fixed in advance, and is what the pooled tables report.
 
-Discrete streams take different readouts, since a temporal basis over code indices has no
-interpretation. Index 5 is not between 4 and 6. Their order-aware summaries are run-length
-statistics and change rates, against the unigram histogram that is the deployed condition.
+basis-K, the projection of the sequence onto the first K orthonormal Legendre polynomials over time normalised to each clip's own duration, giving coefficients that read as level, trend and curvature. Contour parameterisation by polynomial decomposition has precedent in prosody research, and Qian, Figueroa and Skantze (2025b) find third-order Legendre coefficients combined with voiced length outperform the coefficients alone on perceived prosodic similarity. The first coefficient is the mean, so basis-K strictly contains meanstd and any gain is attributable to the added terms.
 
-**The frame-shuffling control.** A time-aware readout has more dimensions than meanstd,
-so a gain over it could reflect the added parameters rather than the timing. Every
-order-aware readout is therefore also applied to clips whose frames have been randomly
-permuted, which destroys order while preserving dimensionality, every feature's marginal
-distribution and the clip's length. The difference between the two is what order
-contributes and nothing else. Verifying temporal order by comparing shuffled against
-unshuffled input is established practice for video representations (Misra et al., 2016),
-and the control is inert against meanstd for the reason above, which is why it appears
-here rather than in earlier work on these representations.
+seg-K, K equal segments each pooled, a coarser trajectory.
+
+delta, meanstd of the sequence together with meanstd of its first differences.
+
+Discrete streams take different readouts, since a temporal basis over code indices has no interpretation. Index 5 is not between 4 and 6. Their order-aware summaries are run-length statistics and change rates, against the unigram histogram that is the deployed condition.
+
+The frame-shuffling control. A time-aware readout has more dimensions than meanstd, so a gain over it could reflect the added parameters rather than the timing. Every order-aware readout is therefore also applied to clips whose frames have been randomly permuted, which destroys order while preserving dimensionality, every feature's marginal distribution and the clip's length. The difference between the two is what order contributes and nothing else. Verifying temporal order by comparing shuffled against unshuffled input is established practice for video representations (Misra et al., 2016), and the control is inert against meanstd for the reason above, which is why it appears here rather than in earlier work on these representations.
 
 ## 3.7 Probing protocol
 
-**Probe.** Each probe is an L2-regularised logistic regression on standardised features,
-with balanced class weights to offset the neutral minority.
+Probe. Each probe is an L2-regularised logistic regression on standardised features, with balanced class weights to offset the neutral minority.
 
-**Evaluation.** All scores are out-of-fold with whole episodes assigned to folds, so no
-episode's clips appear in both training and test, which prevents leakage through shared
-speaker, topic or recording conditions.
+Evaluation. All scores are out-of-fold with whole episodes assigned to folds, so no episode's clips appear in both training and test, which prevents leakage through shared speaker, topic or recording conditions.
 
-Every reported figure is the **mean over 25 independent episode-to-fold partitions**
-rather than a single partition, and the partitions are constructed within the analysis
-code rather than delegated to a library. Two considerations require this. Bengio and
-Grandvalet (2004) show there is no universal unbiased estimator of the variance of K-fold
-cross-validation, and that naive estimators underestimate it because training sets
-overlap between folds, so the uncertainty of a single run cannot be recovered from that
-run. Bouthillier et al. (2021) recommend randomising as many sources of variation as
-possible, on the grounds that averaging over an imperfect estimator approaches the ideal
-estimator far more cheaply than reducing any single source. Measured here, fold
-assignment alone contributes a standard deviation of 0.010 with a range up to 0.06, which
-is the same magnitude as several of the differences this study reports. Constructing the
-partitions explicitly also removes a dependency on library version, since the fold
-assignment produced by a standard grouped splitter changed between two releases and moved
-one representation by 0.020 on identical inputs.
+Every reported figure is the mean over 25 independent episode-to-fold partitions rather than a single partition, and the partitions are constructed within the analysis code rather than delegated to a library. Two considerations require this. Bengio and Grandvalet (2004) show there is no universal unbiased estimator of the variance of K-fold cross-validation, and that naive estimators underestimate it because training sets overlap between folds, so the uncertainty of a single run cannot be recovered from that run. Bouthillier et al. (2021) recommend randomising as many sources of variation as possible, on the grounds that averaging over an imperfect estimator approaches the ideal estimator far more cheaply than reducing any single source. Measured here, fold assignment alone contributes a standard deviation of 0.010 with a range up to 0.06, which is the same magnitude as several of the differences this study reports. Constructing the partitions explicitly also removes a dependency on library version, since the fold assignment produced by a standard grouped splitter changed between two releases and moved one representation by 0.020 on identical inputs.
 
-Where two conditions are compared, such as a readout against its shuffled control or one
-rung of the ladder against the next, the comparison is **paired across the same
-partitions**, so partition noise is shared and cancels in the difference.
+Where two conditions are compared, such as a readout against its shuffled control or one rung of the ladder against the next, the comparison is paired across the same partitions, so partition noise is shared and cancels in the difference.
 
-**Layer selection.** For the continuous encoders a single layer is carried into the main
-analyses, fixed in advance of the timing measurements by taking the maximum of the pooled
-mean-and-standard-deviation curve reported by the initial probe battery. This gives L20 for
-WavLM, L9 for Whisper and L23 for HuBERT. Two properties of that rule are measured rather
-than assumed. Choosing a layer by maximising over the same data that reports its score is
-optimistic, by 0.003 for WavLM, 0.015 for Whisper and 0.029 for HuBERT when compared
-against selection nested inside each training split [H, G.6]. And the choice is not stable
-across folds for HuBERT, which is why it is reported separately. The layers were fixed
-before the readout comparisons existed, so they are not selected to favour any result in
-[4.4], and the full sweep across all 63 layers is reported in [G.6] so that a reader can see
-what a different choice would have given.
+Layer selection. For the continuous encoders a single layer is carried into the main analyses, fixed in advance of the timing measurements by taking the maximum of the pooled mean-and-standard-deviation curve reported by the initial probe battery. This gives L20 for WavLM, L9 for Whisper and L23 for HuBERT. Two properties of that rule are measured rather than assumed. Choosing a layer by maximising over the same data that reports its score is optimistic, by 0.003 for WavLM, 0.015 for Whisper and 0.029 for HuBERT when compared against selection nested inside each training split [H, G.6]. And the choice is not stable across folds for HuBERT, which is why it is reported separately. The layers were fixed before the readout comparisons existed, so they are not selected to favour any result in [4.4], and the full sweep across all 63 layers is reported in [G.6] so that a reader can see what a different choice would have given.
 
-**Chance.** Macro-F1 has no fixed chance value. A majority-class constant predictor
-scores 0.196 here, which is not the right comparison, because balanced class weights mean
-the probe distributes predictions across all three classes and its no-skill counterpart
-is not degenerate. The reference used throughout is the empirical permutation null,
-obtained by refitting on shuffled stance labels under the same partitioning. It is computed
-per configuration rather than assumed, because it is not constant, ranging from 0.311 for
-the 16,384-dimensional histogram to 0.333 for the continuous encoders [4.2].
+Chance. Macro-F1 has no fixed chance value. A majority-class constant predictor scores 0.196 here, which is not the right comparison, because balanced class weights mean the probe distributes predictions across all three classes and its no-skill counterpart is not degenerate. The reference used throughout is the empirical permutation null, obtained by refitting on shuffled stance labels under the same partitioning. It is computed per configuration rather than assumed, because it is not constant, ranging from 0.311 for the 16,384-dimensional histogram to 0.337 for Mimi's post-quantisation vectors [4.2].
 
-**Probe capacity.** A linear probe measures whether information is linearly accessible,
-which is not the same as whether it is present (Belinkov, 2022). The companion concern,
-that a probe may succeed by memorising rather than reading structure, is addressed by
-Hewitt and Liang (2019) through control tasks with randomised labels, of which the
-permutation null is an instance. Accessibility is tested rather than argued around, by a
-strongly regularised non-linear probe under six capacity settings, with the bound across
-that sweep carried forward rather than the ordering at any one setting [G.3].
+Probe capacity. A linear probe measures whether information is linearly accessible, which is not the same as whether it is present (Belinkov, 2022). The companion concern, that a probe may succeed by memorising rather than reading structure, is addressed by Hewitt and Liang (2019) through control tasks with randomised labels, of which the permutation null is an instance. Accessibility is tested rather than argued around, by a strongly regularised non-linear probe under six capacity settings, with the bound across that sweep carried forward rather than the ordering at any one setting [G.3].
 
-**The analyses.** Chapter 4 reports five. Pooled decodability and the per-phrase
-within-word contrast, which is the lexical control at the heart of the design [4.2]. The
-quantisation ladder across three codecs [4.3]. Cue retention by ridge regression from
-each representation to each eGeMAPS feature, grouped by what those features measure, and
-the order effect against the shuffled control [4.4]. The architectural comparison at
-matched frame rate [4.5]. And the controls, namely matched arousal, fold grouping by
-show, probe capacity and the codebook-level probe [4.6].
+The analyses. Chapter 4 reports five. Pooled decodability and the per-phrase within-word contrast, which is the lexical control at the heart of the design [4.2]. The quantisation ladder across three codecs [4.3]. Cue retention by ridge regression from each representation to each eGeMAPS feature, grouped by what those features measure, and the order effect against the shuffled control [4.4]. The architectural comparison at matched frame rate [4.5]. And the controls, namely matched arousal, fold grouping by show, probe capacity and the codebook-level probe [4.6].
 
-Hyperparameters, exact dimensionalities and per-phrase counts are in Appendix [B]. All
-code is released so that, given a corpus and the label store, every number in [Ch.4] can
-be reproduced.
+Hyperparameters, exact dimensionalities and per-phrase counts are in Appendix [B]. All code is released so that, given a corpus and the label store, every number in [Ch.4] can be reproduced.

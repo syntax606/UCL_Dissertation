@@ -1,40 +1,14 @@
+<!-- GENERATED from the Word draft by src/45_export_draft.py.
+     The .docx is authoritative. Edits made here will be overwritten. -->
+
 # Abstract
 
----
+Human language is spoken long before it is written. Children acquire speech without formal instruction, and a substantial share of the world’s population never becomes literate in any language. Writing is a technology that renders only the segmental layer of speech as a sequence of discrete symbols, granting this shape to the tokens on which modern language models operate. Speech-to-speech dialogue systems inherit the architectures in turn, so a continuous acoustic signal must be converted into discrete units before any modelling begins. That conversion is performed by a neural codec, which passes the waveform through an encoder and then quantises the result, and whatever it declines to represent is unavailable to every component downstream. Existing work establishes that discretisation is lossy and that paralinguistic content suffers disproportionately, but measures this by comparing a continuous encoder against a token stream, two conditions differing simultaneously in architecture, training objective, frame rate and feature construction. Probing studies, which train a classifier on a frozen representation to test what it encodes, show that speech carries pragmatic content that the text discards, even when comparing utterances containing words that differ, causing delivery and vocabulary to be confounded.
 
-Speech-to-speech dialogue systems consume discrete tokens rather than audio, so whatever
-the tokeniser declines to represent is unavailable to every component downstream. Existing
-work establishes that discretisation is lossy and that paralinguistic content suffers
-disproportionately, but measures this by comparing a continuous encoder against a token
-stream, two conditions differing simultaneously in architecture, training objective, frame
-rate and feature construction. A parallel literature shows speech representations carry
-pragmatic content that text discards, but compares utterances whose words differ, so
-delivery and vocabulary are confounded.
+This dissertation assembled a corpus of 873 clips of non-scripted political podcast speech in which one of eight short phrases occurs with varying pragmatic force and no variance in wording, so nothing that a probe recovers can be attributed to vocabulary. Each clip carries a pragmatic-function tag, from which interpersonal stance is derived, and a judgement of vocal arousal made without reference to that tag, so the design tests directly whether stance reduces to energy. Three codecs of independent design are then probed immediately before and immediately after quantisation on identical forward passes, so the rounding step is the only difference between conditions, with two of the three matched at 75 Hz and differing in encoder architecture. The two moves depend on each other: a stage decomposition on an uncontrolled task would localise the loss of phonetic detail, which a codec is built to preserve and which says nothing about the interpersonal layer.
 
-This dissertation removes both confounds jointly. A corpus of 873 clips of spontaneous
-political podcast speech was assembled in which one of eight short phrases occurs with
-varying pragmatic force and constant wording, so no separation a probe achieves can be
-attributed to vocabulary. Each codec is then probed immediately before and immediately
-after quantisation on identical forward passes, so the rounding step is the only
-difference between conditions.
+A codec runs in two stages. An encoder reshapes the waveform, then a quantiser replaces each frame with the nearest entries from a learned codebook. Probing both stages on the same forward pass shows that stance decoding degrades mainly at the encoder: in Mimi the encoder accounts for 0.089 of the drop in macro-F1 against the quantiser’s 0.027, and in EnCodec the quantiser costs nothing measurable.
 
-Three findings follow. Quantisation is the smaller cost in all three codecs tested, by 3.3
-to 1 in Mimi and 6.7 to 1 in DAC, with EnCodec's quantiser costing nothing measurable, so
-the loss falls at the encoder. What the encoder fails to preserve is not acoustic detail,
-since the codecs recover hand-crafted acoustic cues more faithfully than the model Mimi
-distils from while reading stance off them far worse, but temporal organisation. And that
-tracks encoder architecture rather than sampling density, since two codecs matched at 75
-Hz differ by 0.040 in how much frame order contributes, separated by whether the encoder
-carries a mechanism for integrating across time.
+The encoder is not discarding acoustic detail. Pitch, loudness and voice quality are recoverable from the codecs more faithfully than from WavLM, the model Mimi learns from. What the encoder loses is sensitivity to the sequence of frames. Shuffling frames into random order costs WavLM 0.113 in stance decoding and costs DAC nothing, so in DAC the information no longer depends on the order in which the sound unfolded.
 
-Three further hypotheses were stated before testing and are not supported, including that
-variable-frame-rate tokenisation recovers the loss.
-
-The measurements imply that interventions at the codebook operate on information the
-encoder has already declined to represent, and that raising the frame rate is not the
-mechanism by which timing is preserved. Decoding remains well below human performance on
-the same clips, at 0.533 against 0.730, so these are comparisons between representations
-rather than claims about approaching a listener.
-
----
-
+Which of these holds depends on how the encoder is built, not how often it samples. DAC and EnCodec both run at 75 Hz and differ by 0.040 in how much frame order contributes. EnCodec’s encoder contains a recurrent component that carries information across frames; DAC’s contains nothing that does.
