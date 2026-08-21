@@ -697,6 +697,36 @@ ASR encoders support joint audio and speech understanding (Gong et al., 2023).
 Distinguishing the accounts would need both measures run on one representation, which is
 worth doing and is not done here.
 
+## G.7 Two unexplained results at the quantiser step
+
+The order effect declines monotonically across the encoder rungs [4.4]. Two rows do not
+follow that pattern, both of them quantiser steps, and neither is accounted for here.
+They are reported because a shuffled control is supposed to behave in a particular way
+and in these two cases it does not.
+
+**EnCodec gains order information at quantisation.** Its post-quantisation vectors reach
++0.063 against +0.033 before, reversing the direction Mimi shows, where quantisation
+costs order information rather than adding it. This is EnCodec's second reversal at the
+same step, since its quantiser also costs nothing measurable in the ladder, at −0.005,
+where both other codecs lose something [4.3]. Two anomalies in one codec at one step are
+more suggestive than one, and the obvious candidate is that quantisation interacts with
+recurrence differently than with attention or with convolution alone. That is a
+conjecture. Testing it needs codecs differing only in the temporal mechanism, which is
+the same experiment [6.2] identifies as the one this design cannot run.
+
+**DAC scores reliably better with frame order destroyed.** Its post-quantisation
+representation reaches −0.018 against its own shuffled control, with t of −4.9, so the
+effect is not noise. A shuffled control should act as a floor, because destroying order
+can only remove information a readout might use. A representation beating its own floor
+therefore indicates something about the readout rather than the representation, most
+plausibly that the Legendre basis fits a genuine but stance-irrelevant temporal pattern
+in DAC's post-quantisation vectors, which shuffling removes. That account is untested and
+is offered as the least unlikely of several rather than as an explanation.
+
+Neither result bears on the claim in [4.5], which concerns the encoder rungs, and both
+are stated here rather than omitted because a design that reports only the rows fitting
+its pattern is not one a reader can calibrate.
+
 ---
 
 # Appendix H. HuBERT-large

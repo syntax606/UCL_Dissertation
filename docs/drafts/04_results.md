@@ -129,13 +129,9 @@ What is lost is temporal organisation. Probing frame sequences rather than poole
 | DAC, before quantisation | −0.007 | 0.019 | −1.9 |
 | DAC, after quantisation | −0.018 | 0.018 | −4.9 |
 
-The gain from frame order declines along the same ladder the stance decoding declines along, and reaches nothing in DAC. Two rows do not fit that pattern and are reported without an account, and both are quantiser steps rather than encoder steps.
+The gain from frame order declines along the same ladder the stance decoding declines along, and reaches nothing in DAC. Two rows do not fit that pattern, both of them quantiser steps rather than encoder steps, and neither is accounted for here. EnCodec gains order information at quantisation where Mimi loses it, and DAC's post-quantisation representation scores reliably better with frame order destroyed. Both are set out in [G.7].
 
-EnCodec's post-quantisation vectors carry more order information than its pre-quantisation ones, at +0.063 against +0.033, reversing the direction seen in Mimi. That is EnCodec's second reversal, since its quantiser also costs nothing measurable in the ladder at −0.005 where both other codecs lose something [4.3]. Two anomalies in the same codec and the same step are more suggestive than one, and the obvious candidate is that quantisation interacts with recurrence differently than with attention or with convolution alone. That is a conjecture and is not tested here.
-
-And DAC's post-quantisation representation scores reliably better with frame order destroyed, at −0.018 with t of −4.9. A shuffled control should act as a floor, so a representation beating its own floor is anomalous. No mechanism is offered.
-
-The monotone decline therefore holds across the encoder rungs, which is where the claim in [4.5] is made, and does not hold across the quantiser rungs. Two independent measurements therefore point the same way, since temporal is also the one cue group the codecs fail to retain.
+The monotone decline therefore holds across the encoder rungs, where the claim in [4.5] is made, and not across the quantiser rungs. Two independent measurements point the same way, since temporal is also the one cue group the codecs fail to retain.
 
 Whisper's figure is layer-sensitive in a way the others are not, and the sweep in [G.6] should be read alongside it.
 
@@ -151,7 +147,7 @@ Frame rate does not explain the ordering, and a controlled comparison shows what
 | EnCodec | LSTM | 75 Hz | +0.033 |
 | Mimi | 8 self-attention layers | 12.5 Hz | +0.080 |
 
-DAC and EnCodec run at the same 75 Hz and differ by 0.040, above the threshold set by partition noise, so sampling density is excluded by a matched comparison rather than by inference. Convolutional receptive fields are comparable and DAC's is the larger, 221 ms against EnCodec's 113 ms, so convolutional depth is excluded too, since the codec with the wider convolutional context is the one carrying no order information. Architectures were read from the loaded checkpoints rather than from published descriptions [3.5].
+DAC and EnCodec run at the same 75 Hz and differ by 0.040, above the threshold set by partition noise, so sampling density is excluded by a matched comparison rather than by inference. Convolutional receptive fields are comparable and DAC's is the larger, 221 ms against EnCodec's 113 ms, so the codec with the wider convolutional context is the one carrying no order information [3.5].
 
 Three properties of the comparison are worth separating, because the claim rests on all of them holding together.
 
@@ -159,7 +155,7 @@ Frame rate is held constant, not controlled for statistically. DAC and EnCodec a
 
 The remaining convolutional difference runs against the result. If convolutional context were the operative variable, DAC should carry more order information than EnCodec, since its receptive field is roughly twice as wide. It carries less, and by a margin above the noise threshold. The variable that does covary with the ordering is whether anything above the convolutional stack integrates across frames.
 
-The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080. Two points would be a difference. Three points in the predicted order, with the third supplied by a codec added after the prediction was made [1.4], is a weaker claim than a controlled ablation and a stronger one than an observation. A second measurement gives the same ordering independently. Temporal cue retention, which asks how well hand-crafted timing features can be recovered rather than how much frame order contributes to decoding, runs 106 per cent for Mimi, 72 for EnCodec and 68 for DAC [4.4]. Two quantities that share no machinery rank the three codecs identically.
+The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 72 for EnCodec and 68 for DAC [4.4]. Two quantities that share no machinery rank the three codecs identically.
 
 What the comparison cannot do is separate architecture from training history, since these are three independently trained public checkpoints. That limitation is stated in [6.2] and is the reason the account is offered as the best supported of the available explanations rather than as established.
 
