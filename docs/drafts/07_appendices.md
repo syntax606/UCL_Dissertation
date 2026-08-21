@@ -765,3 +765,58 @@ quantities genuinely separate in this model.
 
 **Within-word figures** are the single-partition values from the original run, 0.616 mean
 across the eight phrases, and were not recomputed under the partition scheme in [3.7].
+
+---
+
+## G.8 Cue retention, recomputed
+
+Source `results/cue_retention_repeated.txt`, `src/48`, 25 partitions. This supersedes
+`results/cue_retention.txt` and `results/encodec_cue_retention.txt`, which remain in the
+repository as the record of what was replaced.
+
+The cue-retention table was the one set of figures in [Ch.4] not built the way [3.7]
+describes. `src/30` and `src/43` used `GroupKFold` on a single partition, and [3.7] says
+every reported figure is the mean over 25 partitions constructed in the analysis code
+rather than delegated to a library, for a reason that applies here as much as anywhere:
+`GroupKFold`'s assignment changed between two library releases and moved one
+representation by 0.020 on byte-identical inputs. [4.4] flagged the figures as approximate
+but did not say why, and [4.5] rested a claim on them.
+
+Nothing else changed. The cue groups, the eGeMAPS targets, the ridge alphas and the
+standardise-then-ridge pipeline are `src/30`'s. Two things are new. The partition comes
+from the same routine the timing probe uses, seeded 25 times, and each retention ratio is
+formed inside a partition before averaging, so the ratio carries a spread instead of being
+one average divided by another. All 88 targets are fitted jointly with a per-target alpha,
+which selects the same alphas as fitting them one at a time and turns 88 ridge fits per
+fold into one.
+
+Every cell moved, none by more than five points, and no claim in the chapters changed
+direction. The largest movements are in voice quality, which rises three to five points
+across every rung, and in DAC after quantisation on the temporal group, which falls from
+63 to 61 per cent. Standard deviations run at one point for level, temporal and spectral,
+two to three for contour and voice quality.
+
+| figure | single partition | 25 partitions |
+|---|---|---|
+| Mimi before quantisation, contour | 153% | 152% (sd 3) |
+| Mimi before quantisation, voice quality | 158% | 162% (sd 3) |
+| Mimi before quantisation, temporal | 106% | 106% (sd 1) |
+| EnCodec before quantisation, temporal | 72% | 71% (sd 1) |
+| DAC before quantisation, temporal | 68% | 67% (sd 1) |
+| DAC after quantisation, temporal | 63% | 61% (sd 1) |
+| WavLM ceiling, contour, absolute R² | 0.283 | 0.289 (sd 0.006) |
+
+The comparison this was run for is the narrow one. [4.5] reads temporal retention as
+ranking the three codecs the way the order effect does, and that holds only if EnCodec
+sits above DAC by more than partition noise. Four points on a single partition with no
+spread was not enough to say. Paired across the 25 partitions it is:
+
+| contrast, temporal group | difference | sd | t | partitions |
+|---|---|---|---|---|
+| EnCodec before quantisation over DAC before | +3.5 points | 1.1 | 16.2 | 25 of 25 |
+| EnCodec after quantisation over DAC after | +7.7 points | 1.2 | 30.7 | 25 of 25 |
+| Mimi before quantisation over EnCodec before | +35.4 points | 1.3 | 136.5 | 25 of 25 |
+
+The ordering survives, and the narrowest of the three contrasts is the one the
+architectural claim needs. Had it not survived, [4.5] would have had one measurement
+behind it rather than two.

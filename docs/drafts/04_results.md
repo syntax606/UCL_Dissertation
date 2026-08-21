@@ -96,22 +96,22 @@ Summarising the token stream costs a further 0.070, from Mimi's post-quantisatio
 
 The decomposition locates the loss without saying what is lost. Two measurements answer that, and they disagree with the intuitive account.
 
-The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, cross-validated by episode on a single partition, reported as a fraction of what WavLM supports. Ridge R-squared is less partition-sensitive than macro-F1, but these figures have not been recomputed under [3.7] and are reported as approximate.
+The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
 
 | Representation | contour | level | voice quality | temporal | spectral |
 |---|---|---|---|---|---|
-| WavLM, ceiling, absolute R² | 0.283 | 0.607 | 0.225 | 0.557 | 0.345 |
-| Mimi, before quantisation | 153% | 147% | 158% | 106% | 170% |
-| Mimi, after quantisation | 139% | 143% | 139% | 97% | 162% |
-| Mimi, deployed histogram | 98% | 106% | 109% | 78% | 121% |
-| EnCodec, before quantisation | 129% | 145% | 140% | 72% | 164% |
-| EnCodec, after quantisation | 130% | 144% | 134% | 71% | 162% |
-| DAC, before quantisation | 122% | 130% | 123% | 68% | 161% |
-| DAC, after quantisation | 117% | 127% | 113% | 63% | 157% |
+| WavLM, ceiling, absolute R² | 0.289 | 0.610 | 0.219 | 0.558 | 0.345 |
+| Mimi, before quantisation | 152% | 146% | 162% | 106% | 170% |
+| Mimi, after quantisation | 137% | 143% | 143% | 96% | 161% |
+| Mimi, deployed histogram | 97% | 107% | 111% | 78% | 121% |
+| EnCodec, before quantisation | 127% | 145% | 145% | 71% | 164% |
+| EnCodec, after quantisation | 127% | 144% | 137% | 69% | 162% |
+| DAC, before quantisation | 121% | 130% | 127% | 67% | 160% |
+| DAC, after quantisation | 115% | 127% | 117% | 61% | 156% |
 
 The codecs recover the acoustic cues better than WavLM does, with half the feature dimensions, including the contour group that stance is built from. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so this is less surprising alone than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
 
-Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 98 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. Adding EnCodec to that column orders it by encoder architecture rather than by frame rate. Temporal retention runs 106 and 97 per cent for Mimi, which carries attention, 72 and 71 per cent for EnCodec, which carries recurrence, and 68 and 63 per cent for DAC, which carries neither, while DAC and EnCodec share a frame rate. That is the same ordering the order effect gives in [4.5], produced by a different measurement on different machinery, and it was not available when this analysis was first run.
+Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. Adding EnCodec to that column orders it by encoder architecture rather than by frame rate. Temporal retention runs 106 and 96 per cent for Mimi, which carries attention, 71 and 69 per cent for EnCodec, which carries recurrence, and 67 and 61 per cent for DAC, which carries neither, while DAC and EnCodec share a frame rate. That is the same ordering the order effect gives in [4.5], produced by a different measurement on different machinery, and it was not available when this analysis was first run.
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
 
@@ -155,7 +155,7 @@ Frame rate is held constant, not controlled for statistically. DAC and EnCodec a
 
 The remaining convolutional difference runs against the result. If convolutional context were the operative variable, DAC should carry more order information than EnCodec, since its receptive field is roughly twice as wide. It carries less, and by a margin above the noise threshold. The variable that does covary with the ordering is whether anything above the convolutional stack integrates across frames.
 
-The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 72 for EnCodec and 68 for DAC [4.4]. Two quantities that share no machinery rank the three codecs identically.
+The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 71 for EnCodec and 67 for DAC [4.4]. The gap between the two codecs matched at 75 Hz is the narrow one, so it is tested rather than read off. Paired across the same 25 partitions, EnCodec retains 3.5 points more than DAC before quantisation and 7.7 points more after, and does so in every one of the 25. Two quantities that share no machinery rank the three codecs identically.
 
 The ordering follows the presence of a mechanism for integrating across time. Gichamba and Busogi (2026) reach a compatible conclusion from a different quantity, finding no evidence that frame rate imposes a fundamental barrier to reconstruction quality, and describe Mimi as engineered for low frame rate tokenisation through a transformer bottleneck and split-RVQ design. That description is their characterisation of the architecture rather than a finding of their ablation, so it is consistent with the account here rather than independent evidence for it. Their DAC configuration reconstructs almost perfectly at 75 Hz while carrying no order information here, so reconstruction fidelity and temporal organisation come apart.
 
