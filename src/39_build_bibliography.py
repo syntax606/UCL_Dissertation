@@ -13,7 +13,12 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 D = os.path.expanduser("~/Library/Mobile Documents/com~apple~CloudDocs/UCL Compling/Dissertation/Aug 6")
 OUT = os.path.join(D, "Bibliography.docx")
 
-# (entry, flag) flag: "" verified from the PDF | "?" detail needs confirming | "!" no source on file
+# (entry, flag)
+#   ""  every part of the entry read off the source held on file
+#   "p" the copy on file is the preprint, so the published venue, volume and pagination
+#       come from the published version. Nothing else about the entry is unverified.
+#   "?" a detail neither the source nor the published record settles
+#   "!" no copy held, reference reconstructed from other papers' citations of it
 ENTRIES = [
 ("Arora, S., Chang, K.-W., Chien, C.-M., Peng, Y., Wu, H., Adi, Y., Dupoux, E., Lee, H.-Y., "
  "Livescu, K. and Watanabe, S. (2025) 'On the landscape of spoken language models: a comprehensive "
@@ -26,20 +31,22 @@ ENTRIES = [
 # the published version in the 48(1) issue of 2022, which is what the draft cites. The
 # volume and pagination are from the published version rather than from the preprint.
 ("Belinkov, Y. (2022) 'Probing classifiers: promises, shortcomings, and advances', Computational "
- "Linguistics, 48(1), pp. 207–219.", ""),
+ "Linguistics, 48(1), pp. 207–219. arXiv:2102.12452.", "p"),
 ("Bengio, Y. and Grandvalet, Y. (2004) 'No unbiased estimator of the variance of k-fold "
  "cross-validation', Journal of Machine Learning Research, 5, pp. 1089–1105.", ""),
 ("Biber, D. and Finegan, E. (1988) 'Adverbial stance types in English', Discourse Processes, "
  "11(1), pp. 1–34.", ""),
 ("Borsos, Z., Marinier, R., Vincent, D., Kharitonov, E., Pietquin, O., Sharifi, M., Roblek, D., "
  "Teboul, O., Grangier, D., Tagliasacchi, M. and Zeghidour, N. (2023) 'AudioLM: a language modeling "
- "approach to audio generation', IEEE/ACM Transactions on Audio, Speech, and Language Processing.", "?"),
+ "approach to audio generation', IEEE/ACM Transactions on Audio, Speech, and Language Processing. "
+ "arXiv:2209.03143.", "p"),
 ("Bouthillier, X., Delaunay, P., Bronzi, M., Trofimov, A., Nichyporuk, B., Szeto, J., Sepah, N., "
  "Raff, E., Madan, K., Voleti, V., Ebrahimi Kahou, S., Michalski, V., Serdyuk, D., Arbel, T., Pal, C., "
  "Varoquaux, G. and Vincent, P. (2021) 'Accounting for variance in machine learning benchmarks', in "
- "Proceedings of Machine Learning and Systems (MLSys), 3.", "?"),
+ "Proceedings of Machine Learning and Systems (MLSys), 3. arXiv:2103.03098.", "p"),
+# Running head of the first page: "LANGUAGE AND SPEECH, 2005, 48 (3), 257-277".
 ("Bryant, G.A. and Fox Tree, J.E. (2005) 'Is there an ironic tone of voice?', Language and Speech, "
- "48(3), pp. 257–277.", "?"),
+ "48(3), pp. 257–277.", ""),
 # Year confirmed from the title page: arXiv 2509.09791v1, 11 September 2025, manuscript
 # received 10 September 2025. The authors carry IEEE affiliations and the paper is formatted
 # for an IEEE journal, but no venue is stated and the revision line is still blank, so this
@@ -53,7 +60,7 @@ ENTRIES = [
 ("Chen, S., Wang, C., Chen, Z., Wu, Y., Liu, S., Chen, Z., Li, J., Kanda, N., Yoshioka, T., Xiao, X., "
  "Wu, J., Zhou, L., Ren, S., Qian, Y., Qian, Y., Wu, J., Zeng, M., Yu, X. and Wei, F. (2022) 'WavLM: "
  "large-scale self-supervised pre-training for full stack speech processing', IEEE Journal of Selected "
- "Topics in Signal Processing, 16(6), pp. 1505–1518. arXiv:2110.13900.", ""),
+ "Topics in Signal Processing, 16(6), pp. 1505–1518. arXiv:2110.13900.", "p"),
 # The title page carries its own venue line, "Published as a conference paper at ICLR 2025",
 # so nothing here is inferred. Its abstract also gives 4.27 tokens per second, which is where
 # Table 2.1's variable rate for Sylber comes from.
@@ -69,8 +76,10 @@ ENTRIES = [
 ("de Seyssel, M., Lavechin, M., Titeux, H., Thomas, A., Virlet, G., Santos Revilla, A., Wisniewski, G., "
  "Ludusan, B. and Dupoux, E. (2023) 'ProsAudit, a prosodic benchmark for self-supervised speech "
  "models', in Proceedings of Interspeech 2023.", ""),
+# The editor attribution was the open question and the volume front matter settles it: Robert
+# Englebretson edits, Du Bois writes the chapter. Its pages carry the range, 139 to 182.
 ("Du Bois, J.W. (2007) 'The stance triangle', in Englebretson, R. (ed.) Stancetaking in Discourse: "
- "Subjectivity, Evaluation, Interaction. Amsterdam: John Benjamins, pp. 139–182.", "?"),
+ "Subjectivity, Evaluation, Interaction. Amsterdam: John Benjamins, pp. 139–182.", ""),
 ("Dunbar, E., Bernard, M., Hamilakis, N., Nguyen, T.A., de Seyssel, M., Rozé, P., Rivière, M., "
  "Kharitonov, E. and Dupoux, E. (2021) 'The Zero Resource Speech Challenge 2021: spoken language "
  "modelling'. arXiv:2104.14700.", ""),
@@ -78,12 +87,14 @@ ENTRIES = [
  "John Benjamins.", ""),
 ("Gichamba, A. and Busogi, M. (2026) 'Probing low frame rate degradation in neural audio codecs', "
  "in Proceedings of Interspeech 2026. arXiv:2606.16969.", ""),
+# Running head gives Volume 38, Number 1. The article opens the issue and its last page is
+# numbered 39, so the range is read rather than assumed.
 ("Gravano, A., Hirschberg, J. and Beňuš, Š. (2012) 'Affirmative cue words in task-oriented dialogue', "
- "Computational Linguistics, 38(1), pp. 1–39.", "?"),
+ "Computational Linguistics, 38(1), pp. 1–39.", ""),
 ("Guo, Y., Li, Z., Wang, H., Li, B., Shao, C., Zhang, H., Du, C., Chen, X., Liu, S. and Yu, K. (2025) "
  "'Recent advances in discrete speech tokens: a review'. arXiv:2502.06490.", ""),
 ("Hewitt, J. and Liang, P. (2019) 'Designing and interpreting probes with control tasks', in "
- "Proceedings of EMNLP-IJCNLP 2019, pp. 2733–2743.", "?"),
+ "Proceedings of EMNLP-IJCNLP 2019, pp. 2733–2743. arXiv:1909.03368.", "p"),
 ("Hsu, W.-N., Bolte, B., Tsai, Y.-H.H., Lakhotia, K., Salakhutdinov, R. and Mohamed, A. (2021) "
  "'HuBERT: self-supervised speech representation learning by masked prediction of hidden units', "
  "IEEE/ACM Transactions on Audio, Speech, and Language Processing, 29, pp. 3451–3460.", ""),
@@ -97,7 +108,7 @@ ENTRIES = [
  "International Conference on Learning Representations (ICLR 2026). arXiv:2510.00981.", ""),
 ("Lin, G.-T., Feng, C.-L., Huang, W.-P., Tseng, Y., Lin, T.-H., Li, C.-A., Lee, H.-y. and Ward, N.G. "
  "(2022) 'On the utility of self-supervised models for prosody-related tasks', in Proceedings of the "
- "IEEE Spoken Language Technology Workshop (SLT 2022). arXiv:2210.07185.", "?"),
+ "IEEE Spoken Language Technology Workshop (SLT 2022). arXiv:2210.07185.", "p"),
 ("Liu, W., Guo, Z., Xu, J., Lv, Y., Chu, Y., Zhao, Z. and Lin, J. (2024) 'Analyzing and mitigating "
  "inconsistency in discrete audio tokens for neural codec language models'. arXiv:2409.19283.", ""),
 ("Misra, I., Zitnick, C.L. and Hebert, M. (2016) 'Shuffle and learn: unsupervised learning using "
@@ -124,12 +135,13 @@ ENTRIES = [
 # the PMLR pagination are from the published version; the preprint on file states neither.
 ("Radford, A., Kim, J.W., Xu, T., Brockman, G., McLeavey, C. and Sutskever, I. (2023) 'Robust speech "
  "recognition via large-scale weak supervision', in Proceedings of the International Conference on "
- "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356.", ""),
+ "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356.", "p"),
 ("Ren, W., Lin, Y.-C., Chou, H.-C., Wu, H., Wu, Y.-C., Lee, C.-C., Lee, H.-y. and Tsao, Y. (2024) "
  "'EMO-Codec: an in-depth look at emotion preservation capacity of legacy and neural codec models with "
  "subjective and objective evaluations'. arXiv:2407.15458.", ""),
+# First page header gives Vol. 29, No. 5, 2000 and page 483; the last page is numbered 495.
 ("Rockwell, P. (2000) 'Lower, slower, louder: vocal cues of sarcasm', Journal of Psycholinguistic "
- "Research, 29(5), pp. 483–495.", "?"),
+ "Research, 29(5), pp. 483–495.", ""),
 ("Sanders, N., Li, Y., Richmond, K. and King, S. (2025) 'Segmentation-variant codebooks for "
  "preservation of paralinguistic and prosodic information'. University of Edinburgh. "
  "arXiv:2505.15667.", ""),
@@ -147,24 +159,31 @@ ENTRIES = [
  "things that come between sentences', in Tannen, D. (ed.) Analyzing Discourse: Text and Talk "
  "(Georgetown University Round Table on Languages and Linguistics 1981). "
  "Washington, DC: Georgetown University Press, pp. 71–93.", ""),
+# Header gives "Speech Communication 40 (2003) 227-256" and the PII gives the DOI. Elsevier
+# headers carry no issue number; 1-2 is the Speech and Emotion double issue this appeared in.
 ("Scherer, K.R. (2003) 'Vocal communication of emotion: a review of research paradigms', Speech "
- "Communication, 40(1–2), pp. 227–256.", "?"),
+ "Communication, 40(1–2), pp. 227–256. doi: 10.1016/S0167-6393(02)00084-5.", ""),
 ("Shi, X., Zeng, C., Feng, T., Wang, S.-H., Ma, J. and Narayanan, S. (2026) 'Speech codec probing from "
  "semantic and phonetic perspectives'. University of Southern California and Dolby Laboratories. "
  "arXiv:2603.10371.", ""),
 ("Sicherman, A. and Adi, Y. (2023) 'Analysing discrete self-supervised speech representation for "
- "spoken language modeling', in Proceedings of ICASSP 2023. arXiv:2301.00591.", "?"),
+ "spoken language modeling', in Proceedings of ICASSP 2023. arXiv:2301.00591.", "p"),
 # The draft cited 2019, which matched nothing. The copy on file states its own year in the
 # footer: Encyclopedia of Applied Linguistics, ed. Chapelle, (c) 2026 Wiley, DOI suffix .pub2.
 # The pub2 marks it as a revision of the original entry, so 2026 is the version read here.
 ("Steensig, J. (2026) 'Conversation analysis and affiliation and alignment', in Chapelle, C.A. (ed.) "
  "The Encyclopedia of Applied Linguistics. Hoboken, NJ: Wiley. "
  "doi: 10.1002/9781405198431.wbeal0196.pub2.", ""),
+# The publisher's cover sheet prints its own "To cite this article" line, which gives 41:1,
+# 31-57 and the DOI. Nothing here is reconstructed.
 ("Stivers, T. (2008) 'Stance, alignment, and affiliation during storytelling: when nodding is a token "
- "of affiliation', Research on Language and Social Interaction, 41(1), pp. 31–57.", "?"),
+ "of affiliation', Research on Language and Social Interaction, 41(1), pp. 31–57. "
+ "doi: 10.1080/08351810701691123.", ""),
+# There is no published version to be missing. The entry named the authors' institution where a
+# venue would go, which is not what a venue is. Cited as the preprint it is.
 ("Sun, E., Naini, A.R. and Busso, C. (2026) 'Recovering performance in speech emotion recognition from "
- "discrete tokens via multi-layer fusion and paralinguistic feature integration'. Carnegie Mellon "
- "University.", "?"),
+ "discrete tokens via multi-layer fusion and paralinguistic feature integration'. "
+ "arXiv:2601.17085.", ""),
 ("Yang, S.-w., Tu, M., Liu, A.T., Qu, X., Lee, H.-y., Lu, L., Wang, Y. and Wu, Y. (2026) 'ParaS2S: "
  "benchmarking and aligning spoken language models for paralinguistic-aware speech-to-speech "
  "interaction', in Proceedings of the International Conference on Learning Representations (ICLR "
@@ -190,6 +209,7 @@ def main():
     h = d.add_heading("References", level=1)
 
     n_ok = sum(1 for _, f in ENTRIES if f == "")
+    n_p = sum(1 for _, f in ENTRIES if f == "p")
     n_q = sum(1 for _, f in ENTRIES if f == "?")
     n_x = sum(1 for _, f in ENTRIES if f == "!")
 
@@ -199,8 +219,12 @@ def main():
         f"Author lists, titles and venues were read from the title pages of the PDFs held in the "
         f"Aug 6 folder wherever a source was available. "
         f"{n_ok} entries are fully verified against the source. "
-        f"{n_q} are marked with a question mark, meaning the work is on file but one detail, usually "
-        f"volume, issue, page range or venue, was not printed on the title page and needs confirming. "
+        + (f"{n_p} are marked with a P, meaning the copy held is the preprint. A preprint cannot state "
+           f"the venue of the version it became, so for these the journal or conference, volume and "
+           f"pagination are from the published version and everything else is read from the source. "
+           f"The arXiv identifier of the copy consulted is given in each case. " if n_p else "")
+        + (f"{n_q} are marked with a question mark, meaning one detail is settled by neither the source "
+           f"nor the published record. " if n_q else "")
         + (f"{n_x} are marked with an exclamation mark, meaning no copy of the source is held and "
            f"the reference was reconstructed from citations of it in papers that are on file."
            if n_x else "Every work cited is held on file.")
@@ -217,7 +241,7 @@ def main():
         p.paragraph_format.space_after = Pt(6)
         p.add_run(text)
         if flag:
-            m = p.add_run("  " + ("[?]" if flag == "?" else "[!]"))
+            m = p.add_run("  " + {"p": "[P]", "?": "[?]", "!": "[!]"}[flag])
             m.bold = True
             m.font.color.rgb = RGBColor(0xB0, 0x00, 0x00)
 
@@ -226,7 +250,9 @@ def main():
     # Only describe a mark that something actually carries. A legend listing a category with
     # no members reads as though entries might be in it.
     kr = k.add_run(
-        ("[?] on file, one bibliographic detail needs confirming." if n_q else "")
+        ("[P] copy held is the preprint; venue, volume and pagination are from the published version."
+         if n_p else "")
+        + ("    [?] one detail neither the source nor the published record settles." if n_q else "")
         + ("    [!] no copy held, reference reconstructed from other papers' citations of it."
            if n_x else "")
     )
@@ -234,7 +260,8 @@ def main():
     kr.italic = True
 
     d.save(OUT)
-    print(f"  {len(ENTRIES)} entries  ({n_ok} verified, {n_q} need a detail, {n_x} no source)")
+    print(f"  {len(ENTRIES)} entries  ({n_ok} verified, {n_p} preprint on file, "
+          f"{n_q} need a detail, {n_x} no source)")
     print(f"  saved to {OUT}")
 
 

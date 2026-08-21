@@ -40,6 +40,39 @@ preprints, and preprints do not state the venue of the version they became. Thei
 pagination are the one class of detail in the bibliography not read off a title page, which
 is also true of Belinkov below.
 
+## The twelve outstanding details, cleared 2026-08-21
+
+Every one was checked against the copy on file. None was wrong. They split into two
+kinds, and only the first kind was ever a question about diligence.
+
+**Six were answerable from the source and are now read rather than assumed.**
+
+| citation | where the answer was | outcome |
+|---|---|---|
+| Bryant and Fox Tree (2005) | running head of page 1 | `LANGUAGE AND SPEECH, 2005, 48 (3), 257-277`. Entry already exact |
+| Rockwell (2000) | page 1 header and last page | `Vol. 29, No. 5, 2000`, opens at 483, last page numbered 495 |
+| Stivers (2008) | the publisher's own cover sheet | Taylor & Francis prints a *To cite this article* line giving 41:1, 31–57 and the DOI. Gains the DOI |
+| Gravano et al. (2012) | running head and last page | `Computational Linguistics, Volume 38, Number 1`. Opens the issue at 1, last page numbered 39 |
+| Du Bois (2007) | volume front matter and page numbers | the open question was the editor attribution, and the front matter settles it. Englebretson edits, Du Bois writes. Pages run 139 to 182 |
+| Scherer (2003) | page 1 header and PII | `Speech Communication 40 (2003) 227-256`. Gains the DOI. Elsevier headers carry no issue number, and 1–2 is the *Speech and Emotion* double issue |
+
+**Six were not questions about the entry at all.** In each case the copy held is the
+preprint, and a preprint cannot state the venue of the version it became. Marking these
+with a question mark implied a doubt about the citation when the only limitation was in
+the copy. They now carry `[P]`, which says what is actually true: everything except the
+venue, volume and pagination is read from the source, and the arXiv identifier of the copy
+consulted is given so a reader can see which one that is.
+
+Borsos et al., Bouthillier et al., Hewitt and Liang, Lin et al., Sicherman and Adi, and,
+for consistency, Belinkov, Chen et al. and Radford et al., which already carried the same
+caveat in a code comment rather than on the page. Eight entries in total.
+
+**Sun et al. (2026) was neither.** There is no published version to be missing. The entry
+put the authors' institution where a venue belongs, which is not what a venue is. It is
+now cited as the preprint it is, `arXiv:2601.17085`.
+
+Bibliography: 52 entries, 44 fully verified, 8 preprint-sourced, nothing outstanding.
+
 ## Resolved, checked against the title pages
 
 **Steensig, corrected from 2019 to 2026.** The year was wrong and matched no edition. The
