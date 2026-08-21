@@ -37,27 +37,27 @@ Table 4.1. Three-way stance decoding on the primary window. Mean macro-F1 over 2
 | DAC, after quantisation | 0.381 | 0.013 |
 | Mimi, deployed histogram | 0.371 | 0.009 |
 
-Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.337, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to Mimi's 16,384-dimensional histogram at 0.311 and the 768-dimensional target-only text at 0.313, one sparse and one near-constant within a phrase by construction, while a 1,024-dimensional representation carries the highest at 0.337. One consequence is that Mimi's deployed histogram scores lower than DAC after quantisation, at 0.371 against 0.381, but clears a lower null and so carries the larger margin, at +0.060 against +0.050.
+Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.335, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to the 768-dimensional target-only text at 0.311 and Mimi's 16,384-dimensional histogram at 0.312, one near-constant within a phrase by construction and one sparse, while the highest at 0.335 belongs to a 1,536-dimensional representation. Each null is a mean over 200 label shuffles and carries a standard error of 0.002, so margins separated by less than about 0.004 are not separated. One consequence is that Mimi's deployed histogram scores lower than DAC after quantisation, at 0.371 against 0.381, but clears a lower null and so carries the larger margin, at +0.059 against +0.047.
 
 Table 4.2. Each representation against its own permutation null, ordered by margin. The null is refitted on shuffled labels under the same partitioning.
 
 | representation | macro-F1 | null | margin |
 |---|---|---|---|
-| WavLM L20 | 0.557 | 0.330 | +0.226 |
-| Whisper encoder L9 | 0.548 | 0.333 | +0.215 |
-| Text, target word only | 0.493 | 0.313 | +0.179 |
-| Mimi, before quantisation | 0.468 | 0.329 | +0.139 |
-| Sylber | 0.446 | 0.328 | +0.118 |
-| Mimi, after quantisation | 0.441 | 0.337 | +0.104 |
-| eGeMAPS, 88 functionals | 0.420 | 0.324 | +0.096 |
-| DyCAST, after quantisation | 0.403 | 0.317 | +0.086 |
-| DyCAST, before quantisation | 0.401 | 0.320 | +0.081 |
+| WavLM L20 | 0.557 | 0.331 | +0.225 |
+| Whisper encoder L9 | 0.548 | 0.332 | +0.216 |
+| Text, target word only | 0.493 | 0.311 | +0.181 |
+| Mimi, before quantisation | 0.468 | 0.331 | +0.137 |
+| Sylber | 0.446 | 0.335 | +0.111 |
+| Mimi, after quantisation | 0.441 | 0.333 | +0.108 |
+| eGeMAPS, 88 functionals | 0.420 | 0.323 | +0.096 |
+| DyCAST, after quantisation | 0.403 | 0.323 | +0.080 |
+| DyCAST, before quantisation | 0.401 | 0.325 | +0.076 |
+| DAC, before quantisation | 0.404 | 0.332 | +0.072 |
 | EnCodec, after quantisation | 0.400 | 0.328 | +0.072 |
-| EnCodec, before quantisation | 0.396 | 0.326 | +0.070 |
-| DAC, before quantisation | 0.404 | 0.336 | +0.068 |
-| Text, with discourse context | 0.394 | 0.333 | +0.061 |
-| Mimi, deployed histogram | 0.371 | 0.311 | +0.060 |
-| DAC, after quantisation | 0.381 | 0.331 | +0.050 |
+| EnCodec, before quantisation | 0.396 | 0.329 | +0.067 |
+| Text, with discourse context | 0.394 | 0.333 | +0.062 |
+| Mimi, deployed histogram | 0.371 | 0.312 | +0.059 |
+| DAC, after quantisation | 0.381 | 0.334 | +0.047 |
 
 Two entries need comment. eGeMAPS is the hand-crafted comparison, and it places the deployed Mimi condition below 88 classical acoustic functionals, so the deployed token stream is not recovering something a standard feature set already captures. And the target-only text condition at 0.493 should not be read as text recovering stance, since the eight phrases differ in their stance base rates and a probe can score from word identity alone.
 
@@ -199,4 +199,4 @@ Probe capacity. A non-linear probe under six capacity settings recovers at most 
 
 Codebooks. Probed cumulatively, Mimi's distilled codebook 0 alone reaches +0.069 and all eight together reach +0.071, so seven further codebooks and 14,336 further dimensions buy 0.002 [E.4]. Codebook 0 is the one distilled from WavLM. This is a correlation and not evidence that distillation causes the retention, which would need a codec trained twice.
 
-Three hypotheses are not supported, and all three were stated before the run. Variable-frame-rate tokenisation does not preserve more. Against each configuration's own null, Mimi before quantisation reaches a margin of +0.139, Sylber +0.118 and DyCAST +0.081 before quantisation and +0.086 after. DyCAST is clearly below. Sylber is separated from Mimi by 0.021, which is inside the threshold set by partition noise, so it is level rather than below. Neither exceeds Mimi, which is what H7 predicted, so the hypothesis is unsupported either way. Timing features alone sit at chance, with token count, rate and duration moments reaching 0.316 and 0.338. And order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on.
+Three hypotheses are not supported, and all three were stated before the run. Variable-frame-rate tokenisation does not preserve more. Against each configuration's own null, Mimi before quantisation reaches a margin of +0.137, Sylber +0.111 and DyCAST +0.076 before quantisation and +0.080 after. DyCAST is clearly below. Sylber is separated from Mimi by 0.026, which is inside the threshold set by partition noise, so it is level rather than below. Neither exceeds Mimi, which is what H7 predicted, so the hypothesis is unsupported either way. Timing features alone sit at chance, with token count, rate and duration moments reaching 0.316 and 0.338. And order-aware summaries of the discrete streams score below the unigram histogram they were intended to improve on.

@@ -7,7 +7,7 @@
 
 This study asked whether pragmatic contrast survives the representations that speech-to-speech systems consume, and if not, where it is lost and why. The four research questions in [1.3] are answered as follows.
 
-RQ1. Stance is linearly decodable under lexical control. WavLM reaches 0.557 macro-F1 against its own null of 0.330, and the ordering survives the within-word contrast, matched arousal, held-out shows and six probe capacities [4.2, 4.6]. This is decodability relative to other representations rather than to a listener, since the best model condition reaches 0.533 where annotators reach 0.730 [4.1].
+RQ1. Stance is linearly decodable under lexical control. WavLM reaches 0.557 macro-F1 against its own null of 0.331, and the ordering survives the within-word contrast, matched arousal, held-out shows and six probe capacities [4.2, 4.6]. This is decodability relative to other representations rather than to a listener, since the best model condition reaches 0.533 where annotators reach 0.730 [4.1].
 
 RQ2. The representation deployed systems consume retains little of it. Mimi’s token histogram reaches 0.371, a margin of 0.060 over its null against WavLM’s 0.226, and sits below 88 hand-crafted acoustic functionals at 0.420 [4.2]. Whatever the deployed stream carries, a standard feature set carries more.
 

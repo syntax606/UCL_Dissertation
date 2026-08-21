@@ -1,0 +1,46 @@
+REGENERATED FIGURES, previously printed but not saved
+25 partitions from src/34's _partition, 200 label shuffles per null,
+all scoring imported from src/34 rather than reimplemented.
+============================================================================================
+
+A. PERMUTATION NULLS, the ten in Table 4.2 not in results/controls_repeated.txt
+representation                     dims  macroF1    null   margin           vs draft
+WavLM L20                          2048    0.557   0.331   +0.225   F1 -0.000 null +0.001
+Whisper encoder L9                 1536    0.548   0.332   +0.216   F1 +0.000 null -0.001
+Mimi, before quantisation          1024    0.468   0.331   +0.137   F1 -0.000 null +0.002
+Mimi, deployed histogram          16384    0.371   0.312   +0.059   F1 -0.000 null +0.001
+eGeMAPS, 88 functionals              88    0.420   0.323   +0.096   F1 -0.000 null -0.001
+Text, target word only              768    0.493   0.311   +0.181   F1 -0.000 null -0.002
+Mimi, after quantisation           1024    0.441   0.333   +0.108   F1 -0.000 null -0.004
+Sylber                             1536    0.446   0.335   +0.111   F1 -0.000 null +0.007
+DyCAST, before quantisation          64    0.401   0.325   +0.076   F1 +0.000 null +0.005
+DyCAST, after quantisation           64    0.403   0.323   +0.080   F1 +0.000 null +0.006
+EnCodec, before quantisation        256    0.396   0.329   +0.067   F1 -0.000 null +0.003
+EnCodec, after quantisation         256    0.400   0.328   +0.072            matches
+DAC, before quantisation           2048    0.404   0.332   +0.072   F1 -0.000 null -0.004
+DAC, after quantisation            2048    0.381   0.334   +0.047   F1 -0.000 null +0.003
+Text, with discourse context        768    0.394   0.333   +0.062            matches
+
+   Monte Carlo standard error of the null, across the 200 shuffles: mean 0.0013, worst 0.0018. Margins are meaningful to about 0.004.
+
+B. ORDER EFFECT for EnCodec, absent from src/34's CORE list
+representation                      real  shuffled   order     sd      t         vs draft
+EnCodec, before quantisation       0.369     0.336  +0.033  0.017    9.6          matches
+EnCodec, after quantisation        0.385     0.322  +0.063  0.021   14.7          matches
+
+============================================================================================
+13 figure(s) differ from what the draft prints:
+   WavLM L20, null: -0.000 +0.001
+   Whisper encoder L9, null: +0.000 -0.001
+   Mimi, before quantisation, null: -0.000 +0.002
+   Mimi, deployed histogram, null: -0.000 +0.001
+   eGeMAPS, 88 functionals, null: -0.000 -0.001
+   Text, target word only, null: -0.000 -0.002
+   Mimi, after quantisation, null: -0.000 -0.004
+   Sylber, null: -0.000 +0.007
+   DyCAST, before quantisation, null: +0.000 +0.005
+   DyCAST, after quantisation, null: +0.000 +0.006
+   EnCodec, before quantisation, null: -0.000 +0.003
+   DAC, before quantisation, null: -0.000 -0.004
+   DAC, after quantisation, null: -0.000 +0.003
+The draft has not been changed. Decide per figure.
