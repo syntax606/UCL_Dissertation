@@ -153,13 +153,13 @@ The loss is not an artefact of the pooled readout. Time-aware readouts recover a
 
 Frame rate does not explain the ordering, and a controlled comparison shows what does.
 
-Table 4.7. Temporal mechanism against frame rate. The first two rows are matched at 75 Hz.
+Table 4.7. Every property the comparison varies, against the order effect. DAC and EnCodec are matched at 75 Hz. Only the first column orders the three codecs the way the last one does.
 
-| Codec | temporal mechanism | frame rate | order effect |
-|---|---|---|---|
-| DAC | none, pure convolution | 75 Hz | −0.007 |
-| EnCodec | LSTM | 75 Hz | +0.033 |
-| Mimi | 8 self-attention layers | 12.5 Hz | +0.080 |
+| Codec | temporal mechanism | conv. receptive field | latent width | frame rate | order effect |
+|---|---|---|---|---|---|
+| DAC | none, pure convolution | 221 ms | 1,024 | 75 Hz | −0.007 |
+| EnCodec | LSTM | 113 ms | 128 | 75 Hz | +0.033 |
+| Mimi | 8 self-attention layers | 178 ms | 512 | 12.5 Hz | +0.080 |
 
 DAC and EnCodec run at the same 75 Hz and differ by 0.040, above the threshold set by partition noise, so sampling density is excluded by a matched comparison rather than by inference. Convolutional receptive fields are comparable and DAC's is the larger, 221 ms against EnCodec's 113 ms, so the codec with the wider convolutional context is the one carrying no order information [3.5].
 
@@ -193,7 +193,7 @@ Table 4.8. Stance decoded within each arousal level separately, against the pool
 
 Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
 
-Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
+Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's deployed histogram from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
 Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of 0.139, so linear accessibility is not the limiting factor [E.3]. That largest gain falls on the deployed histogram, the most heavily quantised condition here and the one where a penalty on quantised vectors would be expected, so the reserve is located rather than absent. Adding it reaches 0.396 against WavLM's 0.557.
 

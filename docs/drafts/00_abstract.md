@@ -11,4 +11,4 @@ A codec runs in two stages. An encoder reshapes the waveform, then a quantiser r
 
 The encoder is not discarding acoustic detail. Pitch, loudness and voice quality are recoverable from the codecs more faithfully than from WavLM, the model Mimi learns from. What the encoder loses is sensitivity to the sequence of frames. Shuffling frames into random order costs WavLM 0.113 in stance decoding and costs DAC nothing, so in DAC the information no longer depends on the order in which the sound unfolded.
 
-Which of these holds depends on how the encoder is built, not how often it samples. DAC and EnCodec both run at 75 Hz and differ by 0.040 in how much frame order contributes. EnCodec’s encoder contains a recurrent component that carries information across frames, where DAC’s contains nothing that does.
+Which of these holds depends on how the encoder is built, not on how often it samples or how wide its latent is. DAC and EnCodec both run at 75 Hz and differ by 0.040 in how much frame order contributes. EnCodec’s encoder contains a recurrent component that carries information across frames, where DAC’s contains nothing that does.
