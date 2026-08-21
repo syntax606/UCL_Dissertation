@@ -263,6 +263,10 @@ the comparison rest on the same footing. The single-partition figures this repla
 Measured from the stored arrays rather than restated from the extraction code. Every array carries
 873 rows. The per-probe dimension is what a single probe actually receives.
 
+Latent width varies more than frame rate does across the three codecs, at 1,024 for the Descript
+codec, 512 for Mimi and 128 for EnCodec. [4.5] reads that asymmetry, since the widest of the three
+carries the least order information.
+
 | Representation | Stored shape | Per-probe dimension | Construction |
 |---|---|---:|---|
 | WavLM-large | (873, 25, 2048) | 2,048 | Mean and standard deviation over frames, per layer, 25 layers retained |
@@ -272,6 +276,10 @@ Measured from the stored arrays rather than restated from the extraction code. E
 | Mimi, pre-quantisation | (873, 1024) | 1,024 | Projected encoder latent, mean and standard deviation pooled |
 | Mimi, post-quantisation | (873, 1024) | 1,024 | Summed codebook vectors before output projection, pooled identically |
 | Descript codec, pre and post | (873, 2048) | 2,048 | As Mimi, at that codec's latent width |
+| EnCodec, pre and post | (873, 750, 128) | 256 | As Mimi, at that codec's latent width |
+| Sylber | (873, 240, 768) | 1,536 | As Mimi, variable rate, padded to the longest clip |
+| DyCAST, pre and post | (873, 723, 32) | 64 | As Mimi, variable rate |
+| eGeMAPS v02 | (873, 88) | 88 | Functionals, computed once per clip rather than pooled |
 | Text, both conditions | (873, 768) | 768 | MPNet sentence embedding |
 
 Two consequences are relied on in the chapters. WavLM contributes twice Mimi's pooled width, which
