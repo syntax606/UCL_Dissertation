@@ -193,7 +193,7 @@ Table 4.8. Stance decoded within each arousal level separately, against the pool
 
 Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
 
-Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's deployed histogram from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
+Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's deployed histogram from 0.371 to 0.343, Mimi before quantisation from 0.468 to 0.434 and eGeMAPS from 0.420 to 0.391. The cost is between 0.019 and 0.034 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
 Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of 0.139, so linear accessibility is not the limiting factor [E.3]. That largest gain falls on the deployed histogram, the most heavily quantised condition here and the one where a penalty on quantised vectors would be expected, so the reserve is located rather than absent. Adding it reaches 0.396 against WavLM's 0.557.
 
