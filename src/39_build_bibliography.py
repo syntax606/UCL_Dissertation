@@ -4,6 +4,12 @@
 Author lists, titles and venues are taken from the title pages of the PDFs in the
 Aug 6 folder. Entries whose source is absent, or where a detail could not be read
 from the PDF, are marked so nothing is presented as verified that is not.
+
+Every arXiv identifier carries its version suffix, read from the stamp on the copy
+held rather than from the live listing. A bare identifier resolves to whatever the
+latest revision happens to be, which is not necessarily the document a quotation or
+a figure in the draft is true of. The draft quotes three preprints verbatim and takes
+specific numbers from five, so the version is part of the citation.
 """
 import os
 import docx
@@ -31,7 +37,7 @@ ENTRIES = [
 # the published version in the 48(1) issue of 2022, which is what the draft cites. The
 # volume and pagination are from the published version rather than from the preprint.
 ("Belinkov, Y. (2022) 'Probing classifiers: promises, shortcomings, and advances', Computational "
- "Linguistics, 48(1), pp. 207–219. arXiv:2102.12452.", "p"),
+ "Linguistics, 48(1), pp. 207–219. arXiv:2102.12452v4.", "p"),
 ("Bengio, Y. and Grandvalet, Y. (2004) 'No unbiased estimator of the variance of k-fold "
  "cross-validation', Journal of Machine Learning Research, 5, pp. 1089–1105.", ""),
 ("Biber, D. and Finegan, E. (1988) 'Adverbial stance types in English', Discourse Processes, "
@@ -39,11 +45,11 @@ ENTRIES = [
 ("Borsos, Z., Marinier, R., Vincent, D., Kharitonov, E., Pietquin, O., Sharifi, M., Roblek, D., "
  "Teboul, O., Grangier, D., Tagliasacchi, M. and Zeghidour, N. (2023) 'AudioLM: a language modeling "
  "approach to audio generation', IEEE/ACM Transactions on Audio, Speech, and Language Processing. "
- "arXiv:2209.03143.", "p"),
+ "arXiv:2209.03143v2.", "p"),
 ("Bouthillier, X., Delaunay, P., Bronzi, M., Trofimov, A., Nichyporuk, B., Szeto, J., Sepah, N., "
  "Raff, E., Madan, K., Voleti, V., Ebrahimi Kahou, S., Michalski, V., Serdyuk, D., Arbel, T., Pal, C., "
  "Varoquaux, G. and Vincent, P. (2021) 'Accounting for variance in machine learning benchmarks', in "
- "Proceedings of Machine Learning and Systems (MLSys), 3. arXiv:2103.03098.", "p"),
+ "Proceedings of Machine Learning and Systems (MLSys), 3. arXiv:2103.03098v1.", "p"),
 # Running head of the first page: "LANGUAGE AND SPEECH, 2005, 48 (3), 257-277".
 ("Bryant, G.A. and Fox Tree, J.E. (2005) 'Is there an ironic tone of voice?', Language and Speech, "
  "48(3), pp. 257–277.", ""),
@@ -53,26 +59,26 @@ ENTRIES = [
 # is a preprint and citing a journal would overstate it.
 ("Busso, C., Lotfian, R., Sridhar, K., Salman, A.N., Lin, W.-C., Goncalves, L., Parthasarathy, S., "
  "Naini, A.R., Leem, S.-G., Martinez-Lucas, L., Chou, H.-C. and Mote, P. (2025) 'The MSP-Podcast "
- "corpus'. arXiv:2509.09791.", ""),
+ "corpus'. arXiv:2509.09791v1.", ""),
 # All nineteen authors read off the title page of arXiv 2110.13900v5, 17 June 2022, and they
 # match. The JSTSP volume and pagination are from the published version, since the copy on
 # file is the preprint and states no venue.
 ("Chen, S., Wang, C., Chen, Z., Wu, Y., Liu, S., Chen, Z., Li, J., Kanda, N., Yoshioka, T., Xiao, X., "
  "Wu, J., Zhou, L., Ren, S., Qian, Y., Qian, Y., Wu, J., Zeng, M., Yu, X. and Wei, F. (2022) 'WavLM: "
  "large-scale self-supervised pre-training for full stack speech processing', IEEE Journal of Selected "
- "Topics in Signal Processing, 16(6), pp. 1505–1518. arXiv:2110.13900.", "p"),
+ "Topics in Signal Processing, 16(6), pp. 1505–1518. arXiv:2110.13900v5.", "p"),
 # The title page carries its own venue line, "Published as a conference paper at ICLR 2025",
 # so nothing here is inferred. Its abstract also gives 4.27 tokens per second, which is where
 # Table 2.1's variable rate for Sylber comes from.
 ("Cho, C.J., Lee, N., Gupta, A., Agarwal, D., Chen, E., Black, A.W. and Anumanchipalli, G.K. (2025) "
  "'Sylber: syllabic embedding representation of speech from raw audio', in Proceedings of the "
- "International Conference on Learning Representations (ICLR 2025). arXiv:2410.07168.", ""),
+ "International Conference on Learning Representations (ICLR 2025). arXiv:2410.07168v2.", ""),
 ("Défossez, A., Copet, J., Synnaeve, G. and Adi, Y. (2022) 'High fidelity neural audio compression'. "
- "arXiv:2210.13438.", ""),
+ "arXiv:2210.13438v1.", ""),
 ("Défossez, A., Mazaré, L., Orsini, M., Royer, A., Pérez, P., Jégou, H., Grave, E. and Zeghidour, N. "
- "(2024) 'Moshi: a speech-text foundation model for real-time dialogue'. Kyutai. arXiv:2410.00037.", ""),
+ "(2024) 'Moshi: a speech-text foundation model for real-time dialogue'. Kyutai. arXiv:2410.00037v2.", ""),
 ("Della Libera, L., Subakan, C. and Ravanelli, M. (2026) 'Beyond fixed frames: dynamic "
- "character-aligned speech tokenization'. arXiv:2601.23174.", ""),
+ "character-aligned speech tokenization'. arXiv:2601.23174v2.", ""),
 ("de Seyssel, M., Lavechin, M., Titeux, H., Thomas, A., Virlet, G., Santos Revilla, A., Wisniewski, G., "
  "Ludusan, B. and Dupoux, E. (2023) 'ProsAudit, a prosodic benchmark for self-supervised speech "
  "models', in Proceedings of Interspeech 2023.", ""),
@@ -82,69 +88,69 @@ ENTRIES = [
  "Subjectivity, Evaluation, Interaction. Amsterdam: John Benjamins, pp. 139–182.", ""),
 ("Dunbar, E., Bernard, M., Hamilakis, N., Nguyen, T.A., de Seyssel, M., Rozé, P., Rivière, M., "
  "Kharitonov, E. and Dupoux, E. (2021) 'The Zero Resource Speech Challenge 2021: spoken language "
- "modelling'. arXiv:2104.14700.", ""),
+ "modelling'. arXiv:2104.14700v2.", ""),
 ("Gardner, R. (2001) When Listeners Talk: Response Tokens and Listener Stance. Amsterdam: "
  "John Benjamins.", ""),
 ("Gichamba, A. and Busogi, M. (2026) 'Probing low frame rate degradation in neural audio codecs', "
- "in Proceedings of Interspeech 2026. arXiv:2606.16969.", ""),
+ "in Proceedings of Interspeech 2026. arXiv:2606.16969v1.", ""),
 # Running head gives Volume 38, Number 1. The article opens the issue and its last page is
 # numbered 39, so the range is read rather than assumed.
 ("Gravano, A., Hirschberg, J. and Beňuš, Š. (2012) 'Affirmative cue words in task-oriented dialogue', "
  "Computational Linguistics, 38(1), pp. 1–39.", ""),
 ("Guo, Y., Li, Z., Wang, H., Li, B., Shao, C., Zhang, H., Du, C., Chen, X., Liu, S. and Yu, K. (2025) "
- "'Recent advances in discrete speech tokens: a review'. arXiv:2502.06490.", ""),
+ "'Recent advances in discrete speech tokens: a review'. arXiv:2502.06490v4.", ""),
 ("Hewitt, J. and Liang, P. (2019) 'Designing and interpreting probes with control tasks', in "
- "Proceedings of EMNLP-IJCNLP 2019, pp. 2733–2743. arXiv:1909.03368.", "p"),
+ "Proceedings of EMNLP-IJCNLP 2019, pp. 2733–2743. arXiv:1909.03368v1.", "p"),
 ("Hsu, W.-N., Bolte, B., Tsai, Y.-H.H., Lakhotia, K., Salakhutdinov, R. and Mohamed, A. (2021) "
  "'HuBERT: self-supervised speech representation learning by masked prediction of hidden units', "
  "IEEE/ACM Transactions on Audio, Speech, and Language Processing, 29, pp. 3451–3460.", ""),
 ("Kumar, R., Seetharaman, P., Luebs, A., Kumar, I. and Kumar, K. (2023) 'High-fidelity audio "
  "compression with improved RVQGAN', in Advances in Neural Information Processing Systems, 36. "
- "arXiv:2306.06546.", ""),
+ "arXiv:2306.06546v2.", ""),
 ("Lan, C., Hui, P.L., Xu, W. and Mok, P. (2019) 'Revisiting acoustic markers of sarcasm in Cantonese', "
  "in Proceedings of the International Congress of Phonetic Sciences (ICPhS 2019).", ""),
 ("Li, J., Qian, Y., Hu, Y., Zhang, L., Wang, X., Lu, H., Thakker, M., Li, J., Zhao, S. and Wu, Z. "
  "(2026) 'FlexiCodec: a dynamic neural audio codec for low frame rates', in Proceedings of the "
- "International Conference on Learning Representations (ICLR 2026). arXiv:2510.00981.", ""),
+ "International Conference on Learning Representations (ICLR 2026). arXiv:2510.00981v3.", ""),
 ("Lin, G.-T., Feng, C.-L., Huang, W.-P., Tseng, Y., Lin, T.-H., Li, C.-A., Lee, H.-y. and Ward, N.G. "
  "(2022) 'On the utility of self-supervised models for prosody-related tasks', in Proceedings of the "
- "IEEE Spoken Language Technology Workshop (SLT 2022). arXiv:2210.07185.", "p"),
+ "IEEE Spoken Language Technology Workshop (SLT 2022). arXiv:2210.07185v2.", "p"),
 ("Liu, W., Guo, Z., Xu, J., Lv, Y., Chu, Y., Zhao, Z. and Lin, J. (2024) 'Analyzing and mitigating "
- "inconsistency in discrete audio tokens for neural codec language models'. arXiv:2409.19283.", ""),
+ "inconsistency in discrete audio tokens for neural codec language models'. arXiv:2409.19283v2.", ""),
 ("Misra, I., Zitnick, C.L. and Hebert, M. (2016) 'Shuffle and learn: unsupervised learning using "
  "temporal order verification', in Proceedings of the European Conference on Computer Vision (ECCV "
- "2016). arXiv:1603.08561.", ""),
+ "2016). arXiv:1603.08561v2.", ""),
 ("Mousavi, P., Duret, J., Petermann, D., Ploujnikov, A., Della Libera, L., Kuznetsova, A., Subakan, C. "
  "and Ravanelli, M. (2026) 'DASB: discrete audio and speech benchmark', Transactions on Machine "
  "Learning Research, 04/2026.", ""),
 ("O'Connor Russell, S., Charuau, D. and Harte, N. (2026) 'The role of prosodic and lexical cues in "
- "turn-taking with self-supervised speech representations'. arXiv:2601.13835.", ""),
+ "turn-taking with self-supervised speech representations'. arXiv:2601.13835v1.", ""),
 ("Pang, J., Chaubey, A. and Soleymani, M. (2026) 'Do audio LLMs listen or read? Analyzing and "
- "mitigating paralinguistic failures with VoxParadox'. arXiv:2605.27772.", ""),
+ "mitigating paralinguistic failures with VoxParadox'. arXiv:2605.27772v1.", ""),
 ("Pasad, A., Chou, J.-C. and Livescu, K. (2021) 'Layer-wise analysis of a self-supervised speech "
  "representation model', in Proceedings of the IEEE Automatic Speech Recognition and Understanding "
- "Workshop (ASRU 2021). arXiv:2107.04734.", ""),
+ "Workshop (ASRU 2021). arXiv:2107.04734v3.", ""),
 ("Qian, J. and Li, J. (2026) 'Prosody-driven jailbreaks in audio LLMs: a controlled study and "
- "mechanistic analysis'. City University of Hong Kong. arXiv:2607.26541.", ""),
+ "mechanistic analysis'. City University of Hong Kong. arXiv:2607.26541v1.", ""),
 ("Qian, K., Fan, X., Ni, J., Shechtman, S., Hasegawa-Johnson, M., Gan, C. and Zhang, Y. (2025a) "
  "'ProsodyLM: uncovering the emerging prosody processing capabilities in speech language models', in "
  "Proceedings of the Conference on Language Modeling (COLM 2025).", ""),
 ("Qian, L., Figueroa, C. and Skantze, G. (2025b) 'Representation of perceived prosodic similarity of "
- "conversational feedback'. KTH Royal Institute of Technology. arXiv:2505.13268.", ""),
+ "conversational feedback'. KTH Royal Institute of Technology. arXiv:2505.13268v1.", ""),
 # Authors read off the title page of arXiv 2212.04356v1, 6 December 2022. The ICML year and
 # the PMLR pagination are from the published version; the preprint on file states neither.
 ("Radford, A., Kim, J.W., Xu, T., Brockman, G., McLeavey, C. and Sutskever, I. (2023) 'Robust speech "
  "recognition via large-scale weak supervision', in Proceedings of the International Conference on "
- "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356.", "p"),
+ "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356v1.", "p"),
 ("Ren, W., Lin, Y.-C., Chou, H.-C., Wu, H., Wu, Y.-C., Lee, C.-C., Lee, H.-y. and Tsao, Y. (2024) "
  "'EMO-Codec: an in-depth look at emotion preservation capacity of legacy and neural codec models with "
- "subjective and objective evaluations'. arXiv:2407.15458.", ""),
+ "subjective and objective evaluations'. arXiv:2407.15458v4.", ""),
 # First page header gives Vol. 29, No. 5, 2000 and page 483; the last page is numbered 495.
 ("Rockwell, P. (2000) 'Lower, slower, louder: vocal cues of sarcasm', Journal of Psycholinguistic "
  "Research, 29(5), pp. 483–495.", ""),
 ("Sanders, N., Li, Y., Richmond, K. and King, S. (2025) 'Segmentation-variant codebooks for "
  "preservation of paralinguistic and prosodic information'. University of Edinburgh. "
- "arXiv:2505.15667.", ""),
+ "arXiv:2505.15667v1.", ""),
 # Fully verified. The first page carries the venue, the ISCA copyright and the DOI; the last
 # page is numbered 1785, so the range is read rather than assumed.
 ("Schatz, T., Peddinti, V., Bach, F., Jansen, A., Hermansky, H. and Dupoux, E. (2013) 'Evaluating "
@@ -165,9 +171,9 @@ ENTRIES = [
  "Communication, 40(1–2), pp. 227–256. doi: 10.1016/S0167-6393(02)00084-5.", ""),
 ("Shi, X., Zeng, C., Feng, T., Wang, S.-H., Ma, J. and Narayanan, S. (2026) 'Speech codec probing from "
  "semantic and phonetic perspectives'. University of Southern California and Dolby Laboratories. "
- "arXiv:2603.10371.", ""),
+ "arXiv:2603.10371v2.", ""),
 ("Sicherman, A. and Adi, Y. (2023) 'Analysing discrete self-supervised speech representation for "
- "spoken language modeling', in Proceedings of ICASSP 2023. arXiv:2301.00591.", "p"),
+ "spoken language modeling', in Proceedings of ICASSP 2023. arXiv:2301.00591v3.", "p"),
 # The draft cited 2019, which matched nothing. The copy on file states its own year in the
 # footer: Encyclopedia of Applied Linguistics, ed. Chapelle, (c) 2026 Wiley, DOI suffix .pub2.
 # The pub2 marks it as a revision of the original entry, so 2026 is the version read here.
@@ -183,20 +189,20 @@ ENTRIES = [
 # venue would go, which is not what a venue is. Cited as the preprint it is.
 ("Sun, E., Naini, A.R. and Busso, C. (2026) 'Recovering performance in speech emotion recognition from "
  "discrete tokens via multi-layer fusion and paralinguistic feature integration'. "
- "arXiv:2601.17085.", ""),
+ "arXiv:2601.17085v1.", ""),
 ("Yang, S.-w., Tu, M., Liu, A.T., Qu, X., Lee, H.-y., Lu, L., Wang, Y. and Wu, Y. (2026) 'ParaS2S: "
  "benchmarking and aligning spoken language models for paralinguistic-aware speech-to-speech "
  "interaction', in Proceedings of the International Conference on Learning Representations (ICLR "
- "2026).", ""),
+ "2026). arXiv:2511.08723v2.", ""),
 ("Ye, Z., Sun, P., Lei, J., Lin, H., Tan, X., Dai, Z., Kong, Q., Chen, J., Pan, J., Liu, Q., Guo, Y. "
  "and Xue, W. (2024) 'Codec does matter: exploring the semantic shortcoming of codec for audio "
- "language model'. arXiv:2408.17175.", ""),
+ "language model'. arXiv:2408.17175v3.", ""),
 ("Zeghidour, N., Luebs, A., Omran, A., Skoglund, J. and Tagliasacchi, M. (2021) 'SoundStream: an "
  "end-to-end neural audio codec', IEEE/ACM Transactions on Audio, Speech, and Language Processing, 30, "
- "pp. 495–507. arXiv:2107.03312.", ""),
+ "pp. 495–507. arXiv:2107.03312v1.", ""),
 ("Zhang, X., Zhang, D., Li, S., Zhou, Y. and Qiu, X. (2024a) 'SpeechTokenizer: unified speech "
  "tokenizer for speech language models', in Proceedings of the International Conference on Learning "
- "Representations (ICLR 2024). arXiv:2308.16692.", ""),
+ "Representations (ICLR 2024). arXiv:2308.16692v2.", ""),
 ]
 
 

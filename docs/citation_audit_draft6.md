@@ -116,3 +116,36 @@ automatically. Six hits, five of them false positives in the abstract, a table c
 or an internal cross-reference, where citations are conventionally absent. The three
 methodological citations, Bengio and Grandvalet, Bouthillier et al. and Misra et al.,
 each sit at the sentence they license.
+
+## Version pinning, 2026-08-21
+
+Every arXiv identifier in the bibliography now carries its version suffix, 33 in total,
+each read from the stamp on the copy held rather than from the live listing.
+
+A bare identifier resolves to whatever the latest revision happens to be, which is not
+necessarily the document a sentence in the draft is true of. That matters in eight places.
+The draft quotes three preprints verbatim and takes specific figures from five, and six of
+those eight are 2026 papers recent enough to be revised again.
+
+**The three quotations were checked against the pinned versions and are verbatim.**
+
+| quoted in | source | version | note |
+|---|---|---|---|
+| [1.1] | Moshi | `2410.00037v2` | the text hyphenates across a line break as "segmenta- tion", which is why a naive string search misses it |
+| [2.3] | FlexiCodec | `2510.00981v3` | likewise "dis- cards" |
+| [2.5] | ParaS2S | `2511.08723v2` | title page also confirms the venue, "Published as a conference paper at ICLR 2026" |
+
+The ParaS2S entry had no identifier at all, which was the weakest point in the set: a
+verbatim quotation with nothing pinning it to a version. It now carries one.
+
+**The figures are pinned to** `2605.27772v1` (Pang), `2601.17085v1` (Sun),
+`2601.13835v1` (O'Connor Russell) and `2606.16969v1` (Gichamba and Busogi).
+
+Two identifiers were held twice at different revisions. Shi is cited at `2603.10371v2`
+and Guo at `2502.06490v4`, in both cases the copy in the Aug 6 working folder rather than
+the older one sitting in a side folder.
+
+Sun's "6 to 14 per cent" figure, flagged in an earlier audit as not appearing in the
+abstract and needing checking against the body, is in the body: "representing a 6-14%
+performance drop compared to continuous features". The surrounding characterisation in
+[2.3] is also correct, including that the loss is largely recoverable.
