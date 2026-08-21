@@ -79,6 +79,4 @@ Chance. Macro-F1 has no fixed chance value. A majority-class constant predictor 
 
 Probe capacity. A linear probe measures whether information is linearly accessible, which is not the same as whether it is present (Belinkov, 2022), and a probe may succeed by memorising rather than reading structure, which Hewitt and Liang (2019) address through control tasks with randomised labels, of which the permutation null is an instance. Accessibility is tested rather than argued around, by a strongly regularised non-linear probe under six capacity settings, with the bound across that sweep carried forward [E.3].
 
-The analyses. Chapter 4 reports five, namely pooled decodability with the within-word contrast that is the lexical control [4.2], the quantisation ladder across three codecs [4.3], cue retention and the order effect against the shuffled control [4.4], the architectural comparison at matched frame rate [4.5], and the controls [4.6].
-
 Hyperparameters, exact dimensionalities and per-phrase counts are in Appendix [B]. All code is released so that, given a corpus and the label store, every number in [Ch.4] can be reproduced.

@@ -49,7 +49,7 @@ An account of what is lost. Not acoustic detail, since the codecs recover hand-c
 
 A controlled test of why. Two codecs matched at 75 Hz and differing in encoder architecture differ in how much frame order contributes, which excludes sampling density as the mechanism and yields a prediction that the next codec added can falsify.
 
-Reporting of four unsupported hypotheses. H4 from the first round and H6 to H8 from the second, which is why later chapters describing only the second round refer to three. And of a measurement problem found in the study's own pipeline, namely that fold assignment alone moves scores by as much as several of the differences reported in this literature [3.7].
+Reporting of four unsupported hypotheses. H4 from the first round and H6 to H8 from the second. And of a measurement problem found in the study's own pipeline, namely that fold assignment alone moves scores by as much as several of the differences reported in this literature [3.7].
 
 ## 1.5 Structure
 
