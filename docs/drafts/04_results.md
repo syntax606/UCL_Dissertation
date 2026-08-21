@@ -195,7 +195,7 @@ Decoding falls when energy is held constant, against the mean of the two levels 
 
 Speaker. Regrouping folds by show rather than episode moves WavLM from 0.557 to 0.534, Whisper from 0.548 to 0.530, Mimi's tokens from 0.371 to 0.343 and eGeMAPS from 0.420 to 0.391. The cost is between 0.018 and 0.029 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
-Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of roughly 0.14, so linear accessibility is not the limiting factor [E.3].
+Probe capacity. A non-linear probe under six capacity settings recovers at most +0.025 anywhere, against a continuous-to-discrete gap of 0.139, so linear accessibility is not the limiting factor [E.3]. That largest gain falls on the deployed histogram, the most heavily quantised condition here and the one where a penalty on quantised vectors would be expected, so the reserve is located rather than absent. Adding it reaches 0.396 against WavLM's 0.557.
 
 Codebooks. Probed cumulatively, Mimi's distilled codebook 0 alone reaches +0.069 and all eight together reach +0.071, so seven further codebooks and 14,336 further dimensions buy 0.002 [E.4]. Codebook 0 is the one distilled from WavLM. This is a correlation and not evidence that distillation causes the retention, which would need a codec trained twice.
 

@@ -242,17 +242,14 @@ found something the linear probe missed.
 | DAC post-quant | 0.381 | +0.015 | +0.001 | 0.000 | +0.001 | +0.004 | +0.009 |
 | Mimi histogram | 0.371 | +0.010 | +0.011 | +0.015 | +0.025 | +0.025 | +0.018 |
 
-Rows are ordered by linear score. Under every setting that stops early, the non-linear probe is
-worse than the linear one on all three continuous encoders, by as much as 0.050 on Whisper, which is
-the small strongly regularised network behaving as intended. The three above 0.500 reach at most
-+0.018 anywhere in the sweep, and the five below range from −0.001 to +0.025.
-
-The largest gain falls on Mimi's deployed histogram, at +0.025 under two settings. That is the most
-heavily quantised representation in the study, and it is the direction the linear-accessibility worry
-predicts, so it should be read as support for that concern rather than against it. What it is not is
-large enough to matter. Adding it to the histogram's 0.371 reaches 0.396, against WavLM's 0.557, so
-the gap is bounded rather than closed [4.6]. Mimi before quantisation still gains less than Mimi
-after it, which is the ordering a linear-accessibility account predicts within a codec.
+Rows are ordered by linear score. Under every setting that stops early the non-linear probe is worse
+than the linear one on all three continuous encoders, by as much as 0.050 on Whisper, which is the
+small strongly regularised network behaving as intended. The best figure any representation above
+0.500 achieves is +0.018, and the best any representation below it achieves ranges from −0.001 on
+Mimi before quantisation to +0.025 on the deployed histogram. Individual cells span 0.056 within a
+representation and four representations change sign across the sweep, which is why the quantity
+carried into the chapters is the bound rather than any single figure. What that bound means is set
+out in [E.3].
 
 Recomputed by `src/49_nonlinear_repeated.py` over the same 25 partitions as the rest of the study,
 with each gain formed inside a partition before averaging. The linear column now reproduces Table 4.1
