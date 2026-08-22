@@ -9,7 +9,7 @@ This study asked whether pragmatic contrast survives the representations that sp
 
 RQ1. Stance is linearly decodable under lexical control. WavLM reaches 0.557 macro-F1 against its own null of 0.331, and the ordering survives the within-word contrast, matched arousal, held-out shows and six probe capacities [4.2, 4.6]. This is decodability relative to other representations rather than to a listener, since the best model condition reaches 0.533 where annotators reach 0.730 [4.1].
 
-RQ2. The representation deployed systems consume retains little of it. Mimi’s token histogram reaches 0.371, a margin of 0.060 over its null against WavLM’s 0.226, and sits below 88 hand-crafted acoustic functionals at 0.420 [4.2]. Whatever the deployed stream carries, a standard feature set carries more.
+RQ2. The representation deployed systems consume retains little of it. Mimi’s token histogram reaches 0.371, a margin of 0.059 over its null against WavLM’s 0.225, and sits below 88 hand-crafted acoustic functionals at 0.420 [4.2]. Whatever the deployed stream carries, a standard feature set carries more.
 
 RQ3. The loss is not where this study expected to find it. Quantisation, the only step capable of making two distinct inputs literally identical, is the smaller contributor in all three codecs, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC [4.3]. The falsification of H4 is what redirected the study toward the encoder.
 
