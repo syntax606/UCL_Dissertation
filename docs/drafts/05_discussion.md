@@ -23,7 +23,7 @@ Two independent measurements say the missing organisation is temporal. Temporal 
 
 The deployed condition loses a further 0.070 through summarisation alone [4.3]. Liu et al. (2024) supply a mechanism that is not simply dimensionality. Codec encoders integrate context, so acoustically identical segments receive different codes depending on what surrounds them, and consistency falls as codebook depth increases. Code identity is therefore unstable in a way the vector those codes decode to is not, since reconstruction would otherwise fail. A summary over code indices inherits that instability and a summary over decoded vectors does not. This reaches further than the present measurement, because a deployed system consumes indices rather than decoded vectors.
 
-One finding here sits against a near neighbour, and it concerns which layer of Whisper carries prosodic information rather than anything about the codec ladder. Qian, Figueroa and Skantze (2025b) report prosody concentrated in middle layers with Whisper the weakest of four models, where Whisper is among the strongest here and peaks at its final encoder layer. The disagreement, and two candidate accounts of it, are set out in [E.6].
+One finding here sits against a near neighbour, and it concerns which layer of Whisper carries prosodic information rather than anything about the codec ladder. Qian, Figueroa and Skantze (2025b) report prosody concentrated in middle layers with Whisper the weakest of four models, measured on whisper-medium rather than the small checkpoint used here, where Whisper is among the strongest here and peaks at its final encoder layer. The disagreement, and two candidate accounts of it, are set out in [E.6].
 
 ## 5.3 What the negative results rule out
 
