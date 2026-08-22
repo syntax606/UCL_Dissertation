@@ -1,0 +1,35 @@
+WHY THE MODEL COLUMN IN E.1 SITS WHERE IT DOES
+WavLM L20, the same features and probe as everywhere else. Supplies the figures
+E.1 quotes, which results/premise_ceiling.txt does not carry.
+====================================================================================
+
+SUBSET COMPOSITION
+  the sixty      {'affiliative': 20, 'adversarial': 20, 'neutral': 20}   neutral 33%
+  all 873 clips  {np.str_('affiliative'): 364, np.str_('neutral'): 147, np.str_('adversarial'): 362}   neutral 17%
+
+THE SAME REPRESENTATION UNDER THREE EVALUATIONS, accuracy
+  all 873 clips out-of-fold            0.605
+  these 60 out-of-fold                  0.550   the subset is harder by +0.055
+  held-out-episode split, as src/29       0.500   the stricter split costs a further +0.050
+  training clips, out-of-fold 699 against held-out-episode 793
+
+PER CLASS OVER ALL 873, out-of-fold, F1, which is what E.1 quotes
+  affiliative   0.622
+  neutral       0.447
+  adversarial   0.648
+  neutral is the weakest by 0.176
+
+PER CLASS ON THE SIXTY, out-of-fold, F1, where each cell holds twenty clips
+  affiliative   0.512
+  neutral       0.579
+  adversarial   0.564
+  neutral is the weakest by -0.067 against the nearer of the other two
+
+THE GAP E.1 QUOTES
+  human audio 0.730 against the most generous model reading 0.550
+  gap 0.180, and one standard error at 60 items is 0.064, so 2.8 of them
+
+Read: the subset is a third neutral against a sixth overall, and neutral is the
+class every representation reads worst, so the sixty are harder than the corpus
+before any model is chosen. That is most of the distance between this table and
+the headline figures, and it is why [4.1] reads the comparison as a ceiling.

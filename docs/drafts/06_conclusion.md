@@ -33,7 +33,7 @@ The encoder figure is an upper bound while the quantisation figure is not, since
 
 The attribution to distillation is associational. Mimi's codebook 0 carries the stance signal and codebook 0 is the distilled one, but the decisive experiment trains one codec with and without the objective.
 
-Linear probing measures accessibility rather than presence (Belinkov, 2022), though across six probe capacities no configuration recovers more than +0.025 against a gap of roughly 0.14 [E.3], so accessibility bounds rather than explains the result. The identity control is held-out shows rather than unseen speakers, since the corpus carries show labels only.
+Linear probing measures accessibility rather than presence (Belinkov, 2022), though across six probe capacities no configuration recovers more than +0.025 against a gap of 0.139 [E.3], so accessibility bounds rather than explains the result. The identity control is held-out shows rather than unseen speakers, since the corpus carries show labels only.
 
 ## 6.3 A programme for repair
 
@@ -43,7 +43,7 @@ Give the encoder a mechanism for representing time. This is the most direct impl
 
 Establish causality for the distillation observation. Train one codec with and without a distillation term, and across teachers differing in how much stance they encode. Every other step assumes its outcome.
 
-Test the organisation account directly. Which cues a codec loses is now measured and the answer is essentially none of them, so the open question is why surviving acoustics are not usable. The sharpest test holds a representation fixed in acoustic content and varies only how that content is arranged, for instance by reorganising a codec latent under a contrastive objective with no access to new signal. Same-word opposite-stance pairs make delivery the only separating signal, and the 873 clips assembled here are already in that form.
+Test the organisation account directly. Which cues a codec loses is now measured, and the answer is one group of five. The other four survive better in a codec than in the model it distils from, so the open question is why acoustics that survive are not usable. The sharpest test holds a representation fixed in acoustic content and varies only how that content is arranged, for instance by reorganising a codec latent under a contrastive objective with no access to new signal. Same-word opposite-stance pairs make delivery the only separating signal, and the 873 clips assembled here are already in that form.
 
 Build the diagnostic that would notice. The retention that exists is optimised for by no loss term, and reconstruction quality, word error rate and perceptual scores would be unchanged if it vanished, so a successor system could drop the objective and every reported number would improve. The minimal-pair ABX task is the natural template, since it fixes the comparison as a triplet and estimates no centroid, so it degrades gracefully at small samples (Schatz et al., 2013) and is used this way inside evaluation suites for spoken language modelling (Dunbar et al., 2021). A pragmatic-contrast analogue would present two clips of one word carrying opposing stance and a third matched to one of them. Preservation that appears on a scorecard is preservation that can be defended.
 

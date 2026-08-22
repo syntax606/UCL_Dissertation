@@ -15,7 +15,7 @@ Interventions at the encoder-LLM interface rather than at the codebook are consi
 
 ## 5.2 What is lost is organisation, and the organisation is temporal
 
-The natural reading of a codec losing pragmatic content is that it discards the acoustic detail that content is built from. That reading is wrong. Recovering hand-crafted acoustic cues from each rung, the codecs do better than WavLM on every group except one, reaching 152 per cent on the contour features that stance is built from and 162 per cent on voice quality, using half the feature dimensions [4.4].
+The natural reading of a codec losing pragmatic content is that it discards the acoustic detail that content is built from. That reading is wrong. Recovering hand-crafted acoustic cues from each rung, every rung above the deployed histogram does better than WavLM on every group except one, reaching 152 per cent on the contour features that stance is built from and 162 per cent on voice quality, using half the feature dimensions [4.4].
 
 That result is weaker alone than it looks. A reconstruction objective is meant to retain waveform-recoverable descriptors, and eGeMAPS functionals are waveform descriptors, so a codec outperforming a masked-prediction model on them is close to what the training objectives predict. Its force comes from the pairing. The representation that stores the cues most faithfully reads stance off them worst, and the representation that stores them least faithfully reads stance best. Fidelity and readability are not the same quantity, and the deficit is in the second.
 

@@ -524,12 +524,23 @@ set excluded from training, and scored on exactly the 60 they did, in accuracy.
 The subset is balanced at twenty per class, so chance and the majority baseline are both 0.333. Every
 model clears it and none approaches the human audio figure.
 
-Two properties make this subset harder than the corpus. It is 33 per cent neutral against 17 per cent
-overall, and neutral is the weakest class, with WavLM reaching 0.435 on it against 0.635 and 0.652 on
-the other two. And a single split is a harder evaluation than out-of-fold prediction. Decomposing
-WavLM, it reaches 0.608 over all 873 clips out-of-fold, 0.550 on these 60 out-of-fold, and 0.500 under
-the held-out-episode split. On the most generous reading of the model side the gap is about 0.18,
-roughly 2.3 standard errors at sixty items.
+Two properties make this subset harder than the corpus, and both are measurable. Source
+`results/premise_decomposition.txt`, `src/54`.
+
+It is 33 per cent neutral against 17 per cent overall, and neutral is the class every representation
+reads worst. WavLM reaches 0.447 on it out-of-fold against 0.622 and 0.648 on the other two. And a
+single split is a harder evaluation than out-of-fold prediction. Decomposing WavLM under three
+evaluations of the same features, it reaches 0.605 in accuracy over all 873 clips out-of-fold, 0.550
+on these 60 out-of-fold, and 0.500 under the held-out-episode split that src/29 uses. So 0.055 of the
+distance is the subset being harder and a further 0.050 is the stricter split, which together account
+for most of it.
+
+On the most generous reading of the model side the gap to the human audio figure is 0.180, which is
+2.8 standard errors at sixty items. Two cautions. These are single-partition figures under
+`GroupKFold`, for comparability with the table above rather than with [Ch.4], and the per-class
+figures are corpus-wide. Per class on the sixty alone each cell holds twenty clips and the ordering
+does not hold there, so the neutral account is offered as the likely reason for the drop rather than
+as a measurement of it.
 
 ## E.2 Readout, and why Mimi appears twice in the within-word table
 

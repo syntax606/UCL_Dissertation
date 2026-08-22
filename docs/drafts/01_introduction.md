@@ -39,7 +39,7 @@ H1, H2, H3 and H5 are supported. H4 is not. Its falsification redirected the stu
 
 H6. The measured loss reflects the readout, the step that collapses a sequence of frames into one vector for the probe, rather than the representation itself. H7. Variable-frame-rate tokenisers, which allocate tokens to linguistic units rather than to a fixed clock, retain more. H8. The segmentation itself carries stance, through token count, rate and duration. H9. Order retention tracks whether the encoder has an architectural mechanism for representing time, rather than tracking frame rate.
 
-H6, H7 and H8 are not supported. H9 was formed after an anomalous result on one codec and was then tested on a fourth codec not previously included, which is the strongest form of support available without retraining anything.
+H6, H7 and H8 are not supported. H9 was formed after an anomalous result on one codec and was then tested on a third codec not previously included, which is the strongest form of support available without retraining anything.
 
 ## 1.4 Contributions
 
