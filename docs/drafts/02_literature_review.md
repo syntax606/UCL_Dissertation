@@ -15,7 +15,7 @@ A second axis, less often discussed. These systems also differ in how their enco
 
 ## 2.2 The representations under test
 
-Ten conditions are compared on a single task, recovering the pragmatic force of a phrase whose lexical content is held constant. Eight carry the main analyses, with the text baseline supplying two of them, and the two variable-frame-rate tokenisers at the foot of the table are added for the comparison in [4.6].
+Ten conditions are compared on a single task, recovering the pragmatic force of a phrase whose lexical content is held constant. Eight carry the main analyses, with the text baseline supplying two of them, and the two variable-frame-rate tokenisers at the foot of the table are added for the comparison in [4.4, 4.6].
 
 Table 2.1. Representations under test. Frame rate in Hz. Specifications read from the checkpoints and the primary papers.
 
@@ -37,7 +37,7 @@ Continuous encoders. WavLM and HuBERT share a masked-prediction architecture and
 
 Codecs. Mimi is used rather than a pure acoustic codec because it is the input tokeniser for deployed speech-to-speech systems. DAC and EnCodec are matched to it at eight codebooks rather than at equal bitrate, so quantiser count is held constant while frame rate and codebook geometry vary. DAC and EnCodec are additionally matched to each other at 75 Hz, which is what permits frame rate to be separated from encoder architecture [4.5].
 
-Naming the first codebook. Codec probing (Shi et al., 2026) shows that distillation from WavLM injects phonetic rather than semantic knowledge, from which an earlier version of this chapter predicted that pragmatic force would sit in the acoustic codebooks rather than in codebook 0. Chapter 4 shows the reverse [4.6]. The inference was a category error, since the semantic-versus-phonetic axis concerns what a stream encodes about which words were said, and pragmatic force is orthogonal to it.
+Naming the first codebook. Codec probing (Shi et al., 2026) shows that distillation from WavLM injects phonetic rather than semantic knowledge. The natural inference is that pragmatic force would sit in the acoustic codebooks rather than in the distilled one, and [4.6] shows the reverse. The inference is a category error, since the semantic-versus-phonetic axis concerns what a stream encodes about which words were said, and pragmatic force is orthogonal to it.
 
 ## 2.3 What tokenisation loses, and what is proposed about it
 
@@ -45,7 +45,7 @@ On affect and prosody. DASB (Mousavi et al., 2026) finds discrete representation
 
 The remedies currently proposed, and where they intervene. One family intervenes at the codebook, through explicit word-level prosody tokens (Qian, Y. et al., 2025a) or quantisation at multiple segmental units (Sanders et al., 2025). A second and larger family intervenes on the frame rate. FlexiCodec (Li et al., 2026) and CodecSlime allocate frames dynamically on the grounds that natural speech units are inherently dynamic in their rate of occurrence, so a fixed rate wastes capacity on silence and sustained vowels while under-resolving transients. Sylber (Cho et al., 2025) and DyCAST (Della Libera et al., 2026) go further, deriving the units from the signal or from character alignment rather than from a clock.
 
-Its stated motivation is predominantly semantic and phonetic rather than prosodic. FlexiCodec's own account of the syllabic line is that it "successfully extracts semantic units at 5-8Hz but largely discards the fine-grained acoustic details, prosody, and timing required for high-fidelity reconstruction", and SyllableLM describes its objective as coarse semantic units at low bitrate (Baade et al., 2025). So the literature that proposes variable rates as a fix for timing also records, of the systems that go furthest, that prosody is what they shed. And Gichamba and Busogi (2026), ablating frame rate on DAC from 1.6 to 100 Hz, find no evidence that frame rate imposes a fundamental barrier at all, tracing an apparent quality cliff to a training misconfiguration.
+That family's stated motivation is predominantly semantic and phonetic rather than prosodic. FlexiCodec's own account of the syllabic line is that it "successfully extracts semantic units at 5-8Hz but largely discards the fine-grained acoustic details, prosody, and timing required for high-fidelity reconstruction", and SyllableLM describes its objective as coarse semantic units at low bitrate (Baade et al., 2025). So the literature that proposes variable rates as a fix for timing also records, of the systems that go furthest, that prosody is what they shed. And Gichamba and Busogi (2026), ablating frame rate on DAC from 1.6 to 100 Hz, find no evidence that frame rate imposes a fundamental barrier at all, tracing an apparent quality cliff to a training misconfiguration.
 
 A mechanism for discrete instability. Liu et al. (2024) show that codec encoders integrate context, so acoustically identical segments receive different token sequences depending on their surroundings, with consistency falling as codebook depth increases. Code identity is therefore less stable than the vector it decodes to, which bears directly on any summary computed over indices [4.3].
 
