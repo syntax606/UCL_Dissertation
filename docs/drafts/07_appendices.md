@@ -415,6 +415,33 @@ two phrases.
 
 ---
 
+## B.10 Cue retention, full figures
+
+Source `results/cue_retention_repeated.txt`, `src/48`, 25 partitions. [4.4] shows these as a
+heat map, Figure 4.2. The percentages and their standard deviations are here because the figure
+carries the shape and the reader may want the values.
+
+| representation | contour | level | voice quality | temporal | spectral |
+|---|---|---|---|---|---|
+| WavLM, ceiling, absolute R² | 0.289 | 0.610 | 0.219 | 0.558 | 0.345 |
+| Whisper encoder L9 | 101% (2) | 102% (1) | 116% (2) | 100% (1) | 109% (1) |
+| Mimi, before quantisation | 152% (3) | 146% (1) | 162% (3) | 106% (1) | 170% (2) |
+| Mimi, after quantisation | 137% (2) | 143% (1) | 143% (3) | 96% (1) | 161% (2) |
+| Mimi, deployed histogram | 97% (2) | 107% (1) | 111% (2) | 78% (1) | 121% (1) |
+| EnCodec, before quantisation | 127% (3) | 145% (1) | 145% (3) | 71% (1) | 164% (2) |
+| EnCodec, after quantisation | 127% (2) | 144% (1) | 137% (3) | 69% (1) | 162% (2) |
+| DAC, before quantisation | 121% (2) | 130% (1) | 127% (3) | 67% (1) | 160% (2) |
+| DAC, after quantisation | 115% (2) | 127% (1) | 117% (3) | 61% (1) | 156% (2) |
+| Sylber | 80% (2) | 90% (1) | 80% (2) | 81% (1) | 87% (1) |
+| DyCAST, before quantisation | 89% (2) | 90% (1) | 125% (3) | 44% (1) | 100% (1) |
+| DyCAST, after quantisation | 90% (2) | 92% (1) | 126% (3) | 45% (1) | 101% (1) |
+
+Whisper is a control rather than a rung. A second continuous encoder recovering every group at
+between 100 and 116 per cent is what establishes that the codecs' surplus is a property of
+codecs rather than a deficiency of WavLM [4.4].
+
+---
+
 # Appendix C. The acoustic correlates of ironic and sarcastic delivery
 
 Source material for [2.4], which states the conclusion. The inventory is here because the
