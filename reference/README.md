@@ -109,9 +109,10 @@ require rather than in what they show.
 
 1. **Verify the reported numbers.** Needs nothing but this package. Every figure in the text
    appears in a file in `results/`, and `PROVENANCE.md` says which.
-2. **Re-run the probing analysis.** Needs the derived feature arrays, which are not in the
-   repository because of their size. They are derived rather than raw, so they can be
-   distributed, and the delivery route is given in `REPRODUCE.md`.
+2. **Re-run the probing analysis.** Needs the derived feature arrays, 2.1 GB across two
+   release assets. They are derived rather than raw, so they carry no redistributable
+   speech and can be published. Both are attached, including the full per-layer stacks, so
+   the layer sweep runs as well as the headline analyses.
 3. **Rebuild from audio.** Needs your own audio and word-level transcripts. The labels here
    are keyed to specific source episodes and will only align with the identical material.
 

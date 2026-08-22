@@ -203,8 +203,15 @@ def export(dest):
     if dest.exists() and any(dest.iterdir()):
         return [f"{dest} exists and is not empty, refusing to write into it"]
     dest.mkdir(parents=True, exist_ok=True)
+    problems_early = []
 
-    for name in ("README.md", "REPRODUCE.md", "PROVENANCE.md", "requirements.lock.txt"):
+    for name in ("README.md", "REPRODUCE.md", "PROVENANCE.md", "requirements.lock.txt",
+                 "FEATURE_MANIFEST.json"):
+        if not (REF / name).exists():
+            problems_early.append(f"{name} is missing from reference/, run src/56 first"
+                                  if name.startswith("FEATURE") else
+                                  f"{name} is missing from reference/")
+            continue
         shutil.copy2(REF / name, dest / name)
     for name in ("LICENSE", "DATA_AVAILABILITY.md", "annotations.db"):
         shutil.copy2(ROOT / name, dest / name)
@@ -231,7 +238,7 @@ def export(dest):
     # The withheld material must not travel, and the check is on the copy rather than on
     # the intention, because the intention was already stated once in DATA_AVAILABILITY
     # and the working tree still drifted from it.
-    problems = []
+    problems = list(problems_early)
     for pat in ("*.wav", "*.mp3", "*.duckdb", "corpus*", "premise_key.csv",
                 "annotation_sheet*.csv", "candidate_targets*.csv"):
         leaked = list(dest.rglob(pat))

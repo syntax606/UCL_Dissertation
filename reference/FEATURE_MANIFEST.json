@@ -1,0 +1,189 @@
+{
+  "features.tar.gz": {
+    "source": "features/",
+    "what": "Pooled embeddings, one row per clip. WavLM, HuBERT and Whisper carry every layer, so this also serves the layer sweep in src/32.",
+    "files": 30,
+    "bytes": 1291047912,
+    "contents": {
+      "dac_post/W2_segment.npz": {
+        "bytes": 6525307
+      },
+      "dac_pre/W2_segment.npz": {
+        "bytes": 6515748
+      },
+      "egemaps/W2_segment.npz": {
+        "bytes": 903896
+      },
+      "hubert/W1_local.npz": {
+        "bytes": 163205154
+      },
+      "hubert/W2_segment.npz": {
+        "bytes": 163231121
+      },
+      "hubert/W3_discourse.npz": {
+        "bytes": 163237322
+      },
+      "mimi/W1_local.npz": {
+        "bytes": 1025871
+      },
+      "mimi/W2_segment.npz": {
+        "bytes": 1418911
+      },
+      "mimi/W3_discourse.npz": {
+        "bytes": 1895499
+      },
+      "mimi_delta/W2_segment.npz": {
+        "bytes": 6737076
+      },
+      "mimi_meanstd/W2_segment.npz": {
+        "bytes": 3346844
+      },
+      "mimi_post/W2_segment.npz": {
+        "bytes": 3345219
+      },
+      "mimi_post_sem/W2_segment.npz": {
+        "bytes": 1677471
+      },
+      "mimi_pre/W2_segment.npz": {
+        "bytes": 3338855
+      },
+      "mimi_pre_delta/W2_segment.npz": {
+        "bytes": 6724712
+      },
+      "mimi_pre_meanstd/W2_segment.npz": {
+        "bytes": 3340297
+      },
+      "mimi_pre_seg4/W2_segment.npz": {
+        "bytes": 13265434
+      },
+      "mimi_pre_sem/W2_segment.npz": {
+        "bytes": 1668525
+      },
+      "mimi_seg4/W2_segment.npz": {
+        "bytes": 13278356
+      },
+      "text/context.npz": {
+        "bytes": 2533846
+      },
+      "text/targetonly.npz": {
+        "bytes": 314521
+      },
+      "wavlm/W1_local.npz": {
+        "bytes": 163677882
+      },
+      "wavlm/W2_segment.npz": {
+        "bytes": 163694798
+      },
+      "wavlm/W3_discourse.npz": {
+        "bytes": 163680998
+      },
+      "wavlm_delta/W2_segment.npz": {
+        "bytes": 13376566
+      },
+      "wavlm_meanstd/W2_segment.npz": {
+        "bytes": 6623073
+      },
+      "wavlm_seg4/W2_segment.npz": {
+        "bytes": 26358583
+      },
+      "whisper/W1_local.npz": {
+        "bytes": 62055540
+      },
+      "whisper/W2_segment.npz": {
+        "bytes": 62069787
+      },
+      "whisper/W3_discourse.npz": {
+        "bytes": 61980700
+      }
+    }
+  },
+  "features_frames.tar.gz": {
+    "source": "features_frames/",
+    "what": "Frame sequences, variable length. EnCodec, Sylber and DyCAST are here rather than in features/, and so is everything the timing and cue-retention analyses read.",
+    "files": 27,
+    "bytes": 794141874,
+    "contents": {
+      "dycast_durs/W2_segment.X.npy": {
+        "bytes": 1262486
+      },
+      "dycast_durs/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "dycast_durs/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "dycast_post/W2_segment.X.npy": {
+        "bytes": 40395584
+      },
+      "dycast_post/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "dycast_post/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "dycast_pre/W2_segment.X.npy": {
+        "bytes": 40395584
+      },
+      "dycast_pre/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "dycast_pre/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "dycast_toks/W2_segment.X.npy": {
+        "bytes": 40395584
+      },
+      "dycast_toks/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "dycast_toks/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "encodec_codes/W2_segment.X.npy": {
+        "bytes": 10476128
+      },
+      "encodec_codes/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "encodec_codes/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "encodec_post/W2_segment.X.npy": {
+        "bytes": 167616128
+      },
+      "encodec_post/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "encodec_post/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "encodec_pre/W2_segment.X.npy": {
+        "bytes": 167616128
+      },
+      "encodec_pre/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "encodec_pre/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "sylber/W2_segment.X.npy": {
+        "bytes": 321822848
+      },
+      "sylber/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "sylber/W2_segment.lengths.npy": {
+        "bytes": 3620
+      },
+      "sylber_bounds/W2_segment.X.npy": {
+        "bytes": 1676288
+      },
+      "sylber_bounds/W2_segment.ids.npy": {
+        "bytes": 272504
+      },
+      "sylber_bounds/W2_segment.lengths.npy": {
+        "bytes": 3620
+      }
+    }
+  }
+}

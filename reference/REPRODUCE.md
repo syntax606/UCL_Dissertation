@@ -29,9 +29,30 @@ pointing one section short while the checker still reported fifteen of fifteen p
 
 ## Level 2, re-run the probing analysis
 
-This needs the derived feature arrays. They are pooled embeddings rather than audio, so
-they are distributable, but they total roughly 1.2 GB and are therefore not committed. They
-are attached to the tagged release rather than tracked in git.
+This needs the derived feature arrays. They are pooled embeddings and frame sequences
+rather than audio, so they carry no redistributable speech, but they total 2.1 GB and are
+therefore attached to the tagged release rather than tracked in git. Both are needed for
+the full analysis and they divide where the analyses divide.
+
+| Asset | Size | What it carries |
+|---|---|---|
+| `features.tar.gz` | 1.29 GB | pooled embeddings, one row per clip, every layer of WavLM, HuBERT and Whisper |
+| `features_frames.tar.gz` | 0.79 GB | frame sequences, where EnCodec, Sylber and DyCAST live |
+
+Unpack both into the repository root, so that `features/` and `features_frames/` sit
+beside `src/`. `FEATURE_MANIFEST.json` lists every file with its size and gives a sha256
+for each archive, so a download can be checked before it is trusted.
+
+The split matters for what you can run. The ladder, the within-word analysis, the controls
+and the eGeMAPS work read `features/` alone. Cue retention, the timing and order-effect
+work, and every row involving EnCodec, Sylber or DyCAST read `features_frames/`.
+
+The layer stacks are shipped whole rather than sliced to the three layers the paper
+reports. Slicing would cut 1.17 GB to 59 MB, but the analysis selects a layer by indexing
+that axis directly, so every script would need its indexing changed. Editing the code a
+reader is meant to re-run, in order to make the download smaller, is a bad trade. It also
+keeps the layer sweep in `src/32_layer_selection.py` runnable, which a sliced package would
+not.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -57,11 +78,10 @@ Expect the figures to regenerate byte-identically. Expect the analyses to reprod
 third decimal, since partitions are seeded. The permutation nulls carry a Monte Carlo
 standard error near 0.001 at 200 shuffles, so a null may move in the last place.
 
-Two analyses will not reproduce from this package, and both are marked where they are used
-in the dissertation. The premise check was scored from annotator packages that carry clip
-audio and the hidden reference labels, so those packages are withheld. The full layer sweep
-in `src/32_layer_selection.py` needs the complete per-layer stacks rather than the selected
-layers, which is the larger part of the feature payload.
+One analysis will not reproduce from this package, and it is marked where it is used in the
+dissertation. The premise check was scored from annotator packages that carry clip audio
+and the hidden reference labels, so those packages are withheld and the figures drawn from
+them, including the per-phrase human accuracies, cannot be regenerated here.
 
 ## Level 3, rebuild from audio
 
