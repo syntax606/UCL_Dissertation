@@ -172,14 +172,20 @@ Sources: `src/17_extract_features.py`, `src/18_probe.py`, `src/22_nonlinear_prob
 | Solver iterations | `max_iter = 3000` |
 | Class weighting | `balanced` |
 | Standardisation | Per-feature, fitted within each training fold |
-| Cross-validation | `GroupKFold`, grouped by `episode_id` |
+| Fold assignment | Whole episodes to folds by `_partition` in `src/34`, seeded |
+| Repetitions | 25 independent partitions, seeds 0 to 24, averaged |
 | Folds | 5, reduced automatically to `min(5, n_groups, smallest class count)` |
-| Prediction | Out-of-fold, `cross_val_predict` |
+| Prediction | Out-of-fold within each partition |
 | Metric | Macro-F1 over the three stance classes |
-| Random seed | 42 |
 
 Grouping by episode rather than by clip prevents leakage through shared speaker, topic and recording
 conditions. The speaker control in [4.6] regroups by show and is reported separately.
+
+Fold assignment is defined in the analysis code rather than delegated to `GroupKFold`, for the reason
+[3.7] gives. Its assignment changed between two library releases and moved one representation by
+0.020 on byte-identical inputs, so a figure resting on it is pinned to a library version rather than
+to the data. The figures this replaces, produced by `src/18` under `GroupKFold` on one partition, are
+still on disk in `results/probe_results.txt` and differ from the current tables by up to 0.020.
 
 ## B.2 Uncertainty and significance
 
@@ -258,7 +264,27 @@ the comparison rest on the same footing. The single-partition figures this repla
 `results/linear_vs_nonlinear_probe.txt`, where the linear column drifted from Table 4.1 by up to
 0.036.
 
-## B.4 Feature dimensionalities
+## B.4 Checkpoints and clip construction
+
+Every representation is the public checkpoint below, used frozen. Read from `src/31`.
+
+| Representation | Checkpoint |
+|---|---|
+| WavLM-large | `microsoft/wavlm-large` |
+| HuBERT-large | `facebook/hubert-large-ll60k` |
+| Whisper-small encoder | `openai/whisper-small` |
+| Mimi | `kyutai/mimi` |
+| DAC | `descript/dac_24khz` |
+| EnCodec | `facebook/encodec_24khz` |
+| DyCAST | `lucadellalib/dycast` |
+
+Clips are cut from `src/05`, centred on the midpoint of the target word as located in the word-level
+alignment. Half-windows are 3, 5 and 8 seconds, giving the 6, 10 and 16 second windows in [3.2], with
+equal time either side so the target sits at the centre of every window. The 10 second window is
+primary throughout. Audio is resampled per representation to the rate its checkpoint expects, 16 kHz
+for the self-supervised and supervised encoders and 24 kHz for the three codecs [2.2].
+
+## B.5 Feature dimensionalities
 
 Measured from the stored arrays rather than restated from the extraction code. Every array carries
 873 rows. The per-probe dimension is what a single probe actually receives.
@@ -287,7 +313,7 @@ is why the 0.089 attributed to the codec encoder is reported as an upper bound [
 sides of each ladder rung share a dimension exactly, 1,024 against 1,024 for Mimi and 2,048 against
 2,048 for the Descript codec, which is why the quantisation estimate does not carry that caveat.
 
-## B.5 Per-phrase counts by stance and arousal
+## B.6 Per-phrase counts by stance and arousal
 
 All 873 kept clips. Columns are stance by arousal.
 
@@ -311,7 +337,7 @@ crossing both axes at that cell is thin. And the phrases differ in their stance 
 the artefact that lets a probe score above chance from word identity alone in the pooled target-only
 text condition [4.2].
 
-## B.6 Corpus summary
+## B.7 Corpus summary
 
 | Quantity | Value |
 |---|---|
@@ -327,7 +353,7 @@ text condition [4.2].
 
 ---
 
-## B.7 Results files
+## B.8 Results files
 
 Source: `results/probe_results.txt` and the six companion files in `results/`. The chapter reports
 selected rows. This section names where each complete table lives so nothing reported is unsourced.
@@ -345,7 +371,7 @@ selected rows. This section names where each complete table lives so nothing rep
 | `cps_baseline.txt` | The two candidate no-skill baselines for the contrast-preservation score, computed from labels alone |
 | `projection_cosines.txt` | Evidence that the two sides of each ladder rung share a space |
 
-## B.8 Provenance of figures outside the probe outputs
+## B.9 Provenance of figures outside the probe outputs
 
 **Projection cosines.** The ladder compares the projected encoder latent against the summed codebook
 vectors, and that pairing has to be justified rather than assumed. Over all 873 clips the correct
@@ -368,9 +394,9 @@ a reader cannot recompute from the repository alone.
 ingest stage rather than from any analysis script, described the collection sampled from rather than
 material analysed end to end, and was cut for that reason. It is recorded here so that a reader who
 meets it in an earlier version knows what it counted. The quantities that carry the analyses, 873
-clips across 32 shows and 753 episodes, are computed from the label store and given in B.6.
+clips across 32 shows and 753 episodes, are computed from the label store and given in B.7.
 
-## B.9 Per-phrase within-word contrast, full detail
+## B.10 Per-phrase within-word contrast, full detail
 
 The chapter reports means over the eight phrases [4.2]. Per-phrase figures are given here
 rather than in the body because they are not stable enough to be read as orderings. Each
@@ -415,7 +441,7 @@ two phrases.
 
 ---
 
-## B.10 Cue retention, full figures
+## B.11 Cue retention, full figures
 
 Source `results/cue_retention_repeated.txt`, `src/48`, 25 partitions. [4.4] shows these as a
 heat map, Figure 4.2. The percentages and their standard deviations are here because the figure
@@ -492,7 +518,7 @@ grouping folds by show does not guarantee that training and test share no speake
 **Two thin cells.** Target-only text is at chance only within a phrase and not pooled across
 phrases, since the eight differ in their stance base rates, so the pooled 0.493 carries that
 artefact. High-arousal neutral holds 26 clips, so any analysis crossing both axes at that
-cell is thin [B.5].
+cell is thin [B.6].
 
 ---
 
@@ -552,7 +578,7 @@ ordering across readouts and [4.2] is the reference for absolute values.
 
 Mimi's deployed summarisation is a per-codebook unigram histogram of 16,384 sparse dimensions. The
 continuous encoders receive pooled embeddings of at most 2,048. Within a phrase the cells hold 68 to
-127 clips [B.9], so that asymmetry is far more punishing than it is pooled.
+127 clips [B.10], so that asymmetry is far more punishing than it is pooled.
 
 | Representation | Readout | mean within-word macro-F1 | degenerate cells |
 |---|---|---|---|
