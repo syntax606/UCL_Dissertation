@@ -39,7 +39,7 @@ Table 4.1. Three-way stance decoding on the primary window. Mean macro-F1 over 2
 
 Every representation exceeds its own empirical permutation null, obtained by refitting on shuffled labels under the same partitioning. The null is not constant across configurations, ranging from 0.311 to 0.335, so every margin below is given against that configuration's own null rather than against a single assumed value [B.2]. What lowers it is not width but degenerate structure. The two lowest belong to the 768-dimensional target-only text at 0.311 and Mimi's 16,384-dimensional histogram at 0.312, one near-constant within a phrase by construction and one sparse, while the highest at 0.335 belongs to a 1,536-dimensional representation. Each null is a mean over 200 label shuffles and carries a standard error of 0.002, so margins separated by less than about 0.004 are not separated. One consequence is that Mimi's deployed histogram scores lower than DAC after quantisation, at 0.371 against 0.381, but clears a lower null and so carries the larger margin, at +0.059 against +0.047.
 
-Table 4.2. Each representation against its own permutation null, ordered by margin. The null is refitted on shuffled labels under the same partitioning.
+Table 4.2. Macro-F1, permutation null and margin for every condition, ordered by margin.
 
 | representation | macro-F1 | null | margin |
 |---|---|---|---|
@@ -63,7 +63,7 @@ Two entries need comment. eGeMAPS is the hand-crafted comparison, and it places 
 
 That confound is what the lexical control removes. Within each phrase the probe attempts that phrase's dominant binary contrast, so word identity carries no information.
 
-Table 4.3. The within-word contrast. Within each phrase the probe attempts that phrase's dominant binary contrast, averaged over the eight phrases.
+Table 4.3. The within-word contrast, averaged over the eight phrases. The third column is the mean spread across phrases.
 
 | Representation | mean within-word macro-F1 | sd | mean per-phrase sd |
 |---|---|---|---|
@@ -99,7 +99,7 @@ Table 4.1 confounds quantisation with feature construction, frame rate, architec
 
 Costs are paired across the same 25 partitions, so partition noise cancels.
 
-Table 4.5. Cost of each pipeline stage in macro-F1, paired across the same 25 partitions so that partition noise cancels in the difference.
+Table 4.5. Cost of each pipeline stage in macro-F1, with its standard deviation and t.
 
 | Step | cost | sd | t |
 |---|---|---|---|
@@ -126,11 +126,13 @@ Figure 4.2. Retention of each cue group as a percentage of what WavLM supports. 
 
 The codecs recover the acoustic cues better than WavLM does, with half the feature dimensions, including the contour group [4.2] identifies as carrying most stance. Whisper is in the figure as a control rather than as a rung, and it recovers every group at between 100 and 116 per cent, so the surplus is a property of codecs rather than a deficiency of WavLM and the shortfall on temporal is theirs rather than something every representation shows. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so the surplus alone is less surprising than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
 
-Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. The temporal column orders the codecs by encoder architecture rather than by frame rate, running 106 and 96 per cent for Mimi, which carries attention, 71 and 69 for EnCodec, which carries recurrence, and 67 and 61 for DAC, which carries neither, while DAC and EnCodec share a frame rate. The order effect gives the same ordering from different machinery [4.5]. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than any codec, but sits below WavLM on every group rather than above it on four.
+Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3].
+
+The temporal column orders the codecs by encoder architecture rather than by frame rate, running 106 and 96 per cent for Mimi, which carries attention, 71 and 69 for EnCodec, which carries recurrence, and 67 and 61 for DAC, which carries neither, while DAC and EnCodec share a frame rate. The order effect gives the same ordering from different machinery [4.5]. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than any codec, but sits below WavLM on every group rather than above it on four.
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
 
-Table 4.6. The gain from frame order. Each readout against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution.
+Table 4.6. The gain from frame order, with its standard deviation and t.
 
 | Representation | order effect | sd | t |
 |---|---|---|---|
@@ -186,7 +188,7 @@ Both controls were rerun under the partitioning in [3.7], so their baselines mat
 
 Arousal. Stance decoded within each arousal level separately, against the pooled figure.
 
-Table 4.8. Stance decoded within each arousal level separately, against the pooled figure.
+Table 4.8. Macro-F1 within each arousal level, against the pooled figure.
 
 | representation | pooled | low arousal | high arousal |
 |---|---|---|---|

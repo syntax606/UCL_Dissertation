@@ -21,8 +21,10 @@ OUT = os.path.join(D, "Bibliography.docx")
 
 # (entry, flag)
 #   ""  every part of the entry read off the source held on file
-#   "p" the copy on file is the preprint, so the published venue, volume and pagination
-#       come from the published version. Nothing else about the entry is unverified.
+#   "p" the copy on file is the preprint. The published venue, volume and pagination come
+#       from the published record rather than from that copy. Where an entry carries a
+#       volume or a page range, that record has been checked and the source is named
+#       above the entry.
 #   "?" a detail neither the source nor the published record settles
 #   "!" no copy held, reference reconstructed from other papers' citations of it
 ENTRIES = [
@@ -36,6 +38,7 @@ ENTRIES = [
 # a Computational Linguistics squib, accepted 8 September 2021, ACL copyright. That places
 # the published version in the 48(1) issue of 2022, which is what the draft cites. The
 # volume and pagination are from the published version rather than from the preprint.
+# Volume and pagination confirmed against the ACL Anthology record, 2022.cl-1.7.
 ("Belinkov, Y. (2022) 'Probing classifiers: promises, shortcomings, and advances', Computational "
  "Linguistics, 48(1), pp. 207–219. arXiv:2102.12452v4.", "p"),
 ("Bengio, Y. and Grandvalet, Y. (2004) 'No unbiased estimator of the variance of k-fold "
@@ -63,6 +66,7 @@ ENTRIES = [
 # All nineteen authors read off the title page of arXiv 2110.13900v5, 17 June 2022, and they
 # match. The JSTSP volume and pagination are from the published version, since the copy on
 # file is the preprint and states no venue.
+# Volume, issue and pagination confirmed against Crossref, doi 10.1109/JSTSP.2022.3188113.
 ("Chen, S., Wang, C., Chen, Z., Wu, Y., Liu, S., Chen, Z., Li, J., Kanda, N., Yoshioka, T., Xiao, X., "
  "Wu, J., Zhou, L., Ren, S., Qian, Y., Qian, Y., Wu, J., Zeng, M., Yu, X. and Wei, F. (2022) 'WavLM: "
  "large-scale self-supervised pre-training for full stack speech processing', IEEE Journal of Selected "
@@ -99,6 +103,7 @@ ENTRIES = [
  "Computational Linguistics, 38(1), pp. 1–39.", ""),
 ("Guo, Y., Li, Z., Wang, H., Li, B., Shao, C., Zhang, H., Du, C., Chen, X., Liu, S. and Yu, K. (2025) "
  "'Recent advances in discrete speech tokens: a review'. arXiv:2502.06490v4.", ""),
+# Pagination confirmed against the ACL Anthology record, D19-1275.
 ("Hewitt, J. and Liang, P. (2019) 'Designing and interpreting probes with control tasks', in "
  "Proceedings of EMNLP-IJCNLP 2019, pp. 2733–2743. arXiv:1909.03368v1.", "p"),
 ("Hsu, W.-N., Bolte, B., Tsai, Y.-H.H., Lakhotia, K., Salakhutdinov, R. and Mohamed, A. (2021) "
@@ -139,6 +144,7 @@ ENTRIES = [
  "conversational feedback'. KTH Royal Institute of Technology. arXiv:2505.13268v1.", ""),
 # Authors read off the title page of arXiv 2212.04356v1, 6 December 2022. The ICML year and
 # the PMLR pagination are from the published version; the preprint on file states neither.
+# Volume and pagination confirmed against PMLR v202, radford23a.
 ("Radford, A., Kim, J.W., Xu, T., Brockman, G., McLeavey, C. and Sutskever, I. (2023) 'Robust speech "
  "recognition via large-scale weak supervision', in Proceedings of the International Conference on "
  "Machine Learning (ICML). PMLR, pp. 28492–28518. arXiv:2212.04356v1.", "p"),
