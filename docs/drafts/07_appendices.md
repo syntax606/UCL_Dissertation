@@ -355,12 +355,12 @@ text condition [4.2].
 
 ## B.8 Results files
 
-Source: `results/probe_results.txt` and the six companion files in `results/`. The chapter reports
+Source: `results/probe_results.txt` and the nine companion files in `results/`. The chapter reports
 selected rows. This section names where each complete table lives so nothing reported is unsourced.
 
 | File | Contents |
 |---|---|
-| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks. Its view F header prints a superseded chance level of 0.50. The correction is in C.0 and in `cps_baseline.txt`, and the source has been fixed so the next run prints it correctly |
+| `probe_results.txt` | Views A to H. Pooled decodability, context-window sweep, per-phrase within-word contrast, matched arousal, speaker control, contrast-preservation score, layer curves, Mimi codebooks. Its view F header prints a superseded chance level of 0.50. The correction is in [E.5] and in `cps_baseline.txt`, and the source has been fixed so the next run prints it correctly |
 | `quantisation_ladder.txt` | Mimi, projected encoder latent against summed codebook vectors |
 | `dac_vs_mimi.txt` | The same ladder on the Descript codec, and the cross-codec comparison |
 | `ladder_by_readout.txt` | Both ladders under mean-and-standard-deviation, four-segment and delta readouts |
@@ -477,7 +477,7 @@ disagreement in the last row bears on how [4.1] is read.
 |---|---|---|
 | Rockwell (2000) | English | Slower tempo, greater intensity, lowered pitch level. Perceptual coding of filtered utterances |
 | Lan et al. (2019) | Cantonese | Six measured features, namely speech rate, mean F0, F0 range, mean amplitude, amplitude range and harmonics-to-noise ratio, with reductions across several |
-| Bryant and Fox Tree (2002, 2005) | English | Examine whether such cues constitute a dedicated ironic tone of voice, and conclude against a single dedicated marker in favour of a family of cues recognised in context |
+| Bryant and Fox Tree (2005) | English | Examine whether such cues constitute a dedicated ironic tone of voice, and conclude against a single dedicated marker in favour of a family of cues recognised in context |
 
 Two readings follow. Rockwell reports listeners discriminating posed sarcasm but not
 spontaneous sarcasm, and this corpus is spontaneous, so the premise check reaching 0.73 from
@@ -611,8 +611,8 @@ A linear probe reports whether information is linearly accessible rather than wh
 comparison. A non-linear probe was run on identical features and folds under six capacity settings,
 since gains under any single setting move by up to 0.06 and some change sign.
 
-The largest gain observed anywhere across the six settings is +0.025, against a continuous-to-discrete
-gap of 0.139, so any non-linear reserve is bounded at about a sixth of the quantity being interpreted.
+The largest gain observed anywhere across the six settings is +0.025, against the continuous-to-discrete
+gap of 0.139 that the same run reports for its linear column, so any non-linear reserve is bounded at about a sixth of the quantity being interpreted.
 Where it falls is worth stating plainly. It falls on Mimi's deployed histogram, the most heavily
 quantised representation here, which is where a linear-accessibility penalty would be expected. The
 three representations scoring above 0.500 reach at most +0.018, and under every setting that stops
@@ -658,7 +658,7 @@ compared against a differently constructed baseline.
 
 Sources: `src/23_cps_baseline.py`, `results/cps_baseline.txt`.
 
-Within each speaker-by-word cell holding at least three exemplars of the minority stance, leave-one-out
+Within each show-by-word cell holding at least three exemplars of the minority stance, leave-one-out
 nearest-centroid classification was performed on distances alone. Fifteen cells qualify, giving 191
 decisions.
 
@@ -708,14 +708,14 @@ which was the principled choice on design grounds. Coarse temporal position appe
 carry more than smooth contour shape does, and this is reported against expectation.
 
 **Consequence for the comparison in [4.2].** Read at each model's own best layer under a
-time-aware readout, Whisper reaches 0.606 and WavLM 0.592. That 0.014 is well inside the
-partition noise of 0.010, so the two are level rather than ordered. Whisper also peaks at
+time-aware readout, Whisper reaches 0.606 and WavLM 0.592. That 0.014 exceeds the partition noise of
+0.010, though not by much, so the two are close rather than firmly ordered. Whisper also peaks at
 its final encoder layer, which does not sit comfortably with accounts placing
-paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025b).
+paralinguistic content in middle layers (Qian, Figueroa and Skantze, 2025).
 
 ### E.6.1 The disagreement over Whisper
 
-Qian, Figueroa and Skantze (2025b) study perceived prosodic similarity of conversational
+Qian, Figueroa and Skantze (2025) study perceived prosodic similarity of conversational
 feedback under an independent lexical control, and report prosodic information concentrated
 in the middle layers of four foundation models with Whisper the weakest of them, which they
 attribute to its ASR training objective. Whisper is among the strongest representations

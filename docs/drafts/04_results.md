@@ -95,7 +95,7 @@ Contour carries the most stance of any group of comparable size, at +0.083 from 
 
 ## 4.3 Where the loss is
 
-Table 4.1 confounds quantisation with feature construction, frame rate, architecture and training objective. This section isolates the stages. Because the word is held constant throughout, a loss localised to a stage is a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser operates in a projected space, so the comparable pair is the projected encoder latent against the summed codebook vectors before output projection, whose cosine is 0.821 against 0.004 for the naive pairing that would otherwise be used [3.5].
+Table 4.1 confounds quantisation with feature construction, frame rate, architecture and training objective. This section isolates the stages. The pooled task varies the word across clips [4.2], but each stage comparison holds the clip set fixed and changes only where the representation is read, so lexical variation sits on both sides of a rung and cancels in the difference. A loss localised to a stage is therefore a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser operates in a projected space, so the comparable pair is the projected encoder latent against the summed codebook vectors before output projection, whose cosine is 0.821 against 0.004 for the naive pairing that would otherwise be used [3.5].
 
 Costs are paired across the same 25 partitions, so partition noise cancels.
 
@@ -120,15 +120,15 @@ Summarising the token stream costs a further 0.070, from Mimi's post-quantisatio
 
 The decomposition locates the loss without saying what is lost. Two measurements answer that, and they disagree with the intuitive account.
 
-The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
+The acoustic cues are retained. Hand-crafted cue groups are recovered from each rung by ridge regression and reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
 
 Figure 4.2. Retention of each cue group as a percentage of what WavLM supports. Whisper is a control rather than a rung. Teal is better than WavLM, rust is worse. Full figures are in Appendix [B].
 
-The codecs recover the acoustic cues better than WavLM does, with half the feature dimensions, including the contour group [4.2] identifies as carrying most stance. Whisper is in the figure as a control rather than as a rung, and it recovers every group at between 100 and 116 per cent, so the surplus is a property of codecs rather than a deficiency of WavLM and the shortfall on temporal is theirs rather than something every representation shows. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so the surplus alone is less surprising than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
+The codecs recover the acoustic cues better than WavLM does, Mimi on half the feature dimensions and DAC on the same 2,048, including the contour group [4.2] identifies as carrying most stance. Whisper is in the figure as a control rather than as a rung, and it recovers every group at between 100 and 116 per cent, so the surplus is a property of codecs rather than a deficiency of WavLM and the shortfall on temporal is theirs rather than something every representation shows. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so the surplus alone is less surprising than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
 
 Among the codec rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3].
 
-The temporal column orders the codecs by encoder architecture rather than by frame rate, running 106 and 96 per cent for Mimi, which carries attention, 71 and 69 for EnCodec, which carries recurrence, and 67 and 61 for DAC, which carries neither, while DAC and EnCodec share a frame rate. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than any codec, but sits below WavLM on every group rather than above it on four.
+The temporal column orders the codecs by encoder architecture rather than by frame rate, running 106 and 96 per cent for Mimi, which carries attention, 71 and 69 for EnCodec, which carries recurrence, and 67 and 61 for DAC, which carries neither, while DAC and EnCodec share a frame rate. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than DAC or EnCodec though below Mimi both before and after quantisation, but sits below WavLM on every group rather than above it on four.
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
 
@@ -154,7 +154,7 @@ The monotone decline therefore holds across the encoder rungs, where the claim i
 
 Whisper's figure is layer-sensitive in a way the others are not, and the sweep in [E.6] should be read alongside it.
 
-The loss is not an artefact of the pooled readout. Time-aware readouts recover at most +0.031 at a fixed layer, and no representation moves past another on the strength of it [E.6].
+The loss is not an artefact of the pooled readout. Time-aware readouts recover at most +0.031 at a fixed layer, and at that layer no representation moves past another on the strength of it, though read at each model's own best layer Whisper and WavLM exchange places [E.6].
 
 ## 4.5 Why
 
@@ -176,7 +176,7 @@ Frame rate is held constant, not controlled for statistically. DAC and EnCodec a
 
 The two remaining differences both run against the result. If convolutional context were the operative variable, DAC should carry more order information than EnCodec, since its receptive field is roughly twice as wide. If latent width were, DAC should again carry more, since its latent is eight times as wide, at 1,024 against 128 [B.5]. It carries less on both counts, and by a margin above the noise threshold. Across all three codecs width and order information do not covary at all, since the widest carries the least and the narrowest carries more than the widest. The variable that does covary with the ordering is whether anything above the convolutional stack integrates across frames.
 
-The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 71 for EnCodec and 67 for DAC [4.4]. The gap between the two codecs matched at 75 Hz is the narrow one, so it is tested rather than read off. Paired across the same 25 partitions, EnCodec retains 3.5 points more than DAC before quantisation and 7.7 points more after, and does so in every one of the 25. Two quantities that share no machinery rank the three codecs identically, and they agree at +0.82 across all ten systems measured, so the agreement is not an artefact of choosing three [4.4].
+The ordering is monotone across three points rather than a single contrast. None, recurrence and attention give −0.007, +0.033 and +0.080, with the third supplied by a codec added after the prediction was made [1.4]. And a second measurement gives the same ordering independently, since temporal cue retention runs 106 per cent for Mimi, 71 for EnCodec and 67 for DAC [4.4]. The gap between the two codecs matched at 75 Hz is the narrow one, so it is tested rather than read off. Paired across the same 25 partitions, EnCodec retains 3.5 points more than DAC before quantisation and 7.7 points more after, and does so in every one of the 25. Two quantities that share no machinery rank the three codecs identically, and they rank-correlate at 0.82 across all ten systems measured, so the agreement is not an artefact of choosing three [4.4].
 
 The ordering follows the presence of a mechanism for integrating across time. Gichamba and Busogi (2026) reach a compatible conclusion from a different quantity, finding no evidence that frame rate imposes a fundamental barrier to reconstruction quality, and describe Mimi as engineered for low frame rate tokenisation through a transformer bottleneck and split-RVQ design. That description is their characterisation of the architecture rather than a finding of their ablation, so it is consistent with the account here rather than independent evidence for it. Their DAC configuration reconstructs almost perfectly at 75 Hz while carrying no order information here, so reconstruction fidelity and temporal organisation come apart.
 
@@ -184,7 +184,7 @@ One alternative account cannot be excluded. These are three independently traine
 
 ## 4.6 Controls, and what does not hold
 
-Both controls were rerun under the partitioning in [3.7], so their baselines match Table 4.1 rather than the single-partition figures they were first computed against.
+These controls were rerun under the partitioning in [3.7], so their baselines match Table 4.1 rather than the single-partition figures they were first computed against.
 
 Arousal. The design's headline test is stance separability at matched energy [3.3], which means decoding within each level rather than across both.
 
@@ -198,7 +198,7 @@ Table 4.8. Macro-F1 within each arousal level, against the pooled figure.
 | eGeMAPS, 88 functionals | 0.420 | 0.389 | 0.409 |
 | Mimi, deployed histogram | 0.371 | 0.363 | 0.361 |
 
-Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
+Decoding falls when energy is held constant, against the mean of the two levels by 0.039 for WavLM and 0.009 for Mimi's deployed tokens, so the two axes are partly entangled. It does not fall to the null in any representation, so stance is not reducible to arousal.
 
 Speaker. Folds regrouped by show rather than by episode, so that no show appears on both sides of the split. The cost is between 0.019 and 0.034 and is similar across representations, so the probe is not principally recovering speaker identity. Because the corpus carries show names rather than speaker labels, this is properly described as held-out shows.
 
