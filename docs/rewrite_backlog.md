@@ -6,8 +6,8 @@ conversation because it accumulated across many sessions and was becoming untrac
 Nothing below is in `Dissert Draft 7.docx` yet. The measurements behind items A and B are
 all run and saved; what is outstanding is the prose.
 
-Draft stands at 10,297 words of prose excluding the abstract. Items A and B add roughly
-400, so expect about 10,700 before any compensating trim.
+Draft stands at **10,609** words of prose excluding the abstract, after B1, B3 and C1.
+Those three added 312. The remaining items add perhaps 250 more.
 
 ---
 
@@ -32,9 +32,9 @@ rate, +0.024 from 6. Arousal ranks the groups differently, voice quality highest
 
 | # | where | what | why |
 |---|---|---|---|
-| B1 | 1.1 | roughly 100 words establishing that the delivery cues carrying stance are dynamic ones | RQ4 currently arrives with no prior setup. The only mention of time before it is "sequential placement", one item in a list attributed to Gardner. When [4.4] answers "temporal", the reader has nothing to connect it to |
+| ~~B1~~ | 1.1 | **DONE.** 114 words. Two of Gardner's three properties are dynamic, the ironic-delivery literature reports the same emphasis, and the passage hands off to RQ4 explicitly | RQ4 currently arrives with no prior setup. The only mention of time before it is "sequential placement", one item in a list attributed to Gardner. When [4.4] answers "temporal", the reader has nothing to connect it to |
 | B2 | 2.4 | mark which of the five correlates are temporal | "slower tempo" and "reduced F0 range" are dynamic properties sitting unflagged in a list of five |
-| B3 | 4.2, or a short subsection before it | the cue-group table | establishes what stance is made of before asking what the codecs do to it. Turns the [4.4] finding from a surprise into a confirmed prediction |
+| ~~B3~~ | 4.4, at its head | **DONE.** Table 4.5 plus 165 words. Placed in 4.4 rather than 4.2 so both cue analyses sit together and the groups are defined once. Renumbered the four tables below it | establishes what stance is made of before asking what the codecs do to it. Turns the [4.4] finding from a surprise into a confirmed prediction |
 | B4 | 4.6 and 5.2 | make the two senses of "temporal" explicit | "timing features alone sit at chance" and "what is lost is temporal organisation" look contradictory. Contour +0.083 against coarse rate +0.024 shows they are different quantities. 5.3 makes this point late and only negatively |
 | B5 | 3.3 | a third defence of the arousal separation | voice quality carries arousal at +0.107 and stance at +0.047; contour is the reverse. This is annotator-independent evidence that the two axes are different things, which neither the design argument in 3.3 nor the probe result in 4.6 provides |
 
@@ -42,7 +42,7 @@ rate, +0.024 from 6. Arousal ranks the groups differently, voice quality highest
 
 | # | where | what |
 |---|---|---|
-| C1 | 1.1 or 2.4 | Gravano et al. (2012) report contextual information and **final intonation** as the most salient cues to disambiguating *okay* for human listeners. Already cited, but only for the fact that these words are ambiguous, never for which cue resolves it. Direct independent support for the contour finding, on the same word class |
+| ~~C1~~ | 1.1 | **DONE**, folded into B1. Gravano et al. (2012) report contextual information and **final intonation** as the most salient cues to disambiguating *okay* for human listeners. Already cited, but only for the fact that these words are ambiguous, never for which cue resolves it. Direct independent support for the contour finding, on the same word class |
 | C2 | 2.4 | Rockwell (2000) leads her cue list with slower tempo, a rate property, where this corpus finds coarse rate carries the least stance. Name the tension |
 | C3 | 3.6 or 2.4 | Qian et al. (2025b) emphasise duration: voiced length scores 60.49 and 56.35 per cent against 44.44 and 41.88 for Legendre contours alone. The existing characterisation in 3.6 is accurate, but citing them as support for a contour account would overreach. Their finding is that duration carries meaning |
 

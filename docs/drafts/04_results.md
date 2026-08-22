@@ -102,11 +102,27 @@ Summarising the token stream costs a further 0.070, from Mimi's post-quantisatio
 
 ## 4.4 What is lost
 
-The decomposition locates the loss without saying what is lost. Two measurements answer that, and they disagree with the intuitive account.
+The decomposition locates the loss without saying what is lost. Answering that needs two things, first what the contrast is made of and then what survives of it.
+
+What the contrast is made of. Each eGeMAPS cue group was probed on its own against stance, and against arousal, under the partitioning in [3.7]. Margins are over each group's own permutation null.
+
+Table 4.5. Each hand-crafted cue group probed alone, as a margin over its own permutation null. Mean over 25 partitions, 200 label shuffles per null.
+
+| cue group | features | stance | arousal |
+|---|---|---|---|
+| contour, F0 and loudness dynamics | 12 | +0.083 | +0.076 |
+| level, loudness and F0 means | 9 | +0.060 | +0.085 |
+| voice quality, jitter and HNR | 10 | +0.047 | +0.107 |
+| spectral and formant | 51 | +0.094 | +0.088 |
+| temporal, rate and segments | 6 | +0.024 | +0.012 |
+
+Contour carries the most stance of any group of comparable size, at +0.083 from twelve features against level's +0.060 from nine. The spectral group's larger margin comes from fifty-one features and is the weakest per feature by a factor of three, so it reflects width rather than concentration. Coarse rate and segment statistics carry least at +0.024, which is the first sign that the timing which matters here is the shape of the movement rather than its speed [4.6]. Arousal ranks the same groups differently, voice quality highest at +0.107 where it sits near the bottom for stance, so the two annotated axes rest on different measured acoustics rather than on one axis relabelled [3.3].
+
+Two further measurements say what the codecs do to this, and they disagree with the intuitive account.
 
 The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
 
-Table 4.5. Recovery of hand-crafted cue groups from each rung by ridge regression, as a fraction of what WavLM supports. Mean over 25 partitions, no cell above three points of standard deviation.
+Table 4.6. Recovery of hand-crafted cue groups from each rung by ridge regression, as a fraction of what WavLM supports. Mean over 25 partitions, no cell above three points of standard deviation.
 
 | Representation | contour | level | voice quality | temporal | spectral |
 |---|---|---|---|---|---|
@@ -125,7 +141,7 @@ Among the continuous rungs, temporal is the only group falling below WavLM, and 
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
 
-Table 4.6. The gain from frame order. Each readout against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution.
+Table 4.7. The gain from frame order. Each readout against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution.
 
 | Representation | order effect | sd | t |
 |---|---|---|---|
@@ -153,7 +169,7 @@ The loss is not an artefact of the pooled readout. Time-aware readouts recover a
 
 Frame rate does not explain the ordering, and a controlled comparison shows what does.
 
-Table 4.7. Every property the comparison varies, against the order effect. DAC and EnCodec are matched at 75 Hz. Only the first column orders the three codecs the way the last one does.
+Table 4.8. Every property the comparison varies, against the order effect. DAC and EnCodec are matched at 75 Hz. Only the first column orders the three codecs the way the last one does.
 
 | Codec | temporal mechanism | conv. receptive field | latent width | frame rate | order effect |
 |---|---|---|---|---|---|
@@ -181,7 +197,7 @@ Both controls were rerun under the partitioning in [3.7], so their baselines mat
 
 Arousal. Stance decoded within each arousal level separately, against the pooled figure.
 
-Table 4.8. Stance decoded within each arousal level separately, against the pooled figure.
+Table 4.9. Stance decoded within each arousal level separately, against the pooled figure.
 
 | representation | pooled | low arousal | high arousal |
 |---|---|---|---|
