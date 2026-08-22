@@ -76,6 +76,12 @@ THE COMPARISON [4.5] RESTS ON, paired across partitions
    temporal   EnCodec - DAC      = +7.7% (sd 1.2%)  t =   30.7  higher in 25/25 partitions
    temporal      Mimi - EnCodec  = +35.4% (sd 1.3%)  t =  136.5  higher in 25/25 partitions
 
+TEMPORAL RETENTION AGAINST THE ORDER EFFECT, rank correlation
+----------------------------------------------------------------------------------------------------
+  all 10 systems with both quantities: +0.82
+  codec rungs only (6):                  +0.83
+  [4.4] and [4.5] quote these, so they are recorded here rather than computed ad hoc.
+
 Read: [4.5] claims cue retention and the order effect rank the three codecs
 identically. That holds only if EnCodec sits above DAC on the temporal group by
 more than partition noise. The paired figures above are what decides it.

@@ -218,6 +218,31 @@ def main():
                  f"= {d.mean():+.1%} (sd {d.std():.1%})  t = {t:>6.1f}  "
                  f"higher in {wins}/{len(d)} partitions")
     emit()
+    # [4.4] and [4.5] quote a rank correlation across every system measured, which was
+    # computed ad hoc the first time and therefore had no artefact behind it.
+    ORDER_EFFECT = {"Mimi, before quantisation": 0.080, "Mimi, after quantisation": 0.048,
+                    "EnCodec, before quantisation": 0.033, "EnCodec, after quantisation": 0.063,
+                    "DAC, before quantisation": -0.007, "DAC, after quantisation": -0.018,
+                    "Whisper encoder L9": 0.070, "Sylber": 0.042,
+                    "DyCAST, before quantisation": 0.025, "DyCAST, after quantisation": 0.022}
+    common = [k for k in ORDER_EFFECT if k in ret]
+
+    def spearman(keys):
+        a = sorted(keys, key=lambda k: ret[k]["temporal"].mean())
+        b = sorted(keys, key=lambda k: ORDER_EFFECT[k])
+        ra = {k: i for i, k in enumerate(a)}
+        rb = {k: i for i, k in enumerate(b)}
+        n = len(keys)
+        dd = sum((ra[k] - rb[k]) ** 2 for k in keys)
+        return 1 - 6 * dd / (n * (n * n - 1))
+
+    codecs = [k for k in common if k.split(",")[0] in ("Mimi", "EnCodec", "DAC")]
+    emit("TEMPORAL RETENTION AGAINST THE ORDER EFFECT, rank correlation")
+    emit("-" * 100)
+    emit(f"  all {len(common)} systems with both quantities: {spearman(common):+.2f}")
+    emit(f"  codec rungs only ({len(codecs)}):                  {spearman(codecs):+.2f}")
+    emit("  [4.4] and [4.5] quote these, so they are recorded here rather than computed ad hoc.")
+    emit()
     emit("Read: [4.5] claims cue retention and the order effect rank the three codecs")
     emit("identically. That holds only if EnCodec sits above DAC on the temporal group by")
     emit("more than partition noise. The paired figures above are what decides it.")
