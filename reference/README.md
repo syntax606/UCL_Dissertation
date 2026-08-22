@@ -81,6 +81,7 @@ carrying.
 |---|---|
 | `PROVENANCE.md` | every results file, the script that wrote it, and its checksum |
 | `REPRODUCE.md` | the three levels at which this study can be reproduced |
+| `CHECKPOINTS.md` | the exact model revisions the figures were produced from |
 | `requirements.lock.txt` | the exact environment that produced the reported figures |
 | `src/` | the pipeline, from corpus search through annotation to probing |
 | `results/` | saved output of every analysis the dissertation reports |

@@ -95,7 +95,9 @@
       "whisper/W3_discourse.npz": {
         "bytes": 61980700
       }
-    }
+    },
+    "archive_bytes": 1290876677,
+    "archive_sha256": "89ab9677ec0dbce6bd84ced044244c7edb00fb0cf5e547466c8bd4b3d89328fd"
   },
   "features_frames.tar.gz": {
     "source": "features_frames/",
@@ -184,6 +186,8 @@
       "sylber_bounds/W2_segment.lengths.npy": {
         "bytes": 3620
       }
-    }
+    },
+    "archive_bytes": 374492161,
+    "archive_sha256": "0fcabc19b972c41423c102f285a490b79e1584118baf95504ba0070966c65a3c"
   }
 }

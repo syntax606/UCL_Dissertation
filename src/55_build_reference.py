@@ -205,8 +205,8 @@ def export(dest):
     dest.mkdir(parents=True, exist_ok=True)
     problems_early = []
 
-    for name in ("README.md", "REPRODUCE.md", "PROVENANCE.md", "requirements.lock.txt",
-                 "FEATURE_MANIFEST.json"):
+    for name in ("README.md", "REPRODUCE.md", "PROVENANCE.md", "CHECKPOINTS.md",
+                 "requirements.lock.txt", "FEATURE_MANIFEST.json"):
         if not (REF / name).exists():
             problems_early.append(f"{name} is missing from reference/, run src/56 first"
                                   if name.startswith("FEATURE") else

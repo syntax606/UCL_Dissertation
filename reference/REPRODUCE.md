@@ -34,10 +34,12 @@ rather than audio, so they carry no redistributable speech, but they total 2.1 G
 therefore attached to the tagged release rather than tracked in git. Both are needed for
 the full analysis and they divide where the analyses divide.
 
-| Asset | Size | What it carries |
-|---|---|---|
-| `features.tar.gz` | 1.29 GB | pooled embeddings, one row per clip, every layer of WavLM, HuBERT and Whisper |
-| `features_frames.tar.gz` | 0.79 GB | frame sequences, where EnCodec, Sylber and DyCAST live |
+| Asset | Download | Unpacked | What it carries |
+|---|---|---|---|
+| `features.tar.gz` | 1.2 GB | 1.29 GB | pooled embeddings, one row per clip, every layer of WavLM, HuBERT and Whisper |
+| `features_frames.tar.gz` | 357 MB | 0.79 GB | frame sequences, where EnCodec, Sylber and DyCAST live |
+
+Together they need about 3.8 GB of free space to download and unpack.
 
 Unpack both into the repository root, so that `features/` and `features_frames/` sit
 beside `src/`. `FEATURE_MANIFEST.json` lists every file with its size and gives a sha256
