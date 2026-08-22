@@ -384,7 +384,7 @@ An earlier draft of [3.5] and [4.3] gave 0.808 and 0.008 for two of these, from 
 was printed rather than saved. The figures above supersede them and are measured over the full
 corpus. Nothing in the argument turns on the difference.
 
-**Premise-check accuracies.** The 0.65 and 0.73 in [4.1] come from `src/15_score_premise.py` run
+**Premise-check accuracies.** The 0.65 and 0.73 in [4.1], and the per-phrase human figures beside them, come from `src/15_score_premise.py` run
 against the two returned annotator packages. Neither the packages nor the scoring output are in the
 repository, because they contain clip audio and the hidden reference key. The script is present and
 the figures regenerate from it given those inputs. This is the one quantity in the dissertation that
