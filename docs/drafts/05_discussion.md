@@ -37,7 +37,7 @@ The order-aware summaries lose to counting [4.6]. Run lengths and change rates a
 
 ## 5.4 What these results cannot say
 
-Decodability above chance is not decodability at a useful level. On the sixty clips human annotators judged, the best model condition reaches 0.533 against their 0.730, and a human reading only the transcript reaches 0.650, exceeding every model condition including the one given both modalities [4.1]. The claims here concern what these representations carry relative to one another, not what they carry relative to a listener.
+Decodability above chance is not decodability at a useful level. On the sixty clips human annotators judged, the best model condition reaches 0.533 against their 0.730, and a human reading the transcript and its context without the audio reaches 0.650, exceeding every model condition including the one given both modalities [4.1]. The claims here concern what these representations carry relative to one another, not what they carry relative to a listener.
 
 The architectural account is the best supported of the available explanations and it is not the only one. Gichamba and Busogi (2026) show an apparent architectural limit in DAC resolving into a training misconfiguration once sequence length was matched. Frozen public checkpoints cannot separate what an architecture can represent from what a particular training run taught it to represent. Settling that needs codecs trained under matched conditions differing only in the temporal mechanism.
 
