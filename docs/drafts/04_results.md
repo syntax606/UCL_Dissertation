@@ -186,7 +186,7 @@ One alternative account cannot be excluded. These are three independently traine
 
 Both controls were rerun under the partitioning in [3.7], so their baselines match Table 4.1 rather than the single-partition figures they were first computed against.
 
-Arousal. Stance decoded within each arousal level separately, against the pooled figure.
+Arousal. The design's headline test is stance separability at matched energy [3.3], which means decoding within each level rather than across both.
 
 Table 4.8. Macro-F1 within each arousal level, against the pooled figure.
 
