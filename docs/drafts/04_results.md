@@ -15,7 +15,7 @@ Scoring the models on those same sixty clips, the only like-for-like comparison 
 
 ## 4.2 Decodability, and the lexical control
 
-Sylber and DyCAST are the two variable-frame-rate tokenisers, included for the comparison in [4.6] and discussed there rather than here.
+Table 4.1 reports fifteen conditions. Sylber and DyCAST among them are variable-frame-rate tokenisers, included for the comparison in [4.6] and discussed there rather than here.
 
 Table 4.1. Three-way stance decoding on the primary window. Mean macro-F1 over 25 partitions with its standard deviation.
 
@@ -79,13 +79,27 @@ The ordering survives the control, which is the result the rest of the chapter d
 
 Two things follow from the third column. Individual phrase cells hold 68 to 127 clips and move by roughly 0.030 with the partition alone, three times as much as the averaged figure, so per-phrase results are reported in Appendix [B] and are not read as orderings. And WavLM and Whisper are separated by 0.002 against an sd of 0.010, so they are not distinguishable here. The layer sweep reaches the same conclusion from a different direction [E.6].
 
+What the contrast is made of. The eGeMAPS row in Table 4.1 is 88 features at once. Probed group by group, against stance and against arousal, it says which kind of acoustic property the contrast rests on.
+
+Table 4.4. Each hand-crafted cue group probed alone, as a margin over its own permutation null. Mean over 25 partitions, 200 label shuffles per null.
+
+| cue group | features | stance | arousal |
+|---|---|---|---|
+| contour, F0 and loudness dynamics | 12 | +0.083 | +0.076 |
+| level, loudness and F0 means | 9 | +0.060 | +0.085 |
+| voice quality, jitter and HNR | 10 | +0.047 | +0.107 |
+| spectral and formant | 51 | +0.094 | +0.088 |
+| temporal, rate and segments | 6 | +0.024 | +0.012 |
+
+Contour carries the most stance of any group of comparable size, at +0.083 from twelve features against level's +0.060 from nine. The spectral group's larger margin comes from fifty-one features and is the weakest per feature by close to a factor of four, so it reflects width rather than concentration. Coarse rate and segment statistics carry least at +0.024, which is the first sign that the timing which matters here is the shape of the movement rather than its speed [4.6]. Arousal ranks the same groups differently, voice quality highest at +0.107 where it sits near the bottom for stance, so the two annotated axes rest on different measured acoustics rather than on one axis relabelled [3.3].
+
 ## 4.3 Where the loss is
 
 Table 4.1 confounds quantisation with feature construction, frame rate, architecture and training objective. This section isolates the stages. Because the word is held constant throughout, a loss localised to a stage is a loss of pragmatic rather than phonetic sensitivity. Mimi's residual quantiser operates in a projected space, so the comparable pair is the projected encoder latent against the summed codebook vectors before output projection, whose cosine is 0.821 against 0.004 for the naive pairing that would otherwise be used [3.5].
 
 Costs are paired across the same 25 partitions, so partition noise cancels.
 
-Table 4.4. Cost of each pipeline stage in macro-F1, paired across the same 25 partitions so that partition noise cancels in the difference.
+Table 4.5. Cost of each pipeline stage in macro-F1, paired across the same 25 partitions so that partition noise cancels in the difference.
 
 | Step | cost | sd | t |
 |---|---|---|---|
@@ -98,37 +112,21 @@ Table 4.4. Cost of each pipeline stage in macro-F1, paired across the same 25 pa
 
 In all three codecs the encoder is the dominant contributor, by 3.3 to 1 in Mimi and 6.7 to 1 in DAC, with EnCodec's quantiser costing nothing measurable. Three codecs of independent design, differing in objective, frame rate and quantiser, agree on where the loss falls.
 
-Figure 4.1. The encoder step against the quantiser step. The encoder costs 3.3 times the quantiser in Mimi and 6.7 times in DAC, and in EnCodec the quantiser costs nothing measurable.
+Figure 4.1. Each codec's descent from the WavLM ceiling, with the encoder step and the quantiser step marked separately.
 
 Summarising the token stream costs a further 0.070, from Mimi's post-quantisation vectors at 0.441 to the deployed histogram at 0.371. That is a property of the histogram as a summarisation choice rather than of the deployed system, which consumes token sequences. Liu et al. (2024) give a mechanism, since codec encoders integrate context and therefore assign different codes to acoustically identical segments depending on their surroundings, which destabilises code identity while leaving the vector those codes decode to intact.
 
 ## 4.4 What is lost
 
-The decomposition locates the loss without saying what is lost. Answering that needs two things, first what the contrast is made of and then what survives of it.
-
-What the contrast is made of. Each eGeMAPS cue group was probed on its own against stance, and against arousal, under the partitioning in [3.7]. Margins are over each group's own permutation null.
-
-Table 4.5. Each hand-crafted cue group probed alone, as a margin over its own permutation null. Mean over 25 partitions, 200 label shuffles per null.
-
-| cue group | features | stance | arousal |
-|---|---|---|---|
-| contour, F0 and loudness dynamics | 12 | +0.083 | +0.076 |
-| level, loudness and F0 means | 9 | +0.060 | +0.085 |
-| voice quality, jitter and HNR | 10 | +0.047 | +0.107 |
-| spectral and formant | 51 | +0.094 | +0.088 |
-| temporal, rate and segments | 6 | +0.024 | +0.012 |
-
-Contour carries the most stance of any group of comparable size, at +0.083 from twelve features against level's +0.060 from nine. The spectral group's larger margin comes from fifty-one features and is the weakest per feature by close to a factor of four, so it reflects width rather than concentration. Coarse rate and segment statistics carry least at +0.024, which is the first sign that the timing which matters here is the shape of the movement rather than its speed [4.6]. Arousal ranks the same groups differently, voice quality highest at +0.107 where it sits near the bottom for stance, so the two annotated axes rest on different measured acoustics rather than on one axis relabelled [3.3].
-
-Two further measurements say what the codecs do to this, and they disagree with the intuitive account.
+The decomposition locates the loss without saying what is lost. Two measurements answer that, and they disagree with the intuitive account.
 
 The acoustic cues are retained. Recovering hand-crafted cue groups from each rung by ridge regression, reported as a fraction of what WavLM supports. Each retention figure is the mean over the same 25 partitions the rest of the chapter uses, with the ratio formed within each partition before averaging so that it carries a spread of its own [3.7]. No cell has a standard deviation above three points and most sit at one.
 
 Figure 4.2. Retention of each cue group as a percentage of what WavLM supports. Whisper is a control rather than a rung. Teal is better than WavLM, rust is worse. Full figures are in Appendix [B].
 
-The codecs recover the acoustic cues better than WavLM does, with half the feature dimensions, including the contour group that stance is built from. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so this is less surprising alone than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
+The codecs recover the acoustic cues better than WavLM does, with half the feature dimensions, including the contour group [4.2] identifies as carrying most stance. Whisper is in the figure as a control rather than as a rung, and it recovers every group at between 100 and 116 per cent, so the surplus is a property of codecs rather than a deficiency of WavLM and the shortfall on temporal is theirs rather than something every representation shows. A reconstruction objective is meant to retain waveform-recoverable descriptors and eGeMAPS functionals are waveform descriptors, so the surplus alone is less surprising than it is in combination with the previous section. The codec stores the cues more faithfully and reads stance off them far worse.
 
-Whisper is in the figure as a control rather than as a rung. A second continuous encoder recovers every group at between 100 and 116 per cent, temporal included, so the codecs' surplus is a property of codecs rather than a deficiency of WavLM, and the shortfall on temporal is theirs rather than something every representation shows. Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. The temporal column orders the codecs by encoder architecture rather than by frame rate. Temporal retention runs 106 and 96 per cent for Mimi, which carries attention, 71 and 69 per cent for EnCodec, which carries recurrence, and 67 and 61 per cent for DAC, which carries neither, while DAC and EnCodec share a frame rate. The order effect gives the same ordering from different machinery [4.5]. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than any codec, but sits below WavLM on every group rather than above it on four. Across all ten systems temporal retention and the order effect agree at a rank correlation of +0.82, against +0.83 across the codec rungs alone, so the relationship is not an artefact of the three-codec comparison [4.5].
+Among the continuous rungs, temporal is the only group falling below WavLM, and it falls furthest for DAC at 75 Hz rather than Mimi at 12.5, which is the wrong direction for a frame-rate account. The deployed histogram is the exception to the pattern as a whole, dropping to 97 per cent on contour and 78 per cent on temporal, which is a property of that summarisation rather than of the token stream [4.3]. The temporal column orders the codecs by encoder architecture rather than by frame rate, running 106 and 96 per cent for Mimi, which carries attention, 71 and 69 for EnCodec, which carries recurrence, and 67 and 61 for DAC, which carries neither, while DAC and EnCodec share a frame rate. The order effect gives the same ordering from different machinery [4.5]. The two variable-frame-rate systems extend the pattern rather than break it. DyCAST, which abandons the clock most completely by aligning to characters, retains 44 and 45 per cent of the temporal group, the least of anything measured here. Sylber retains 81 per cent, more than any codec, but sits below WavLM on every group rather than above it on four.
 
 What is lost is temporal organisation. Probing frame sequences rather than pooled summaries measures this directly. Each readout is compared against its own frame-shuffled control, which preserves dimensionality and every feature's marginal distribution while destroying order, paired on identical partitions.
 
