@@ -1,0 +1,37 @@
+WHICH MEASURED CUES CARRY STANCE, UNDER THE PARTITIONING IN [3.7]
+873 clips, 753 episodes, eGeMAPSv02, 88 features.
+25 partitions for the score, 200 label shuffles for the null.
+Replaces the single-partition figures in results/egemaps_baseline.txt.
+==============================================================================================
+
+All 88 features against stance: 0.420 (sd 0.012), null 0.325, margin +0.095
+
+CUE GROUPS AGAINST STANCE, each group on its own
+group                               feat   macroF1     sd    null   margin  per feat
+contour (F0/loudness dynamics)        12     0.402  0.012   0.319   +0.083    0.0069
+level (loudness, F0 mean)              9     0.377  0.010   0.317   +0.060    0.0066
+voice quality (jitter/HNR)            10     0.363  0.010   0.317   +0.047    0.0047
+spectral and formant                  51     0.416  0.010   0.322   +0.094    0.0018
+temporal (rate, segments)              6     0.340  0.009   0.316   +0.024    0.0040
+
+THE SAME GROUPS AGAINST AROUSAL, which is the other half of the design
+group                               feat   macroF1     sd    null   margin
+contour (F0/loudness dynamics)        12     0.572  0.008   0.496   +0.076
+level (loudness, F0 mean)              9     0.580  0.006   0.495   +0.085
+voice quality (jitter/HNR)            10     0.603  0.008   0.496   +0.107
+spectral and formant                  51     0.587  0.009   0.499   +0.088
+temporal (rate, segments)              6     0.507  0.010   0.495   +0.012
+
+==============================================================================================
+WHAT THIS SETTLES
+  Most stance per feature: contour (F0/loudness dynamics), +0.083 from 12 features.
+  Contour carries +0.083 from 12 features. Coarse rate carries +0.024 from 6.
+  Level, how loud and how high the phrase sits, carries +0.060 from 9.
+  So the two senses of temporal come apart. How pitch and loudness move carries
+  stance; how fast the phrase runs does not. [4.6] and [5.2] are about different
+  quantities and only look contradictory if the distinction is left implicit.
+
+  Against arousal the ordering differs, which is what makes the two axes separable:
+    voice quality (jitter/HNR)        +0.107
+    spectral and formant              +0.088
+    level (loudness, F0 mean)         +0.085

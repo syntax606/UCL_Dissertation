@@ -10,6 +10,10 @@ Replaces the single-partition GroupKFold figures from src/30 and src/43.
   loaded EnCodec, after quantisation         256 dims
   loaded DAC, before quantisation           2048 dims
   loaded DAC, after quantisation            2048 dims
+  loaded Whisper encoder L9                 1536 dims
+  loaded Sylber                             1536 dims
+  loaded DyCAST, before quantisation          64 dims
+  loaded DyCAST, after quantisation           64 dims
 
   partition 1/25 done
   partition 2/25 done
@@ -47,6 +51,10 @@ EnCodec, before quantisation          0.367 (0.003)        0.882 (0.001)        
 EnCodec, after quantisation           0.366 (0.004)        0.876 (0.001)        0.300 (0.003)        0.386 (0.006)        0.560 (0.001)
 DAC, before quantisation              0.348 (0.003)        0.793 (0.002)        0.278 (0.003)        0.374 (0.005)        0.551 (0.001)
 DAC, after quantisation               0.333 (0.004)        0.772 (0.002)        0.255 (0.003)        0.343 (0.005)        0.539 (0.001)
+Whisper encoder L9                    0.291 (0.005)        0.623 (0.004)        0.253 (0.004)        0.559 (0.004)        0.375 (0.004)
+Sylber                                0.231 (0.006)        0.550 (0.004)        0.175 (0.003)        0.450 (0.006)        0.299 (0.002)
+DyCAST, before quantisation           0.256 (0.003)        0.547 (0.003)        0.273 (0.004)        0.244 (0.007)        0.346 (0.003)
+DyCAST, after quantisation            0.260 (0.004)        0.561 (0.003)        0.276 (0.003)        0.252 (0.005)        0.347 (0.003)
 
 RETENTION vs WavLM, ratio formed within each partition then averaged (sd)
 representation                             contour               level       voice quality            temporal            spectral
@@ -57,6 +65,10 @@ EnCodec, before quantisation           127% (3%)         145% (1%)         145% 
 EnCodec, after quantisation            127% (2%)         144% (1%)         137% (3%)          69% (1%)         162% (2%)
 DAC, before quantisation               121% (2%)         130% (1%)         127% (3%)          67% (1%)         160% (2%)
 DAC, after quantisation                115% (2%)         127% (1%)         117% (3%)          61% (1%)         156% (2%)
+Whisper encoder L9                     101% (2%)         102% (1%)         116% (2%)         100% (1%)         109% (1%)
+Sylber                                  80% (2%)          90% (1%)          80% (2%)          81% (1%)          87% (1%)
+DyCAST, before quantisation             89% (2%)          90% (1%)         125% (3%)          44% (1%)         100% (1%)
+DyCAST, after quantisation              90% (2%)          92% (1%)         126% (3%)          45% (1%)         101% (1%)
 
 THE COMPARISON [4.5] RESTS ON, paired across partitions
 ----------------------------------------------------------------------------------------------------

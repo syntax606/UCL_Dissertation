@@ -60,6 +60,15 @@ RUNGS = [
     ("EnCodec, after quantisation",  ("frames", "encodec_post", None)),
     ("DAC, before quantisation",     ("npz", "dac_pre", None)),
     ("DAC, after quantisation",      ("npz", "dac_post", None)),
+    # Whisper is a control rather than a rung. If a second continuous encoder also
+    # recovers the cues better than WavLM, then "the codecs beat WavLM" is partly a
+    # fact about WavLM and [4.4] has no way to see that from the codec rows alone.
+    ("Whisper encoder L9",           ("npz", "whisper", 9)),
+    # The variable-rate systems, tested for decodability in [4.1] and [4.6] but never
+    # asked which cues they keep, which is where the account in [5.2] actually lives.
+    ("Sylber",                       ("frames", "sylber", None)),
+    ("DyCAST, before quantisation",  ("frames", "dycast_pre", None)),
+    ("DyCAST, after quantisation",   ("frames", "dycast_post", None)),
 ]
 
 CEIL = "WavLM, ceiling"
