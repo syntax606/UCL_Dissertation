@@ -27,6 +27,7 @@ Usage:  python3 src/53_check_draft.py
 import argparse
 import collections
 import difflib
+import hashlib
 import glob
 import os
 import re
@@ -113,7 +114,18 @@ def main():
                     continue
                 if abs((a - b_) - c_) > 0.0015:
                     bad.append(f"{r.cells[0].text} off by {abs((a-b_)-c_):.4f}")
-    results.append(check("margins within rounding of their columns", not bad, "; ".join(bad)))
+    for t in d.tables:
+        head = [c.text.strip().lower() for c in t.rows[0].cells]
+        if len(head) == 4 and head[-1] in ("change", "margin", "difference"):
+            for r in t.rows[1:]:
+                a, b_, c_ = (num(r.cells[i].text) for i in (1, 2, 3))
+                if None in (a, b_, c_):
+                    continue
+                if abs((b_ - a) - c_) > 0.0015 and abs((a - b_) - c_) > 0.0015:
+                    bad.append(f"{r.cells[0].text} {head[-1]} off by "
+                               f"{min(abs((b_-a)-c_), abs((a-b_)-c_)):.4f}")
+    results.append(check("margins and changes within rounding of their columns",
+                         not bad, "; ".join(bad)))
 
     # -- provenance ----------------------------------------------------------------
     src = " ".join(" ".join(open(f, errors="ignore").read().split())
@@ -184,11 +196,38 @@ def main():
     results.append(check("every embedded figure is generated from results/",
                          embedded == len(figs) and len(gen) >= len(figs),
                          f"{embedded} embedded, {len(gen)} generated files"))
+    # Word embeds a copy of each image. Regenerating the figures updates the file and not
+    # the copy, so the document can show one thing while docs/figures shows another. This is
+    # the +0.244 failure in a different costume, and unlike that one it is checkable.
+    embedded = {hashlib.md5(r.target_part.blob).hexdigest()
+                for r in d.part.rels.values() if "image" in r.reltype}
+    ondisk = {os.path.basename(f): hashlib.md5(open(f, "rb").read()).hexdigest()
+              for f in glob.glob(str(ROOT / "docs" / "figures" / "fig?_*.png"))}
+    stale = [k for k, v in ondisk.items() if v not in embedded]
+    results.append(check("embedded figures match the generated files", not stale,
+                         f"{' '.join(stale)} regenerated but not re-placed"))
+
     hand = [os.path.basename(f) for f in glob.glob(str(ROOT / "docs" / "figures" / "*.png"))
             if not os.path.basename(f).startswith("fig")]
     if hand and not args.quiet:
         print(f"  note  {len(hand)} hand-authored figure(s) on disk, not in the document: "
               f"{', '.join(hand)}")
+
+    # Not a failure. Every numeric error this project produced was a prose figure with no
+    # table cell and no reference beside it, so the list is worth seeing even when it is short.
+    tabtxt = " ".join(c.text.replace("\xa0", " ")
+                      for t in d.tables for r in t.rows for c in r.cells)
+    loose = []
+    for v in sorted(set(re.findall(r"\b\d\.\d{3}\b", txt))):
+        if v in tabtxt:
+            continue
+        m = re.search(re.escape(v), txt)
+        win = txt[max(0, m.start() - 260):m.end() + 160]
+        if not re.search(r"\[[A-F](\.\d+)?\]|\[[^\]]*\d\.\d[^\]]*\]", win):
+            loose.append(v)
+    if loose and not args.quiet:
+        print(f"  note  {len(loose)} prose figure(s) with no table cell and no reference nearby: "
+              f"{', '.join(loose)}")
 
     width = max(len(n) for n, _, _ in results)
     print(f"Draft check\n{'-' * (width + 34)}")
